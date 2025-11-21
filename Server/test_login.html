@@ -1,0 +1,26 @@
+### Test Đăng nhập Bác sĩ (Thành công)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "doctor@hms.com",
+    "password": "123456"
+}
+
+### Test Đăng nhập Bệnh nhân (Thành công - dùng SĐT)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "0904444444",
+    "password": "123456"
+}
+
+### Test Sai mật khẩu (Thất bại)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "doctor@hms.com",
+    "password": "sai_mat_khau"
+}
