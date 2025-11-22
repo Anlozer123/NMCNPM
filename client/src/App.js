@@ -1,16 +1,29 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './Login';
-import Dashboard from './Dashboard'; // Gọi file điều phối
+import Homepage from './Homepage'; // Import trang chủ mới
+import Login from './Login';       // Import trang đăng nhập 
+import Dashboard from './Dashboard'; // Import Dashboard
+import Register from './Register';
+import DoctorAppointments from './components/DoctorAppointments';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        {/* Trang chủ */}
+        <Route path="/" element={<Homepage />} />
+
+        {/* Trang Login */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Đăng ký */}
+        <Route path="/register" element={<Register />} />
         
-        {/* Đường dẫn /dashboard sẽ tự động phân quyền */}
+        {/* Dashboard sau khi đăng nhập */}
         <Route path="/dashboard" element={<Dashboard />} />
+
+        {/* Dashboard appointment của bác sĩ */}
+        <Route path="/doctor/appointments" element={<DoctorAppointments />} />
       </Routes>
     </Router>
   );

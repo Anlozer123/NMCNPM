@@ -11,10 +11,11 @@ VALUES
 
 -- 2. Thêm dữ liệu Bệnh nhân (Patient)
 -- Thêm 2 bệnh nhân để test danh sách
-INSERT INTO Patient (FullName, Gender, DoB, Phone, Address, PasswordHash)
+-- Tìm đoạn INSERT INTO Patient và sửa thành:
+INSERT INTO Patient (FullName, Gender, DoB, Phone, Email, Address, PasswordHash)
 VALUES 
-(N'Phạm Bệnh Nhân A', 'Male', '2000-02-10', '0904444444', N'123 Đường Lê Lợi, TP.HCM', '123456'),
-(N'Hoàng Bệnh Nhân B', 'Female', '1998-11-30', '0905555555', N'456 Đường Nguyễn Huệ, TP.HCM', '123456');
+(N'Phạm Bệnh Nhân A', 'Male', '2000-02-10', '0904444444', 'benhnhana@email.com', N'123 Đường Lê Lợi', '123456'), -- Thêm data email
+(N'Hoàng Bệnh Nhân B', 'Female', '1998-11-30', '0905555555', 'benhnhanb@email.com', N'456 Đường Nguyễn Huệ', '123456'); -- Thêm data email
 
 -- 3. Thêm dữ liệu Thuốc (Medicine)
 -- Để test chức năng Kê đơn (Prescription)

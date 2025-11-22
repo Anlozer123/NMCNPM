@@ -5,33 +5,31 @@ USE HospitalManagement;
 GO
 
 -- 1. Bảng Staff (Gộp chung Doctor, Nurse, Admin)
--- Dựa trên Class Staff [cite: 8] và quan hệ thừa kế [cite: 12, 13]
 CREATE TABLE Staff (
     StaffID INT PRIMARY KEY IDENTITY(1,1),
     FullName NVARCHAR(100) NOT NULL,
     DoB DATE,
     Phone VARCHAR(15),
     Email VARCHAR(100) UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL, -- Dùng để Login [cite: 8]
+    PasswordHash VARCHAR(255) NOT NULL, 
     Role NVARCHAR(20) NOT NULL CHECK (Role IN ('Doctor', 'Nurse', 'Admin')), -- Phân quyền
     Specialization NVARCHAR(100), -- Chỉ dành cho Doctor [cite: 1]
     AdminPrivilege BIT DEFAULT 0  -- Chỉ dành cho Admin [cite: 6]
 );
 
 -- 2. Bảng Patient (Bệnh nhân)
--- Dựa trên Class Patient 
 CREATE TABLE Patient (
     PatientID INT PRIMARY KEY IDENTITY(1,1),
     FullName NVARCHAR(100) NOT NULL,
     Gender NVARCHAR(10),
     DoB DATE,
     Phone VARCHAR(15),
+    Email VARCHAR(100), 
     Address NVARCHAR(200),
-    PasswordHash VARCHAR(255) NOT NULL -- Dùng để Login 
+    PasswordHash VARCHAR(255) NOT NULL
 );
 
 -- 3. Bảng Medicine (Thuốc)
--- Dựa trên Class Medicine 
 CREATE TABLE Medicine (
     MedicineID INT PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(100) NOT NULL,
@@ -41,7 +39,6 @@ CREATE TABLE Medicine (
 );
 
 -- 4. Bảng MedicalRecord (Hồ sơ bệnh án)
--- Dựa trên Class MedicalRecord 
 CREATE TABLE MedicalRecord (
     RecordID INT PRIMARY KEY IDENTITY(1,1),
     PatientID INT FOREIGN KEY REFERENCES Patient(PatientID),
@@ -52,7 +49,6 @@ CREATE TABLE MedicalRecord (
 );
 
 -- 5. Bảng Prescription (Đơn thuốc - Phần đầu)
--- Dựa trên Class Prescription [cite: 10]
 CREATE TABLE Prescription (
     PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
     RecordID INT FOREIGN KEY REFERENCES MedicalRecord(RecordID),
@@ -60,7 +56,6 @@ CREATE TABLE Prescription (
 );
 
 -- 6. Bảng PrescriptionItem (Chi tiết đơn thuốc)
--- Dựa trên Class PrescriptionItem [cite: 16]
 CREATE TABLE PrescriptionItem (
     ItemID INT PRIMARY KEY IDENTITY(1,1),
     PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
@@ -73,7 +68,6 @@ CREATE TABLE PrescriptionItem (
 );
 
 -- 7. Bảng Appointment (Lịch hẹn)
--- Dựa trên Class Appointment 
 CREATE TABLE Appointment (
     AppointmentID INT PRIMARY KEY IDENTITY(1,1),
     PatientID INT FOREIGN KEY REFERENCES Patient(PatientID),
@@ -84,7 +78,6 @@ CREATE TABLE Appointment (
 );
 
 -- 8. Bảng Equipment (Thiết bị y tế)
--- Dựa trên Class Equipment [cite: 30]
 CREATE TABLE Equipment (
     EquipmentID INT PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(100) NOT NULL,
@@ -94,7 +87,6 @@ CREATE TABLE Equipment (
 );
 
 -- 9. Bảng EquipmentRequest (Yêu cầu thiết bị - Của Y tá/Bác sĩ)
--- Dựa trên Class EquipmentRequest [cite: 31]
 CREATE TABLE EquipmentRequest (
     RequestID INT PRIMARY KEY IDENTITY(1,1),
     StaffID INT FOREIGN KEY REFERENCES Staff(StaffID), -- Người yêu cầu
@@ -105,7 +97,6 @@ CREATE TABLE EquipmentRequest (
 );
 
 -- 10. Bảng Schedule (Lịch làm việc nhân viên)
--- Dựa trên Class Schedule [cite: 26]
 CREATE TABLE Schedule (
     ScheduleID INT PRIMARY KEY IDENTITY(1,1),
     StaffID INT FOREIGN KEY REFERENCES Staff(StaffID),

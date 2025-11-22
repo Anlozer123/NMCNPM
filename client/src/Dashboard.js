@@ -8,7 +8,7 @@ const Dashboard = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        // 1. Lấy thông tin user từ bộ nhớ trình duyệt
+        // Lấy thông tin user từ bộ nhớ trình duyệt
         const storedUser = localStorage.getItem('user');
         
         if (!storedUser) {
@@ -19,15 +19,15 @@ const Dashboard = () => {
         }
     }, [navigate]);
 
-    if (!user) return null; // Hoặc hiện Loading spinner
+    if (!user) return null; 
 
-    // 2. Phân quyền hiển thị
+    // Phân quyền hiển thị
     return (
         <div>
-            {/* Nếu là Bác sĩ -> Hiện Dashboard Bác sĩ */}
+            {/* Dashboard Bác sĩ */}
             {user.Role === 'Doctor' && <DoctorDashboard user={user} />}
 
-            {/* Nếu là Bệnh nhân -> Hiện Dashboard Bệnh nhân */}
+            {/* Hiện Dashboard Bệnh nhân */}
             {(user.Role === 'Patient' || !user.Role) && <PatientDashboard user={user} />}
             
             {/* Sprint sau sẽ làm thêm Admin/Nurse */}

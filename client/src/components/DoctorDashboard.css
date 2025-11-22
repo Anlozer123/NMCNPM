@@ -1,0 +1,292 @@
+/* FILE: client/src/components/DoctorDashboard.css */
+
+/* Reset & Layout */
+* {
+    box-sizing: border-box; /* Đảm bảo padding không làm vỡ khung */
+}
+
+.doctor-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa; /* Nền tổng thể xám rất nhạt */
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- SIDEBAR --- */
+.doc-sidebar {
+    width: 260px;
+    background: white;
+    border-right: 1px solid #eef2f6;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    
+    /* Cố định Sidebar để khi cuộn trang nó vẫn đứng yên */
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1000; /* Đảm bảo Sidebar luôn nằm trên cùng */
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 40px;
+    padding-left: 10px;
+}
+
+.logo-icon {
+    color: #0ea5e9;
+}
+
+.doc-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.doc-menu li {
+    padding: 14px 20px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    color: #64748b;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.doc-menu li:hover {
+    background-color: #f1f5f9;
+    color: #0ea5e9;
+}
+
+/* Class active để highlight mục đang chọn */
+.doc-menu li.active {
+    background-color: #0ea5e9;
+    color: white;
+}
+
+/* --- MAIN CONTENT --- */
+.doc-main {
+    flex: 1;
+    margin-left: 260px; /* Đẩy nội dung sang phải để không bị Sidebar che mất */
+    padding: 0;
+    width: calc(100% - 260px); /* Tính toán độ rộng còn lại */
+}
+
+/* Header */
+.doc-header {
+    height: 70px;
+    background: white;
+    display: flex;
+    justify-content: space-between; /* Logo trái - User phải */
+    align-items: center;
+    padding: 0 40px;
+    border-bottom: 1px solid #eef2f6;
+    position: sticky; /* Thanh header dính lên trên cùng khi cuộn */
+    top: 0;
+    z-index: 900;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.btn-logout {
+    border: none;
+    background: none;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn-logout:hover { 
+    color: #ef4444; 
+    background-color: #fee2e2;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+    padding: 40px;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 5px;
+    margin-top: 0;
+}
+
+.page-subtitle {
+    color: #64748b;
+    margin-bottom: 30px;
+}
+
+/* --- STATS GRID (Hàng 1) --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Chia 4 cột đều nhau */
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-info p { font-size: 0.9rem; color: #64748b; margin: 0 0 10px 0; }
+.stat-info h3 { font-size: 1.8rem; color: #0f172a; margin: 0; }
+
+.stat-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.stat-icon.blue { background: #e0f2fe; color: #0284c7; }
+.stat-icon.teal { background: #ccfbf1; color: #0d9488; }
+.stat-icon.green { background: #dcfce7; color: #16a34a; }
+.stat-icon.red { background: #fee2e2; color: #dc2626; }
+
+/* --- ACTIONS GRID (Hàng 2) --- */
+.section-header {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.action-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border-color: #0ea5e9;
+}
+
+.action-icon { font-size: 2.5rem; margin-bottom: 15px; }
+.action-icon.blue { color: #0ea5e9; }
+.action-icon.teal { color: #0d9488; }
+.action-icon.green { color: #16a34a; }
+
+.action-card h4 { margin: 0 0 5px 0; color: #0f172a; font-size: 1.1rem; }
+.action-card p { color: #94a3b8; font-size: 0.85rem; margin: 0; }
+
+.action-card.highlight {
+    background-color: #f0f9ff; /* Nền xanh nhạt cho AI */
+    border: 1px solid #bae6fd;
+}
+
+/* --- APPOINTMENT LIST (Hàng 3) --- */
+.appointments-section {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.section-sub { color: #64748b; font-size: 0.9rem; margin-bottom: 25px; margin-top: -10px; }
+
+.appointment-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.appointment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s;
+    border-radius: 8px;
+}
+
+.appointment-item:hover {
+    background-color: #f8fafc;
+}
+
+.appointment-item:last-child { border-bottom: none; }
+
+.app-left { display: flex; gap: 15px; align-items: center; }
+
+.avatar-circle {
+    width: 48px;
+    height: 48px;
+    background-color: #e0f2fe;
+    color: #0284c7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.app-info h4 { color: #0f172a; margin: 0 0 4px 0; font-size: 1rem; }
+.app-info p { color: #64748b; font-size: 0.9rem; margin: 0; }
+
+.app-right { text-align: right; }
+.app-time { display: block; font-weight: 700; color: #333; margin-bottom: 5px; font-size: 1rem; }
+
+.btn-detail {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+}
+
+.btn-detail:hover { color: #0ea5e9; text-decoration: underline; }
