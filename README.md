@@ -17,6 +17,7 @@ npm install
 npm run dev
 ```
 ### Cài đặt Frontend
+Mở terminal tại thư mục `client`:
 ```bash
 cd client
 npm install
