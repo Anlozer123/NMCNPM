@@ -1,0 +1,17 @@
+# Bỏ qua thư mục thư viện (Rất nặng, không đẩy lên)
+node_modules/
+*/node_modules/
+
+# Bỏ qua file môi trường (Chứa mật khẩu DB, không đẩy lên)
+.env
+*.env
+
+# Bỏ qua file build của hệ thống
+dist/
+build/
+.DS_Store
+
+# Bỏ qua file log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

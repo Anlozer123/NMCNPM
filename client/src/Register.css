@@ -1,0 +1,142 @@
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f9fa; /* Màu nền xám nhạt tổng thể */
+    padding: 40px 20px;
+}
+
+.register-card {
+    background: white;
+    width: 100%;
+    max-width: 600px; /* Độ rộng form */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.icon-circle {
+    width: 60px;
+    height: 60px;
+    background-color: #e0f2fe;
+    color: #0284c7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 15px;
+}
+
+.register-header h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.register-header p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+/* Form Layout */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.half {
+    flex: 1;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    background-color: #fff;
+}
+
+input:focus, select:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+/* Checkbox */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    font-size: 0.9rem;
+}
+
+.checkbox-group input {
+    width: auto;
+}
+
+.checkbox-group span {
+    color: #0ea5e9;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Button */
+.btn-register {
+    width: 100%;
+    padding: 14px;
+    background-color: #0284c7; /* Màu xanh nút bấm */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-register:hover {
+    background-color: #026aa7;
+}
+
+/* Footer Link */
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.login-link span {
+    color: #0284c7;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.error-msg {
+    background-color: #fee2e2;
+    color: #dc2626;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+}
