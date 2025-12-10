@@ -3,11 +3,11 @@ require('dotenv').config();
 
 const config = {
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER, 
+    password: process.env.DB_PASS,
+    server: process.env.DB_HOST, 
     database: process.env.DB_NAME,
     options: {
-        encrypt: true, // Bắt buộc nếu dùng Azure, local có thể để false
+        encrypt: false, // Bắt buộc nếu dùng Azure, local có thể để false
         trustServerCertificate: true // Bắt buộc true nếu chạy local (bỏ qua SSL)
     }
 };

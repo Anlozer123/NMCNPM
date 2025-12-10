@@ -1,0 +1,128 @@
+/* Container chung (Kế thừa layout dashboard) */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    background-color: #f5f7fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Sidebar Styling (Copy từ Dashboard.css nếu chưa global) */
+.sidebar {
+    width: 260px;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+.menu-list { list-style: none; padding: 0; margin-top: 20px; }
+.menu-list li {
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #555;
+    transition: all 0.2s;
+}
+.menu-list li svg { margin-right: 10px; }
+.menu-list li:hover, .menu-list li.active {
+    background-color: #e3f2fd;
+    color: #007bff;
+    font-weight: 600;
+}
+.logout-btn { color: #dc3545 !important; margin-top: auto; }
+
+/* Main Content Area */
+.main-content.prescription-page {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+}
+
+.page-header h2 { margin: 0; color: #333; font-size: 28px; }
+.page-header p { color: #777; margin-top: 5px; font-size: 14px; }
+
+/* Các Card (Khung trắng) */
+.card-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    border: 1px solid #e0e0e0;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.mt-20 { margin-top: 20px; }
+
+/* Tiêu đề section */
+.section-title { display: flex; align-items: center; margin-bottom: 10px; }
+.section-title h3 { margin: 0; margin-left: 10px; font-size: 18px; color: #333; }
+.sub-text { color: #666; font-size: 14px; margin-bottom: 20px; margin-top: -5px; }
+
+.icon-green { color: #28a745; font-size: 18px; }
+.icon-blue { color: #007bff; font-size: 18px; }
+
+/* Form Elements */
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 14px; }
+.form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+}
+.form-input:focus { border-color: #007bff; }
+.textarea { height: 80px; resize: vertical; font-family: inherit; }
+
+/* Medicine Detail Box (Box xám nhạt bên trong) */
+.medicine-details-box {
+    background-color: #f9fafb;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+}
+.medicine-details-box h4 { margin-top: 0; margin-bottom: 15px; font-size: 16px; }
+
+.medicine-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    color: #555;
+    font-size: 14px;
+}
+.medicine-item .qty { color: #888; }
+
+.total-divider { height: 1px; background-color: #ddd; margin: 15px 0; }
+.total-row { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 16px; }
+.total-price { color: #333; font-size: 18px; }
+
+/* Checkbox */
+.checkbox-group { display: flex; align-items: center; margin: 20px 0; }
+.checkbox-group input { margin-right: 10px; width: 16px; height: 16px; }
+.checkbox-group label { font-size: 14px; color: #555; }
+
+/* Buttons */
+.action-buttons { display: flex; gap: 15px; margin-top: 20px; }
+.btn-primary, .btn-secondary {
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btn-primary { background-color: #0088cc; color: white; flex: 1; } /* Màu xanh giống ảnh */
+.btn-primary:hover { background-color: #0077b3; }
+
+.btn-secondary { background-color: white; color: #333; border: 1px solid #ddd; flex: 1; }
+.btn-secondary:hover { background-color: #f5f5f5; }

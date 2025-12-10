@@ -1,0 +1,140 @@
+/* Container và Sidebar dùng chung logic với Dashboard/Prescription */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    background-color: #f5f7fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Appointment Page Specifics */
+.main-content.appointment-page {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+}
+
+.page-header h2 { margin: 0; font-size: 28px; color: #000; font-weight: 700; }
+.page-header p { color: #666; font-size: 14px; margin-top: 5px; }
+
+/* Main Card */
+.appointment-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    border: 1px solid #e0e0e0;
+    margin-top: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.card-header-text h3 { margin: 0; font-size: 18px; color: #000; font-weight: 600; }
+.card-header-text p { color: #777; font-size: 14px; margin-top: 5px; margin-bottom: 25px; }
+
+/* Form Layout */
+.form-container { display: flex; flex-direction: column; gap: 20px; }
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group { display: flex; flex-direction: column; }
+.full-width { width: 100%; }
+.half-width { flex: 1; }
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-blue { color: #0088cc; }
+
+.form-input {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+    background-color: #fff;
+}
+
+.form-input:focus { border-color: #0088cc; box-shadow: 0 0 0 2px rgba(0, 136, 204, 0.1); }
+
+.textarea {
+    height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Error State & Tooltip */
+.input-error { border-color: #dc3545; }
+
+.relative-group { position: relative; }
+.error-tooltip {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    pointer-events: none;
+    /* Mũi tên tooltip (optional) */
+}
+.error-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 15px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+/* Buttons */
+.mt-30 { margin-top: 30px; }
+.action-buttons { display: flex; gap: 15px; }
+
+.btn-primary {
+    flex: 1;
+    background-color: #0088cc; /* Màu xanh trong ảnh */
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
+}
+.btn-primary:hover { background-color: #0077b3; }
+
+.btn-secondary {
+    flex: 1;
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
+}
+.btn-secondary:hover { background-color: #f9f9f9; }
+
+/* Note Card (Footer) */
+.note-card {
+    margin-top: 20px;
+    background-color: #f8f9fa; /* Màu xám nhạt */
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    color: #555;
+    font-size: 13px;
+    line-height: 1.5;
+}
