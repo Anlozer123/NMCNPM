@@ -1,18 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FaHome,
-  FaCalendarAlt,
-  FaComments,
-  FaFilePrescription,
   FaSignOutAlt,
   FaStethoscope,
+  FaCalendarAlt,
   FaClock,
-  FaFileMedical,
-  FaInfoCircle,
-  FaCalendarPlus
+  FaFileMedical
 } from "react-icons/fa";
-import "./PatientAppointments.css"; // Import CSS
+import PatientSidebar from "../Sidebar/PatientSidebar"; // <--- Import Component Sidebar dùng chung
+import "./PatientAppointments.css"; 
 
 const PatientAppointment = () => {
   const navigate = useNavigate();
@@ -80,7 +76,7 @@ const PatientAppointment = () => {
 
   return (
     <div className="layout-container">
-      {/* --- HEADER (Giống trang Đặt đơn thuốc) --- */}
+      {/* --- HEADER --- */}
       <header className="top-header">
         <div className="logo-section" onClick={() => navigate("/dashboard")}>
           <FaStethoscope className="logo-icon" />
@@ -95,26 +91,9 @@ const PatientAppointment = () => {
       </header>
 
       <div className="body-container">
-        {/* --- SIDEBAR MỚI (Đơn giản, đúng theo hình) --- */}
-        <aside className="sidebar-nav">
-          <ul>
-            <li onClick={() => navigate("/dashboard")}>
-              <FaHome /> Trang chủ
-            </li>
-            <li className="active">
-              <FaCalendarAlt /> Lịch khám
-            </li>
-            <li onClick={() => navigate("/request-consultation")}>
-              <FaComments /> Tư vấn
-            </li>
-            <li onClick={() => navigate("/prescription")}>
-              <FaFilePrescription /> Đơn thuốc
-            </li>
-            <li onClick={() => navigate("/my-appointments")}>
-              <FaCalendarPlus /> Quản lý lịch hẹn
-            </li>
-          </ul>
-        </aside>
+        {/* --- SỬ DỤNG COMPONENT SIDEBAR DÙNG CHUNG --- */}
+        <PatientSidebar />
+        {/* ------------------------------------------- */}
 
         {/* --- MAIN CONTENT --- */}
         <main className="main-content-area">
@@ -200,7 +179,7 @@ const PatientAppointment = () => {
                   className={`form-control textarea ${showError ? "input-error" : ""}`}
                 ></textarea>
                 
-                {/* Tooltip lỗi (Giữ nguyên logic) */}
+                {/* Tooltip lỗi */}
                 {showError && (
                   <div className="error-tooltip">
                     Vui lòng điền vào trường này.

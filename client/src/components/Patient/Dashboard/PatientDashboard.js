@@ -1,8 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FaHome,
-  FaCalendarAlt,
   FaComments,
   FaFilePrescription,
   FaSignOutAlt,
@@ -11,6 +9,7 @@ import {
   FaNotesMedical,
   FaCalendarPlus
 } from "react-icons/fa";
+import PatientSidebar from "../Sidebar/PatientSidebar"; // <--- Import Component Sidebar dùng chung
 import "./PatientDashboard.css";
 
 const PatientDashboard = () => {
@@ -40,26 +39,9 @@ const PatientDashboard = () => {
       </header>
 
       <div className="body-container">
-        {/* --- SIDEBAR MỚI --- */}
-        <aside className="sidebar-nav">
-          <ul>
-            <li className="active">
-              <FaHome /> Trang chủ
-            </li>
-            <li onClick={() => navigate("/appointment")}>
-              <FaCalendarAlt /> Lịch khám
-            </li>
-            <li onClick={() => navigate("/request-consultation")}>
-              <FaComments /> Tư vấn
-            </li>
-            <li onClick={() => navigate("/prescription")}>
-              <FaFilePrescription /> Đơn thuốc
-            </li>
-            <li onClick={() => navigate("/my-appointments")}>
-              <FaCalendarPlus /> Quản lý lịch hẹn
-            </li>
-          </ul>
-        </aside>
+        {/* --- SỬ DỤNG SIDEBAR DÙNG CHUNG --- */}
+        <PatientSidebar />
+        {/* ---------------------------------- */}
 
         {/* --- MAIN CONTENT --- */}
         <main className="main-content-area">

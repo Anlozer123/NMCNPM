@@ -53,42 +53,7 @@
     overflow: hidden;
 }
 
-/* --- SIDEBAR MỚI (Đơn giản, không Avatar) --- */
-.sidebar-nav {
-    width: 240px;
-    background-color: #fff;
-    padding-top: 30px;
-    /* Không có border-right trong hình, nhưng thêm vào để phân cách rõ hơn nếu muốn */
-}
-
-.sidebar-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.sidebar-nav li {
-    padding: 15px 40px; /* Căn lề trái giống hình */
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    color: #333;
-    font-weight: 500;
-    font-size: 15px;
-    transition: all 0.2s;
-}
-
-.sidebar-nav li:hover { color: #0089d0; }
-
-.sidebar-nav li.active {
-    font-weight: 700; /* Chỉ in đậm, không đổi màu nền quá nhiều */
-    color: #000;
-}
-/* Icon trong menu */
-.sidebar-nav li svg { font-size: 18px; color: #555; }
-.sidebar-nav li.active svg { color: #000; }
-
+/* --- [ĐÃ XÓA] Sidebar CSS cũ vì đã dùng Component chung --- */
 
 /* --- MAIN CONTENT --- */
 .main-content-area {

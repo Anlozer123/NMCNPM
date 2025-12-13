@@ -1,4 +1,4 @@
-/* --- LAYOUT GLOBAL (Copy logic từ trang Prescription để đồng bộ) --- */
+/* --- LAYOUT GLOBAL --- */
 .layout-container {
     display: flex;
     flex-direction: column;
@@ -35,28 +35,7 @@
 /* Body (Sidebar + Content) */
 .body-container { display: flex; flex: 1; overflow: hidden; }
 
-/* Sidebar Menu */
-.sidebar-nav {
-    width: 240px;
-    background-color: #fff;
-    padding-top: 30px;
-}
-.sidebar-nav ul { list-style: none; padding: 0; margin: 0; }
-.sidebar-nav li {
-    padding: 15px 40px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    color: #333;
-    font-weight: 500;
-    font-size: 15px;
-    transition: all 0.2s;
-}
-.sidebar-nav li:hover { color: #0089d0; }
-.sidebar-nav li.active { font-weight: 700; color: #000; }
-.sidebar-nav li svg { font-size: 18px; color: #555; }
-.sidebar-nav li.active svg { color: #000; }
+/* --- [ĐÃ XÓA] Sidebar Menu Styles cũ vì đã dùng Component chung --- */
 
 /* Main Content Area */
 .main-content-area {
@@ -181,10 +160,10 @@
     max-width: 900px;
     margin-top: 20px;
     border: 1px solid #e0e0e0;
-    border-radius: 12px; /* Bo góc giống hình */
-    padding: 25px 40px; /* Padding rộng */
+    border-radius: 12px; 
+    padding: 25px 40px; 
     color: #555;
     font-size: 13px;
     line-height: 1.6;
-    background-color: #fff; /* Nền trắng */
+    background-color: #fff;
 }

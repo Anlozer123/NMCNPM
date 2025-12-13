@@ -55,41 +55,7 @@
   overflow: hidden;
 }
 
-/* Sidebar */
-.sidebar-nav {
-  width: 240px;
-  background-color: #ffffff;
-  border-right: 1px solid #e0e0e0;
-  padding-top: 20px;
-}
-
-.sidebar-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar-nav li {
-  padding: 12px 24px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #333;
-  transition: all 0.2s;
-  font-weight: 500;
-}
-
-.sidebar-nav li:hover {
-  background-color: #f0f7ff;
-  color: #0089d0;
-}
-
-.sidebar-nav li.active {
-  border-left: 4px solid #0089d0;
-  background-color: #e6f4fa; /* Màu xanh rất nhạt khi active */
-  color: #0089d0; /* Chữ màu xanh đậm */
-}
+/* --- [ĐÃ XÓA] Sidebar CSS cũ vì đã dùng Component chung --- */
 
 /* Main Content */
 .main-content-area {

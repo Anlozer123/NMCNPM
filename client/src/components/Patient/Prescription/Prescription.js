@@ -1,18 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FaHome, // Icon Trang chủ (Thay cho FaUserMd)
-  FaCalendarAlt, // Icon Lịch khám
-  FaComments, // Icon Tư vấn
-  FaFilePrescription, // Icon Đơn thuốc
   FaSignOutAlt,
   FaLink,
   FaMapMarkerAlt,
   FaCreditCard,
   FaShoppingCart,
-  FaStethoscope,
-  FaCalendarPlus
+  FaStethoscope
 } from "react-icons/fa";
+import PatientSidebar from "../Sidebar/PatientSidebar"; // <--- Import Component Sidebar dùng chung
 import "./Prescription.css";
 
 const Prescription = () => {
@@ -81,7 +77,7 @@ const Prescription = () => {
 
   return (
     <div className="layout-container">
-      {/* --- TOP HEADER (Giống hình 1 & 2) --- */}
+      {/* --- TOP HEADER --- */}
       <header className="top-header">
         <div className="logo-section" onClick={() => navigate("/dashboard")} style={{cursor: 'pointer'}}>
           <FaStethoscope className="logo-icon" />
@@ -96,26 +92,9 @@ const Prescription = () => {
       </header>
 
       <div className="body-container">
-        {/* --- SIDEBAR ĐÃ SỬA (Không Avatar, menu đơn giản) --- */}
-        <aside className="sidebar-nav">
-          <ul>
-            <li onClick={() => navigate("/dashboard")}>
-              <FaHome /> Trang chủ
-            </li>
-            <li onClick={() => navigate("/appointment")}>
-              <FaCalendarAlt /> Lịch khám
-            </li>
-            <li onClick={() => navigate("/request-consultation")}>
-              <FaComments /> Tư vấn
-            </li>
-            <li className="active">
-              <FaFilePrescription /> Đơn thuốc
-            </li>
-            <li onClick={() => navigate("/my-appointments")}>
-              <FaCalendarPlus /> Quản lý lịch hẹn
-            </li>
-          </ul>
-        </aside>
+        {/* --- SỬ DỤNG SIDEBAR DÙNG CHUNG --- */}
+        <PatientSidebar />
+        {/* ---------------------------------- */}
 
         {/* --- MAIN CONTENT --- */}
         <main className="main-content-area">
@@ -217,7 +196,7 @@ const Prescription = () => {
                   name="note"
                   value={shippingInfo.note}
                   onChange={handleInputChange}
-                  placeholder="Ghi chủ thêm cho người giao hàng..."
+                  placeholder="Ghi chú thêm cho người giao hàng..."
                   className="form-control textarea"
                 ></textarea>
               </div>

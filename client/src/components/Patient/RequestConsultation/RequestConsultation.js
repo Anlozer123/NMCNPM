@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
-  FaHome, 
-  FaCalendarAlt, 
   FaComments, 
-  FaFilePrescription, 
   FaSignOutAlt, 
   FaUpload,
-  FaNotesMedical,
   FaExclamationCircle,
-  FaStethoscope,
-  FaCalendarPlus
+  FaStethoscope
 } from "react-icons/fa";
-import "./RequestConsultation.css"; // Import file CSS bên dưới
+import PatientSidebar from "../Sidebar/PatientSidebar"; // <--- Import Sidebar dùng chung
+import "./RequestConsultation.css";
 
 const RequestConsultation = () => {
   const navigate = useNavigate();
   
-  // Giả lập thông tin user (Precondition: Patient must be logged in )
+  // Giả lập thông tin user
   const user = JSON.parse(localStorage.getItem("user")) || { FullName: "Nguyễn Văn X" };
 
   // State quản lý form
@@ -30,12 +26,11 @@ const RequestConsultation = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // Load bản nháp nếu có (Hỗ trợ Alt Flow 3a: Resume draft )
+  // Load bản nháp nếu có
   useEffect(() => {
     const savedDraft = localStorage.getItem("consultation_draft");
     if (savedDraft) {
       setFormData(JSON.parse(savedDraft));
-      // Tùy chọn: Thông báo cho user biết đã khôi phục bản nháp
     }
   }, []);
 
@@ -57,9 +52,8 @@ const RequestConsultation = () => {
     navigate("/login");
   };
 
-  // Xử lý gửi yêu cầu (UC Main Flow & Alternate Flow)
+  // Xử lý gửi yêu cầu
   const handleSubmit = async () => {
-    // 1. UC Alt Flow 2a: Incomplete information -> System prompts 
     if (!formData.department || !formData.urgency || !formData.symptoms) {
       alert("Vui lòng điền đầy đủ các trường thông tin bắt buộc (Chuyên khoa, Mức độ, Triệu chứng).");
       return;
@@ -68,26 +62,21 @@ const RequestConsultation = () => {
     setLoading(true);
 
     try {
-      // Giả lập gửi API (Main Flow 3: Sends the request )
-      // Constraint: Response time < 3 seconds 
       await new Promise((resolve, reject) => {
         setTimeout(() => {
-          // Giả lập tỉ lệ lỗi mạng để test Alt Flow 3a (bạn có thể xóa dòng Math.random này khi chạy thật)
           const isNetworkError = Math.random() < 0.1; 
           if (isNetworkError) reject(new Error("Network Error"));
           else resolve();
         }, 1500);
       });
 
-      // Main Flow 4: System notifies successful submission 
       alert("Gửi yêu cầu tư vấn thành công! Bác sĩ sẽ phản hồi sớm.");
-      localStorage.removeItem("consultation_draft"); // Xóa nháp sau khi gửi thành công
-      navigate("/dashboard"); // Quay về trang chủ hoặc danh sách tư vấn
+      localStorage.removeItem("consultation_draft");
+      navigate("/dashboard");
 
     } catch (error) {
-      // UC Alt Flow 3a: Network failure -> Save draft locally and notify 
       console.error(error);
-      const draftData = { ...formData, file: null }; // Không lưu file vào localstorage được
+      const draftData = { ...formData, file: null };
       localStorage.setItem("consultation_draft", JSON.stringify(draftData));
       alert("Lỗi kết nối! Hệ thống đã lưu bản nháp, vui lòng thử lại sau.");
     } finally {
@@ -99,7 +88,7 @@ const RequestConsultation = () => {
     <div className="layout-container">
       {/* Header */}
       <header className="top-header">
-        <div className="logo-section">
+        <div className="logo-section" onClick={() => navigate("/dashboard")} style={{cursor: 'pointer'}}>
           <FaStethoscope className="logo-icon" />
           <span className="brand-name">MediCare Hospital</span>
         </div>
@@ -112,18 +101,9 @@ const RequestConsultation = () => {
       </header>
 
       <div className="body-container">
-        {/* Sidebar Navigation */}
-        <aside className="sidebar-nav">
-          <ul>
-            <li onClick={() => navigate("/dashboard")}><FaHome /> Trang chủ</li>
-            <li onClick={() => navigate("/appointment")}><FaCalendarAlt /> Lịch khám</li>
-            <li className="active"><FaComments /> Tư vấn</li>
-            <li onClick={() => navigate("/prescription")}><FaFilePrescription /> Đơn thuốc</li>
-            <li onClick={() => navigate("/my-appointments")}>
-              <FaCalendarPlus /> Quản lý lịch hẹn
-            </li>
-          </ul>
-        </aside>
+        {/* --- SỬ DỤNG SIDEBAR DÙNG CHUNG --- */}
+        <PatientSidebar />
+        {/* ---------------------------------- */}
 
         {/* Main Content Area */}
         <main className="main-content-area">
