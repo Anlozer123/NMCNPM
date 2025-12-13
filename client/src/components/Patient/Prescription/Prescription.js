@@ -61,8 +61,8 @@ const Prescription = () => {
     const { name, value } = e.target;
     setShippingInfo({ ...shippingInfo, [name]: value });
   };
-
   const handleSubmit = () => {
+    // Validate cơ bản
     if (!shippingInfo.deliveryTime || !paymentMethod) {
       alert("Vui lòng chọn thời gian giao hàng và phương thức thanh toán!");
       return;
@@ -71,8 +71,16 @@ const Prescription = () => {
       alert("Vui lòng xác nhận đơn thuốc!");
       return;
     }
-    alert(`Đặt hàng thành công đơn thuốc ${currentPrescription.id}!\nTổng tiền: ${currentPrescription.total.toLocaleString()} VNĐ`);
-    navigate("/dashboard");
+    
+    // THAY ĐỔI Ở ĐÂY: Thay vì Alert, ta điều hướng sang trang Billing
+    // Truyền state bao gồm thông tin đơn thuốc và phí ship (giả lập 30k)
+    navigate("/billing", { 
+      state: { 
+        prescription: currentPrescription, 
+        shippingInfo: shippingInfo,
+        shippingFee: 30000 
+      } 
+    });
   };
 
   return (

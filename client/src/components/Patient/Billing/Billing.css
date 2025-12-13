@@ -1,0 +1,175 @@
+/* --- Billing.css --- */
+.billing-container {
+    padding: 30px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Layout 2 cột cho trang Billing */
+.billing-layout {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+/* Card chung */
+.billing-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* Cột trái: Tóm tắt đơn hàng */
+.order-summary-col {
+    flex: 1;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #555;
+}
+
+.summary-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 15px 0;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 18px;
+    color: #0089d0;
+}
+
+/* Cột phải: Form thanh toán */
+.payment-form-col {
+    flex: 1.5;
+}
+
+.payment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.card-input-group {
+    margin-bottom: 16px;
+}
+.card-input-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+}
+.card-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+.card-input:focus {
+    border-color: #0089d0;
+    outline: none;
+}
+
+.row-inputs {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-confirm-payment {
+    width: 100%;
+    background-color: #0089d0;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.btn-confirm-payment:hover {
+    background-color: #007bbd;
+}
+
+/* Footer bảo mật */
+.security-note {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    font-size: 13px;
+    color: #666;
+    display: flex;
+    gap: 10px;
+}
+
+/* --- Màn hình Thành công (Success Page) --- */
+.success-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh; /* Căn giữa màn hình */
+}
+
+.success-card {
+    text-align: center;
+    background: #f8fffa; /* Màu nền xanh nhạt giống ảnh */
+    border: 1px solid #27ae60;
+    border-radius: 16px;
+    padding: 50px 80px;
+    max-width: 600px;
+}
+
+.success-icon-circle {
+    width: 80px;
+    height: 80px;
+    background-color: #00b894;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+    color: white;
+    font-size: 40px;
+}
+
+.success-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #000;
+}
+
+.success-desc {
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.btn-home {
+    background-color: #0089d0;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}

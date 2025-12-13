@@ -6,7 +6,8 @@ import {
   FaCalendarAlt,  // Icon Quản lý lịch (Cuốn lịch)
   FaComments,
   FaFilePrescription,
-  FaCalendarCheck // Icon cho Quản lý lịch hẹn
+  FaCalendarCheck, // Icon cho Quản lý lịch hẹn
+  FaPrescriptionBottle
 } from "react-icons/fa";
 import "./PatientSidebar.css"; // Dùng chung CSS của Sidebar cũ
 
