@@ -6,7 +6,8 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import Register from "./components/Auth/Register";
 import DoctorAppointments from "./components/Doctor/Appointments/DoctorAppointments";
 import Prescription from "./components/Patient/Prescription/Prescription";
-import PatientAppointment from "./components/Patient/Appointment/PatientAppointment";
+import PatientAppointment from "./components/Patient/Appointment/PatientAppointments";
+import RequestConsultation from "./components/Patient/RequestConsultation/RequestConsultation";
 function App() {
   return (
     <Router>
@@ -17,10 +18,15 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/doctor/appointments" element={<DoctorAppointments />} />
 
-        {/* UC1 – Online Prescription Ordering */}
+        {/* UC001 – Online Prescription Ordering */}
         <Route path="/prescription" element={<Prescription />} />
+
+        {/* UC002 – Request Doctor Consultation */}
+        <Route path="/request-consultation" element={<RequestConsultation />} />
+
         {/* UC003 – Register Appointment */}
         <Route path="/appointment" element={<PatientAppointment />} />
+
       </Routes>
     </Router>
   );

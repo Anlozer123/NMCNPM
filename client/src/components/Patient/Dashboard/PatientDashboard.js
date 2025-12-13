@@ -36,14 +36,17 @@ const PatientDashboard = ({ user }) => {
             <FaCalendarPlus /> Đặt lịch khám
           </li>
 
-          <li onClick={() => navigate("/medical-record")}>
-            <FaNotesMedical /> Hồ sơ bệnh án
+          {/* UC1 – Online Prescription Ordering */}
+          <li onClick={() => navigate("/request-consultation")}>
+            <FaNotesMedical /> Yêu cầu tư vấn
           </li>
 
           {/* UC1 – Online Prescription Ordering */}
           <li onClick={() => navigate("/prescription")}>
             <FaNotesMedical /> Đặt đơn thuốc
           </li>
+
+          
 
           <li onClick={handleLogout} className="logout-btn">
             <FaSignOutAlt /> Đăng xuất

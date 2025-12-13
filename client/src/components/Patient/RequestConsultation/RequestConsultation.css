@@ -1,0 +1,245 @@
+/* Layout chung */
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f8f9fa; /* Màu nền xám nhẹ tổng thể */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.top-header {
+  height: 60px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  color: #0089d0; /* Màu xanh thương hiệu */
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.logo-icon { margin-right: 8px; font-size: 22px; }
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-name { color: #555; font-weight: 500; }
+
+.header-logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Body Container (Sidebar + Main) */
+.body-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar-nav {
+  width: 240px;
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  padding-top: 20px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  padding: 12px 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #333;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.sidebar-nav li:hover {
+  background-color: #f0f7ff;
+  color: #0089d0;
+}
+
+.sidebar-nav li.active {
+  border-left: 4px solid #0089d0;
+  background-color: #e6f4fa; /* Màu xanh rất nhạt khi active */
+  color: #0089d0; /* Chữ màu xanh đậm */
+}
+
+/* Main Content */
+.main-content-area {
+  flex: 1;
+  padding: 30px 40px;
+  overflow-y: auto;
+}
+
+.page-title-group { margin-bottom: 24px; }
+.page-title-group h1 { font-size: 28px; margin: 0 0 8px 0; color: #1a1a1a; }
+.subtitle { color: #666; font-size: 14px; margin: 0; }
+
+/* Form Card */
+.form-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  border: 1px solid #e0e0e0;
+  max-width: 800px; /* Giới hạn chiều rộng giống ảnh */
+}
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.section-icon { color: #0089d0; font-size: 18px; }
+.form-section-header h3 { margin: 0; font-size: 18px; color: #333; }
+.section-desc { color: #777; margin-bottom: 24px; font-size: 14px; }
+
+/* Form Elements */
+.form-group { margin-bottom: 24px; }
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-icon { color: #0089d0; }
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  border-color: #0089d0;
+}
+
+.textarea-field {
+  height: 120px;
+  resize: vertical;
+}
+
+.helper-text {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+/* File Upload Box */
+.upload-box {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  background-color: #fafafa;
+  transition: background-color 0.2s;
+}
+
+.upload-box:hover { background-color: #f0f7ff; border-color: #0089d0; }
+
+.upload-label {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-icon-center { color: #888; margin-bottom: 5px; }
+.upload-label span { color: #333; font-weight: 500; }
+.upload-label small { color: #999; }
+
+/* Actions */
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.btn-primary {
+  background-color: #0089d0;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 180px;
+}
+
+.btn-primary:hover { background-color: #0077b5; }
+.btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
+
+.btn-secondary {
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 100px;
+}
+
+.btn-secondary:hover { background-color: #f5f5f5; }
+
+
+/* --- FIX LỖI ICON BỊ DÍNH LỀ TRÁI --- */
+/* Buộc các icon trong form phải nằm yên tại chỗ, hủy bỏ lệnh absolute từ nơi khác */
+.form-group .input-icon, 
+.upload-label svg, 
+.form-section-header .section-icon {
+  position: static !important; /* Quan trọng: Hủy lệnh dính lề */
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  display: inline-block;
+  margin-right: 10px; /* Tạo khoảng cách đẹp với chữ */
+}
+
+/* Đảm bảo thẻ label hiển thị flex để icon và chữ thẳng hàng */
+.form-group label, 
+.form-section-header {
+  display: flex;
+  align-items: center;
+}

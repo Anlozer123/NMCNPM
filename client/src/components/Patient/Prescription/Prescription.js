@@ -99,11 +99,11 @@ const Prescription = () => {
           <li onClick={() => navigate("/dashboard")}>
             <FaUserMd /> Tổng quan
           </li>
-          <li onClick={() => navigate("/doctor/appointments")}>
+          <li onClick={() => navigate("/appointment")}>
             <FaCalendarPlus /> Đặt lịch khám
           </li>
-          <li onClick={() => navigate("/medical-record")}>
-            <FaNotesMedical /> Hồ sơ bệnh án
+          <li onClick={() => navigate("/request-consultation")}>
+            <FaNotesMedical /> Yêu cầu tư vấn
           </li>
           <li className="active"> {/* Active state */}
             <FaNotesMedical /> Đặt đơn thuốc

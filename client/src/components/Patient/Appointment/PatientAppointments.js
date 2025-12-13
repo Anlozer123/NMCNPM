@@ -10,7 +10,7 @@ import {
   FaClock,
   FaFileMedical
 } from "react-icons/fa";
-import "./PatientAppointment.css"; // Import CSS
+import "./PatientAppointments.css"; // Import CSS
 
 const PatientAppointment = () => {
   const navigate = useNavigate();
@@ -96,8 +96,8 @@ const PatientAppointment = () => {
           <li className="active"> {/* Active state */}
             <FaCalendarPlus /> Đặt lịch khám
           </li>
-          <li onClick={() => navigate("/medical-record")}>
-            <FaNotesMedical /> Hồ sơ bệnh án
+          <li onClick={() => navigate("/request-consultation")}>
+            <FaNotesMedical /> Yêu cầu tư vấn
           </li>
           <li onClick={() => navigate("/prescription")}>
             <FaNotesMedical /> Đặt đơn thuốc
