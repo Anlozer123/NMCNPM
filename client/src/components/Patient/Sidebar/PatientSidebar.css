@@ -1,0 +1,60 @@
+/* Container của Sidebar */
+.sidebar-nav {
+    width: 250px;                 /* Chiều rộng cố định */
+    background-color: #ffffff;    /* Nền trắng */
+    border-right: 1px solid #e0e0e0; /* Đường kẻ ngăn cách với nội dung chính */
+    padding-top: 30px;            /* Khoảng cách từ đỉnh */
+    display: flex;
+    flex-direction: column;
+    height: 100%;                 /* Kéo dài hết chiều cao cha */
+}
+
+/* Danh sách menu */
+.sidebar-nav ul {
+    list-style: none;             /* Bỏ dấu chấm tròn */
+    padding: 0;
+    margin: 0;
+}
+
+/* Từng mục menu (li) */
+.sidebar-nav li {
+    padding: 15px 30px;           /* Khoảng cách bên trong */
+    cursor: pointer;              /* Con trỏ chuột dạng bàn tay */
+    display: flex;
+    align-items: center;          /* Căn giữa icon và chữ theo chiều dọc */
+    gap: 15px;                    /* Khoảng cách giữa icon và chữ */
+    color: #555;                  /* Màu chữ mặc định (xám đậm) */
+    font-weight: 500;             /* Độ đậm chữ vừa phải */
+    font-size: 15px;
+    transition: all 0.2s ease-in-out; /* Hiệu ứng chuyển màu mượt mà */
+    border-left: 4px solid transparent; /* Tạo viền trái trong suốt để giữ chỗ */
+}
+
+/* Icon mặc định */
+.sidebar-nav li svg {
+    font-size: 18px;
+    color: #777;                  /* Màu icon nhạt hơn chữ một chút */
+    transition: color 0.2s;
+}
+
+/* --- HIỆU ỨNG HOVER (Khi di chuột vào) --- */
+.sidebar-nav li:hover {
+    background-color: #f8f9fa;    /* Nền xám rất nhạt */
+    color: #0089d0;               /* Đổi màu chữ sang xanh */
+}
+
+.sidebar-nav li:hover svg {
+    color: #0089d0;               /* Đổi màu icon sang xanh */
+}
+
+/* --- TRẠNG THÁI ACTIVE (Mục đang được chọn) --- */
+.sidebar-nav li.active {
+    background-color: #e3f2fd;    /* Nền xanh dương rất nhạt */
+    color: #0089d0;               /* Chữ màu xanh dương đậm */
+    font-weight: 700;             /* In đậm chữ */
+    border-left: 4px solid #0089d0; /* Viền xanh bên trái để đánh dấu */
+}
+
+.sidebar-nav li.active svg {
+    color: #0089d0;               /* Icon màu xanh dương đậm */
+}

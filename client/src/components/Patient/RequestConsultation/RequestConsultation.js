@@ -9,7 +9,8 @@ import {
   FaUpload,
   FaNotesMedical,
   FaExclamationCircle,
-  FaStethoscope
+  FaStethoscope,
+  FaCalendarPlus
 } from "react-icons/fa";
 import "./RequestConsultation.css"; // Import file CSS bên dưới
 
@@ -118,6 +119,9 @@ const RequestConsultation = () => {
             <li onClick={() => navigate("/appointment")}><FaCalendarAlt /> Lịch khám</li>
             <li className="active"><FaComments /> Tư vấn</li>
             <li onClick={() => navigate("/prescription")}><FaFilePrescription /> Đơn thuốc</li>
+            <li onClick={() => navigate("/my-appointments")}>
+              <FaCalendarPlus /> Quản lý lịch hẹn
+            </li>
           </ul>
         </aside>
 

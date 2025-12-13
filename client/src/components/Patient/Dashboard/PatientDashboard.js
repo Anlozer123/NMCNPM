@@ -55,6 +55,9 @@ const PatientDashboard = () => {
             <li onClick={() => navigate("/prescription")}>
               <FaFilePrescription /> Đơn thuốc
             </li>
+            <li onClick={() => navigate("/my-appointments")}>
+              <FaCalendarPlus /> Quản lý lịch hẹn
+            </li>
           </ul>
         </aside>
 

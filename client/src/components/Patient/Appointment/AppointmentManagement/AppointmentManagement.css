@@ -1,0 +1,192 @@
+/* --- LAYOUT GLOBAL (Dùng chung) --- */
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f9f9f9; /* Nền xám nhạt để card nổi bật */
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header */
+.top-header {
+    height: 60px;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+}
+.logo-section {
+    display: flex;
+    align-items: center;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+}
+.logo-icon { color: #0089d0; margin-right: 8px; font-size: 22px; }
+.user-section { display: flex; align-items: center; gap: 20px; font-size: 14px; }
+.header-logout-btn {
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; font-weight: 600;
+}
+
+/* Sidebar */
+.body-container { display: flex; flex: 1; overflow: hidden; }
+.sidebar-nav { width: 240px; background-color: #fff; padding-top: 30px; border-right: 1px solid #eee; }
+.sidebar-nav ul { list-style: none; padding: 0; margin: 0; }
+.sidebar-nav li {
+    padding: 15px 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #333;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+.sidebar-nav li:hover { color: #0089d0; }
+.sidebar-nav li.active { font-weight: 700; color: #000; border-left: 3px solid #0089d0; background-color: #f0f7ff; }
+.sidebar-nav li svg { font-size: 18px; color: #555; }
+.sidebar-nav li.active svg { color: #000; }
+
+/* Main Content */
+.main-content-area { flex: 1; padding: 30px 60px; overflow-y: auto; }
+
+/* --- SPECIFIC STYLES FOR APPOINTMENT MANAGEMENT --- */
+
+/* Header Flex (Title + Button) */
+.page-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+.page-header-flex h1 { font-size: 28px; font-weight: 700; margin: 0; color: #000; }
+.page-header-flex p { color: #666; margin-top: 5px; font-size: 14px; }
+
+/* Button Đặt lịch mới */
+.btn-new-appointment {
+    background-color: #0089d0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+.btn-new-appointment:hover { background-color: #0077b3; }
+
+/* Appointment List Container */
+.appointment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Individual Card */
+.appt-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    transition: transform 0.2s;
+}
+.appt-card:hover { border-color: #0089d0; }
+
+/* Card Header */
+.appt-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+.doctor-info h3 { margin: 0; font-size: 18px; font-weight: 700; color: #000; }
+.specialty { display: block; margin-top: 5px; font-size: 14px; color: #666; }
+
+/* Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-success {
+    background-color: #dbfbf3; /* Nền xanh nhạt */
+    color: #00b894; /* Chữ xanh lá */
+    border: 1px solid #00b894;
+}
+.badge-pending {
+    background-color: #f1f2f6;
+    color: #57606f;
+    border: 1px solid #ced6e0;
+}
+.badge-danger {
+    background-color: #ffeaea;
+    color: #ff4757;
+}
+
+/* Card Body Info Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 cột */
+    gap: 15px;
+    row-gap: 15px;
+}
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #444;
+}
+.icon-blue { color: #0089d0; font-size: 16px; }
+
+/* Card Footer Actions */
+.appt-card-footer .divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 20px 0 15px 0;
+}
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Action Buttons */
+.btn-outline, .btn-danger-outline, .btn-light {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: none;
+}
+
+.btn-light {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    color: #333;
+}
+.btn-light:hover { background-color: #e9ecef; }
+
+.btn-danger-outline {
+    background-color: #fff0f1;
+    border: 1px solid #ff4757;
+    color: #ff4757;
+}
+.btn-danger-outline:hover { background-color: #ff4757; color: white; }
+
+.btn-outline {
+    border: 1px solid #ddd;
+    color: #333;
+}
+.btn-outline:hover { border-color: #999; }

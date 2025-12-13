@@ -10,7 +10,8 @@ import {
   FaMapMarkerAlt,
   FaCreditCard,
   FaShoppingCart,
-  FaStethoscope
+  FaStethoscope,
+  FaCalendarPlus
 } from "react-icons/fa";
 import "./Prescription.css";
 
@@ -109,6 +110,9 @@ const Prescription = () => {
             </li>
             <li className="active">
               <FaFilePrescription /> Đơn thuốc
+            </li>
+            <li onClick={() => navigate("/my-appointments")}>
+              <FaCalendarPlus /> Quản lý lịch hẹn
             </li>
           </ul>
         </aside>
