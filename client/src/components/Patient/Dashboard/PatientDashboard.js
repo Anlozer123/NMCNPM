@@ -1,15 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FaCalendarPlus,
-  FaNotesMedical,
-  FaUserMd,
+  FaHome,
+  FaCalendarAlt,
+  FaComments,
+  FaFilePrescription,
   FaSignOutAlt,
+  FaStethoscope,
+  FaArrowRight,
+  FaNotesMedical,
+  FaCalendarPlus
 } from "react-icons/fa";
 import "./PatientDashboard.css";
 
-const PatientDashboard = ({ user }) => {
+const PatientDashboard = () => {
   const navigate = useNavigate();
+  // Lấy thông tin user
+  const user = JSON.parse(localStorage.getItem("user")) || { FullName: "Nguyễn Văn X" };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -17,73 +24,99 @@ const PatientDashboard = ({ user }) => {
   };
 
   return (
-    <div className="dashboard-container">
-      {/* Sidebar bên trái */}
-      <div className="sidebar">
-        <div className="profile-section">
-          <div className="avatar-circle">
-            {user.FullName ? user.FullName.charAt(0) : "P"}
-          </div>
-          <h3>{user.FullName}</h3>
-          <p>Bệnh nhân</p>
+    <div className="layout-container">
+      {/* --- HEADER (Đồng bộ) --- */}
+      <header className="top-header">
+        <div className="logo-section" onClick={() => navigate("/dashboard")}>
+          <FaStethoscope className="logo-icon" />
+          <span className="brand-name">MediCare Hospital</span>
         </div>
-        <ul className="menu-list">
-          <li className="active">
-            <FaUserMd /> Tổng quan
-          </li>
-
-          <li onClick={() => navigate("/appointment")}>
-            <FaCalendarPlus /> Đặt lịch khám
-          </li>
-
-          {/* UC1 – Online Prescription Ordering */}
-          <li onClick={() => navigate("/request-consultation")}>
-            <FaNotesMedical /> Yêu cầu tư vấn
-          </li>
-
-          {/* UC1 – Online Prescription Ordering */}
-          <li onClick={() => navigate("/prescription")}>
-            <FaNotesMedical /> Đặt đơn thuốc
-          </li>
-
-          
-
-          <li onClick={handleLogout} className="logout-btn">
+        <div className="user-section">
+          <span className="user-name">{user.FullName}</span>
+          <button className="header-logout-btn" onClick={handleLogout}>
             <FaSignOutAlt /> Đăng xuất
-          </li>
-        </ul>
-      </div>
-
-      {/* Nội dung chính bên phải */}
-      <div className="main-content">
-        <header>
-          <h2>Chào mừng quay trở lại!</h2>
-          <p>Hôm nay sức khỏe của bạn thế nào?</p>
-        </header>
-
-        <div className="card-grid">
-          <div className="card blue-card">
-            <FaCalendarPlus size={40} />
-            <h3>Đặt Lịch Khám Mới</h3>
-            <p>Chọn bác sĩ và thời gian phù hợp</p>
-            <button>Đặt ngay</button>
-          </div>
-
-          <div className="card green-card">
-            <FaNotesMedical size={40} />
-            <h3>Lịch Sử Khám</h3>
-            <p>Xem lại đơn thuốc và chẩn đoán</p>
-            <button>Xem chi tiết</button>
-          </div>
-
-          <div className="card purple-card">
-            <FaUserMd size={40} />
-            <h3>Tư Vấn Trực Tuyến</h3>
-            <p>Chat trực tiếp với bác sĩ (AI hỗ trợ)</p>
-            <button>Bắt đầu chat</button>
-          </div>
-
+          </button>
         </div>
+      </header>
+
+      <div className="body-container">
+        {/* --- SIDEBAR MỚI --- */}
+        <aside className="sidebar-nav">
+          <ul>
+            <li className="active">
+              <FaHome /> Trang chủ
+            </li>
+            <li onClick={() => navigate("/appointment")}>
+              <FaCalendarAlt /> Lịch khám
+            </li>
+            <li onClick={() => navigate("/request-consultation")}>
+              <FaComments /> Tư vấn
+            </li>
+            <li onClick={() => navigate("/prescription")}>
+              <FaFilePrescription /> Đơn thuốc
+            </li>
+          </ul>
+        </aside>
+
+        {/* --- MAIN CONTENT --- */}
+        <main className="main-content-area">
+          <div className="welcome-banner">
+            <h1>Chào mừng quay trở lại, {user.FullName}! 👋</h1>
+            <p>Hôm nay bạn cảm thấy thế nào? Hãy chọn một dịch vụ bên dưới để bắt đầu.</p>
+          </div>
+
+          <div className="dashboard-grid">
+            
+            {/* Card 1: Đặt lịch khám */}
+            <div className="dashboard-card" onClick={() => navigate("/appointment")}>
+              <div className="icon-wrapper bg-blue">
+                <FaCalendarPlus />
+              </div>
+              <div className="card-content">
+                <h3>Đặt Lịch Khám</h3>
+                <p>Đăng ký lịch hẹn khám bệnh với các bác sĩ chuyên khoa.</p>
+                <span className="link-text">Đặt ngay <FaArrowRight /></span>
+              </div>
+            </div>
+
+            {/* Card 2: Tư vấn trực tuyến */}
+            <div className="dashboard-card" onClick={() => navigate("/request-consultation")}>
+              <div className="icon-wrapper bg-teal">
+                <FaComments />
+              </div>
+              <div className="card-content">
+                <h3>Tư Vấn Trực Tuyến</h3>
+                <p>Gửi câu hỏi và triệu chứng để nhận tư vấn từ bác sĩ.</p>
+                <span className="link-text">Gửi yêu cầu <FaArrowRight /></span>
+              </div>
+            </div>
+
+            {/* Card 3: Đặt đơn thuốc */}
+            <div className="dashboard-card" onClick={() => navigate("/prescription")}>
+              <div className="icon-wrapper bg-purple">
+                <FaFilePrescription />
+              </div>
+              <div className="card-content">
+                <h3>Đặt Đơn Thuốc</h3>
+                <p>Mua thuốc theo đơn của bác sĩ và giao hàng tận nơi.</p>
+                <span className="link-text">Đặt thuốc <FaArrowRight /></span>
+              </div>
+            </div>
+
+            {/* Card 4: Hồ sơ bệnh án (Ví dụ thêm cho cân đối layout) */}
+            <div className="dashboard-card" onClick={() => alert("Tính năng đang phát triển")}>
+              <div className="icon-wrapper bg-orange">
+                <FaNotesMedical />
+              </div>
+              <div className="card-content">
+                <h3>Hồ Sơ Sức Khỏe</h3>
+                <p>Xem lại lịch sử khám bệnh và các kết quả xét nghiệm.</p>
+                <span className="link-text">Xem chi tiết <FaArrowRight /></span>
+              </div>
+            </div>
+
+          </div>
+        </main>
       </div>
     </div>
   );

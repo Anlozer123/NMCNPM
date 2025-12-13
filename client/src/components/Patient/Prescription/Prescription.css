@@ -1,129 +1,203 @@
-/* Container chung (Kế thừa layout dashboard) */
-.dashboard-container {
-    display: flex;
-    height: 100vh;
-    background-color: #f5f7fa;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Sidebar Styling (Copy từ Dashboard.css nếu chưa global) */
-.sidebar {
-    width: 260px;
-    background-color: #ffffff;
-    border-right: 1px solid #e0e0e0;
+/* --- LAYOUT CHUNG (Header Top + Body Flex) --- */
+.layout-container {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    height: 100vh;
+    background-color: #fff;
+    font-family: 'Segoe UI', sans-serif;
 }
-.menu-list { list-style: none; padding: 0; margin-top: 20px; }
-.menu-list li {
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
+
+/* Header (Full Width) */
+.top-header {
+    height: 60px;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px; /* Padding rộng giống hình */
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 18px;
+}
+.logo-icon { color: #0089d0; margin-right: 8px; font-size: 22px; }
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 14px;
+}
+.user-name { color: #666; }
+
+.header-logout-btn {
+    background: none;
+    border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
-    color: #555;
+    gap: 5px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* Body Container */
+.body-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* --- SIDEBAR MỚI (Đơn giản, không Avatar) --- */
+.sidebar-nav {
+    width: 240px;
+    background-color: #fff;
+    padding-top: 30px;
+    /* Không có border-right trong hình, nhưng thêm vào để phân cách rõ hơn nếu muốn */
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    padding: 15px 40px; /* Căn lề trái giống hình */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #333;
+    font-weight: 500;
+    font-size: 15px;
     transition: all 0.2s;
 }
-.menu-list li svg { margin-right: 10px; }
-.menu-list li:hover, .menu-list li.active {
-    background-color: #e3f2fd;
-    color: #007bff;
-    font-weight: 600;
-}
-.logout-btn { color: #dc3545 !important; margin-top: auto; }
 
-/* Main Content Area */
-.main-content.prescription-page {
+.sidebar-nav li:hover { color: #0089d0; }
+
+.sidebar-nav li.active {
+    font-weight: 700; /* Chỉ in đậm, không đổi màu nền quá nhiều */
+    color: #000;
+}
+/* Icon trong menu */
+.sidebar-nav li svg { font-size: 18px; color: #555; }
+.sidebar-nav li.active svg { color: #000; }
+
+
+/* --- MAIN CONTENT --- */
+.main-content-area {
     flex: 1;
-    padding: 30px 40px;
+    padding: 30px 60px;
     overflow-y: auto;
 }
 
-.page-header h2 { margin: 0; color: #333; font-size: 28px; }
-.page-header p { color: #777; margin-top: 5px; font-size: 14px; }
+.page-header { margin-bottom: 30px; }
+.page-header h1 { font-size: 32px; font-weight: 700; color: #000; margin: 0; }
+.page-header p { color: #888; margin-top: 8px; font-size: 14px; }
 
-/* Các Card (Khung trắng) */
-.card-section {
-    background: #fff;
-    border-radius: 12px;
-    padding: 25px;
+/* CARD FORM */
+.prescription-card {
     border: 1px solid #e0e0e0;
-    margin-top: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    border-radius: 12px;
+    padding: 40px;
+    background-color: #fff;
+    max-width: 900px;
 }
 
-.mt-20 { margin-top: 20px; }
+/* Section Header */
+.section-header-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.section-icon { 
+    font-size: 20px; 
+    margin-top: 2px;
+    position: static !important; /* Fix lỗi icon bay */
+}
+.icon-teal { color: #00b894; }
+.icon-blue { color: #0984e3; }
 
-/* Tiêu đề section */
-.section-title { display: flex; align-items: center; margin-bottom: 10px; }
-.section-title h3 { margin: 0; margin-left: 10px; font-size: 18px; color: #333; }
-.sub-text { color: #666; font-size: 14px; margin-bottom: 20px; margin-top: -5px; }
+.section-header-group h3 { margin: 0; font-size: 18px; font-weight: 700; color: #000; }
+.sub-text { margin: 5px 0 0 0; font-size: 14px; color: #666; }
 
-.icon-green { color: #28a745; font-size: 18px; }
-.icon-blue { color: #007bff; font-size: 18px; }
+.mt-40 { margin-top: 40px; }
 
-/* Form Elements */
+/* Form Controls */
 .form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 14px; }
-.form-input {
+.form-group label { display: block; margin-bottom: 10px; font-weight: 600; color: #000; font-size: 14px; }
+
+.form-control {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ddd;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
     border-radius: 6px;
     font-size: 14px;
     outline: none;
-    transition: border 0.2s;
+    background-color: #fff;
 }
-.form-input:focus { border-color: #007bff; }
-.textarea { height: 80px; resize: vertical; font-family: inherit; }
+.form-control:focus { border-color: #0089d0; }
+.textarea { height: 100px; resize: vertical; font-family: inherit; }
 
-/* Medicine Detail Box (Box xám nhạt bên trong) */
-.medicine-details-box {
-    background-color: #f9fafb;
+/* Medicine Summary Box */
+.medicine-summary-box {
+    background-color: #f9f9f9;
     border: 1px solid #eee;
     border-radius: 8px;
-    padding: 20px;
-    margin-top: 15px;
+    padding: 25px;
+    margin-top: 20px;
 }
-.medicine-details-box h4 { margin-top: 0; margin-bottom: 15px; font-size: 16px; }
+.medicine-summary-box h4 { margin: 0 0 20px 0; font-size: 16px; font-weight: 700; }
 
 .medicine-item {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    color: #555;
+    margin-bottom: 15px;
     font-size: 14px;
+    color: #444;
 }
-.medicine-item .qty { color: #888; }
+.med-qty { color: #888; }
+.divider { height: 1px; background-color: #e0e0e0; margin: 20px 0; }
+.total-row { display: flex; justify-content: space-between; font-weight: 700; font-size: 16px; color: #000; }
 
-.total-divider { height: 1px; background-color: #ddd; margin: 15px 0; }
-.total-row { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 16px; }
-.total-price { color: #333; font-size: 18px; }
+/* Checkbox & Buttons */
+.checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin: 25px 0; }
+.checkbox-wrapper input { width: 18px; height: 18px; }
+.checkbox-wrapper label { font-size: 14px; color: #555; }
 
-/* Checkbox */
-.checkbox-group { display: flex; align-items: center; margin: 20px 0; }
-.checkbox-group input { margin-right: 10px; width: 16px; height: 16px; }
-.checkbox-group label { font-size: 14px; color: #555; }
-
-/* Buttons */
-.action-buttons { display: flex; gap: 15px; margin-top: 20px; }
-.btn-primary, .btn-secondary {
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+.form-actions { display: flex; gap: 20px; }
+.btn-primary {
+    flex: 2;
+    background-color: #0089d0;
+    color: white;
     border: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 8px;
+    align-items: center;
+    gap: 10px;
 }
-.btn-primary { background-color: #0088cc; color: white; flex: 1; } /* Màu xanh giống ảnh */
 .btn-primary:hover { background-color: #0077b3; }
 
-.btn-secondary { background-color: white; color: #333; border: 1px solid #ddd; flex: 1; }
+.btn-secondary {
+    flex: 1;
+    background-color: white;
+    color: #000;
+    border: 1px solid #ddd;
+    padding: 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
 .btn-secondary:hover { background-color: #f5f5f5; }
-

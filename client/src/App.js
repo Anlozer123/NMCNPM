@@ -8,6 +8,8 @@ import DoctorAppointments from "./components/Doctor/Appointments/DoctorAppointme
 import Prescription from "./components/Patient/Prescription/Prescription";
 import PatientAppointment from "./components/Patient/Appointment/PatientAppointments";
 import RequestConsultation from "./components/Patient/RequestConsultation/RequestConsultation";
+
+
 function App() {
   return (
     <Router>
