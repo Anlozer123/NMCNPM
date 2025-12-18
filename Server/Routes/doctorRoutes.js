@@ -17,4 +17,6 @@ router.post('/prescribe', doctorController.prescribeMedication);
 // GET: http://localhost:5000/api/doctor/history/1
 router.get('/history/:patientId', doctorController.getPrescriptionHistory);
 
+router.get('/my-patients/:doctorId', doctorController.getMyPatients);
+
 module.exports = router;

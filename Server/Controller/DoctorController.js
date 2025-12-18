@@ -169,3 +169,31 @@ exports.getPrescriptionHistory = async (req, res) => {
         res.status(500).json({ message: "Lỗi lấy lịch sử đơn thuốc" });
     }
 };
+
+// --- 5. Hàm lấy danh sách bệnh nhân của tôi (Dùng cho Tab Bệnh nhân) ---
+exports.getMyPatients = async (req, res) => {
+    const { doctorId } = req.params;
+
+    try {
+        // Lấy danh sách bệnh nhân duy nhất từ các lịch hẹn của bác sĩ này
+        const result = await sql.query`
+            SELECT DISTINCT 
+                p.PatientID, 
+                p.FullName, 
+                p.Gender, 
+                p.DoB,
+                p.Phone, 
+                p.Email,
+                p.Address
+            FROM Patient p
+            JOIN Appointment a ON p.PatientID = a.PatientID
+            WHERE a.DoctorID = ${doctorId}
+            ORDER BY p.FullName ASC
+        `;
+
+        res.json(result.recordset);
+    } catch (err) {
+        console.error("Lỗi lấy danh sách bệnh nhân:", err);
+        res.status(500).json({ message: "Lỗi Server khi lấy danh sách bệnh nhân" });
+    }
+};
