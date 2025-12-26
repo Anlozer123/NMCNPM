@@ -79,7 +79,7 @@ const DoctorAppointments = () => {
                                             <div className="reason-box"><strong>Lý do:</strong> {app.Reason}</div>
                                         </div>
                                         <div className="card-actions-horizontal">
-                                            <button className="btn-primary-blue" onClick={() => navigate(`/prescription/${app.PatientID}`)}>Xem hồ sơ</button>
+                                            <button className="btn-primary-blue" onClick={() => navigate(`/patient-profile/${app.PatientID}`)}>Xem hồ sơ</button>
                                             <button className="btn-secondary-white">Liên hệ</button>
                                         </div>
                                     </div>
@@ -105,7 +105,7 @@ const DoctorAppointments = () => {
                                             <span className="status-tag good">Hồi phục tốt</span>
                                         </div>
                                         <div className="card-actions-horizontal">
-                                            <button className="btn-primary-blue" onClick={() => navigate(`/prescription/${p.PatientID}`)}>
+                                            <button className="btn-primary-blue" onClick={() => navigate(`/patient-profile/${p.PatientID}`)}>
                                                 <FaFileMedical /> Xem hồ sơ
                                             </button>
                                             <button className="btn-secondary-white">Cập nhật</button>

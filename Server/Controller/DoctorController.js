@@ -7,7 +7,8 @@ exports.getAppointments = async (req, res) => {
         // Lấy tên bệnh nhân
         const result = await sql.query`
             SELECT 
-                a.AppointmentID, 
+                a.AppointmentID,
+                a.PatientID, 
                 a.AppointmentDate, 
                 a.Status, 
                 a.Reason, 
@@ -195,5 +196,66 @@ exports.getMyPatients = async (req, res) => {
     } catch (err) {
         console.error("Lỗi lấy danh sách bệnh nhân:", err);
         res.status(500).json({ message: "Lỗi Server khi lấy danh sách bệnh nhân" });
+    }
+};
+
+// --- 6. Hàm lấy chi tiết đầy đủ hồ sơ bệnh nhân (Dùng cho UI Ảnh 3) ---
+exports.getPatientDetail = async (req, res) => {
+    const { patientId } = req.params;
+
+    try {
+        const result = await sql.query`
+            SELECT 
+                p.PatientID, p.FullName, p.Gender, p.DoB, p.Phone, p.Email, p.Address,
+                p.InsuranceID, p.BloodGroup, p.Allergies, p.MedicalHistory, 
+                p.CurrentRoom, p.AdmissionDiagnosis, p.CurrentCondition
+            FROM Patient p
+            WHERE p.PatientID = ${patientId}
+        `;
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ message: "Không tìm thấy bệnh nhân" });
+        }
+
+        res.json(result.recordset[0]);
+    } catch (err) {
+        console.error("Lỗi lấy chi tiết bệnh nhân:", err);
+        res.status(500).json({ message: "Lỗi Server khi lấy dữ liệu chi tiết" });
+    }
+};
+
+// --- 7. Hàm cập nhật hồ sơ bệnh nhân (Đáp ứng UC005 - Ảnh 1 & 3) ---
+exports.updatePatientProfile = async (req, res) => {
+    const { patientId } = req.params;
+    const { 
+        FullName, Gender, DoB, Phone, Address, InsuranceID, 
+        BloodGroup, Allergies, MedicalHistory, CurrentRoom, 
+        AdmissionDiagnosis, CurrentCondition 
+    } = req.body;
+
+    try {
+        // Thực hiện update vào bảng Patient
+        await sql.query`
+            UPDATE Patient
+            SET 
+                FullName = ${FullName},
+                Gender = ${Gender},
+                DoB = ${DoB},
+                Phone = ${Phone},
+                Address = ${Address},
+                InsuranceID = ${InsuranceID},
+                BloodGroup = ${BloodGroup},
+                Allergies = ${Allergies},
+                MedicalHistory = ${MedicalHistory},
+                CurrentRoom = ${CurrentRoom},
+                AdmissionDiagnosis = ${AdmissionDiagnosis},
+                CurrentCondition = ${CurrentCondition}
+            WHERE PatientID = ${patientId}
+        `;
+
+        res.json({ message: "Cập nhật hồ sơ bệnh nhân thành công!" });
+    } catch (err) {
+        console.error("Lỗi cập nhật hồ sơ:", err);
+        res.status(500).json({ message: "Lỗi Server khi cập nhật dữ liệu" });
     }
 };

@@ -28,6 +28,10 @@ function App() {
           path="/doctor/appointments" 
           element={<Dashboard activeView="appointments" />} 
         />
+
+        {/* --- THÊM MỚI: Route cho chức năng Xem hồ sơ (UC005) --- */}
+        <Route path="/patient-profile/:id" element={<Dashboard activeView="patient-detail" />} />
+
       </Routes>
     </Router>
   );

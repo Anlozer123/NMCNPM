@@ -8,6 +8,7 @@ import './DoctorDashboard.css';
 import PrescriptionForm from './PrescriptionForm'; 
 import PrescriptionHistory from './PrescriptionHistory';
 import DoctorAppointments from './DoctorAppointments'; // Import component Lịch khám
+import PatientProfile from './PatientProfile'; // THÊM DÒNG NÀY
 
 const DoctorDashboard = ({ user, activeView }) => {
     const navigate = useNavigate();
@@ -78,6 +79,10 @@ const DoctorDashboard = ({ user, activeView }) => {
                     {activeView === 'appointments' ? (
                         /* HIỂN THỊ TRANG LỊCH KHÁM */
                         <DoctorAppointments />
+                    ) : 
+                    /* TRƯỜNG HỢP 2: XEM CHI TIẾT HỒ SƠ BỆNH NHÂN (UC005) */
+                    activeView === 'patient-detail' ? (
+                    <PatientProfile />
                     ) : (
                         /* HIỂN THỊ BẢNG ĐIỀU KHIỂN MẶC ĐỊNH */
                         <>

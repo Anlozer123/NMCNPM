@@ -96,41 +96,52 @@
 .input-group {
     margin-bottom: 20px;
     position: relative;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: #333;
-    font-weight: 500;
+    text-align: left; /* Đảm bảo label luôn căn trái */
 }
 
 .input-wrapper {
     position: relative;
-    display: flex;
-    align-items: center;
+    /* Loại bỏ display: flex nếu có để tránh làm xáo trộn absolute positioning */
+    display: block !important; 
+    width: 100%;
 }
 
 .input-icon {
-    position: absolute;
-    left: 12px;
+    position: absolute !important;
+    left: 15px !important; /* Vị trí cố định của icon */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     color: #888;
     font-size: 18px;
+    z-index: 10; /* Đảm bảo icon luôn nằm trên cùng */
+    pointer-events: none; /* Click xuyên qua icon vào input */
 }
 
 .input-field {
-    width: 100%;
-    padding: 12px 12px 12px 40px; /* Chừa chỗ cho icon */
+    width: 100% !important;
+    /* Tăng padding-left mạnh hơn để ép văn bản phải lùi lại */
+    padding: 14px 15px 14px 50px !important; 
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 16px;
-    transition: border-color 0.3s;
+    transition: all 0.3s;
+    display: block;
+    background-color: #fff !important;
+    box-sizing: border-box !important; /* Quan trọng: tính padding vào bên trong width */
 }
 
+/* Hiệu ứng khi focus vào ô nhập */
 .input-field:focus {
     border-color: #007bff;
     outline: none;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    background-color: #fff !important;
+}
+
+/* Sửa lại lỗi hiển thị placeholder nếu trình duyệt tự động điền (autofill) */
+.input-field:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    padding-left: 50px !important;
 }
 
 /* Nút Bấm */
