@@ -7,7 +7,7 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
     
     // State lưu danh sách thuốc
     const [medications, setMedications] = useState([
-        { medicineId: '', quantity: '', drugName: '', dosage: '', frequency: '', duration: '', note: '' }
+        { medicineId: '', quantity: '', drugName: '', dosage: '', frequency: '', note: '' }
     ]);
 
     const [diagnosis, setDiagnosis] = useState('');
@@ -24,7 +24,7 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
             }
         };
         fetchMedicines();
-    }, []);
+    }, [patientId]);
 
     const handleDrugChange = (index, event) => {
         const values = [...medications];
@@ -40,9 +40,7 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
         const values = [...medications];
         let val = event.target.value;
 
-        // --- ĐÃ SỬA: Logic chặn số âm khi nhập liệu ---
         if (event.target.name === 'quantity') {
-            // Nếu giá trị < 0, tự động reset về rỗng
             if (val < 0) val = '';
         }
 
@@ -51,7 +49,7 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
     };
 
     const handleAddDrug = () => {
-        setMedications([...medications, { medicineId: '', quantity: '', drugName: '', dosage: '', frequency: '', duration: '', note: '' }]);
+        setMedications([...medications, { medicineId: '', quantity: '', drugName: '', dosage: '', frequency: '', note: '' }]);
     };
 
     const handleRemoveDrug = (index) => {
@@ -61,10 +59,35 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
     };
 
     const handleSubmit = async () => {
-        // Kiểm tra kỹ lại một lần nữa trước khi gửi
-        if (medications.some(m => !m.medicineId || !m.quantity || parseInt(m.quantity) <= 0)) {
-            alert("Vui lòng kiểm tra lại:\n- Phải chọn tên thuốc.\n- Số lượng phải lớn hơn 0.");
+        // 1. Kiểm tra Chẩn đoán bắt buộc
+        if (!diagnosis.trim()) {
+            alert("Vui lòng nhập Chẩn đoán. Đây là thông tin bắt buộc.");
             return;
+        }
+
+        // 2. Kiểm tra chi tiết từng dòng thuốc
+        for (let i = 0; i < medications.length; i++) {
+            const m = medications[i];
+            const drugNum = i + 1;
+
+            if (!m.medicineId) {
+                alert(`Lỗi ở Thuốc #${drugNum}: Vui lòng chọn tên thuốc.`);
+                return;
+            }
+            if (!m.quantity || parseInt(m.quantity) <= 0) {
+                alert(`Lỗi ở Thuốc #${drugNum}: Vui lòng nhập số lượng hợp lệ (> 0).`);
+                return;
+            }
+            // Kiểm tra Liều dùng không được để trống
+            if (!m.dosage || !m.dosage.trim()) {
+                alert(`Lỗi ở Thuốc #${drugNum}: Vui lòng nhập liều dùng.`);
+                return;
+            }
+            // Kiểm tra Cách sử dụng không được để trống
+            if (!m.frequency) {
+                alert(`Lỗi ở Thuốc #${drugNum}: Vui lòng chọn cách sử dụng (tần suất).`);
+                return;
+            }
         }
 
         try {
@@ -83,7 +106,7 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
             const data = await response.json();
             if (response.ok) {
                 alert("✅ Kê đơn thành công!");
-                setMedications([{ medicineId: '', quantity: '', drugName: '', dosage: '', frequency: '', duration: '', note: '' }]);
+                setMedications([{ medicineId: '', quantity: '', drugName: '', dosage: '', frequency: '', note: '' }]);
                 setDiagnosis('');
                 setNotes('');
             } else {
@@ -95,7 +118,6 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
         }
     };
 
-    // --- STYLE CỐ ĐỊNH (FIX CỨNG) ---
     const commonInputStyle = { 
         width: '100%', 
         height: '40px',             
@@ -105,7 +127,8 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
         border: '1px solid #ccc',
         fontSize: '14px',
         lineHeight: '40px',         
-        display: 'block'            
+        display: 'block',
+        textAlign: 'left' 
     };
 
     const labelStyle = {
@@ -114,35 +137,48 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
         color: '#444',
         display: 'block',
         marginBottom: '8px',
-        whiteSpace: 'nowrap'        
+        whiteSpace: 'nowrap',
+        textAlign: 'left' 
     };
 
     return (
-        <div className="prescription-container" style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px', background: '#fff' }}>
-            <h3 style={{ color: '#008CBA' }}>💊 Kê đơn thuốc</h3>
+        <div className="prescription-container" style={{ background: '#fff', textAlign: 'left' }}>
             
-            <div style={{ marginBottom: '15px' }}>
-                <label style={labelStyle}>Chẩn đoán:</label>
-                <input type="text" value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} placeholder="VD: Viêm họng cấp" style={commonInputStyle} />
+            <div style={{ marginBottom: '15px', textAlign: 'left' }}>
+                <label style={labelStyle}>Chẩn đoán (*):</label>
+                <input 
+                    type="text" 
+                    value={diagnosis} 
+                    onChange={(e) => setDiagnosis(e.target.value)} 
+                    placeholder="VD: Viêm họng cấp (Bắt buộc)" 
+                    style={commonInputStyle} 
+                />
             </div>
             
-            <div style={{ marginBottom: '15px' }}>
+            <div style={{ marginBottom: '15px', textAlign: 'left' }}>
                 <label style={labelStyle}>Ghi chú:</label>
-                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="VD: Tái khám sau 7 ngày" style={{ ...commonInputStyle, height: '60px', lineHeight: 'normal', paddingTop: '10px' }} />
+                <textarea 
+                    value={notes} 
+                    onChange={(e) => setNotes(e.target.value)} 
+                    placeholder="VD: Tái khám sau 7 ngày" 
+                    style={{ ...commonInputStyle, height: '60px', lineHeight: 'normal', paddingTop: '10px' }} 
+                />
             </div>
 
             <hr style={{ margin: '20px 0', border: '0', borderTop: '1px solid #eee' }} />
 
             {medications.map((medication, index) => (
-                <div key={index} className="drug-item" style={{ marginBottom: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <div key={index} className="drug-item" style={{ marginBottom: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef', textAlign: 'left' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
                         <span style={{ fontWeight: 'bold', color: '#008CBA' }}>Thuốc #{index + 1}</span>
-                        {index > 0 && <button onClick={() => handleRemoveDrug(index)} style={{ background: '#ff4d4d', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Xóa dòng</button>}
+                        {index > 0 && (
+                            <button onClick={() => handleRemoveDrug(index)} style={{ background: '#ff4d4d', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>
+                                Xóa dòng
+                            </button>
+                        )}
                     </div>
                     
-                    <div style={{ display: 'grid', gridTemplateColumns: '2.5fr 0.6fr 1.2fr 1.2fr 1.2fr', gap: '15px', alignItems: 'start' }}>
-                        
-                        {/* 1. Tên thuốc */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', textAlign: 'left' }}>
                         <div>
                             <label style={labelStyle}>Tên thuốc (*)</label>
                             <select value={medication.medicineId} onChange={(e) => handleDrugChange(index, e)} style={commonInputStyle}>
@@ -155,15 +191,13 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
                             </select>
                         </div>
 
-                        {/* 2. Số lượng */}
                         <div>
-                            <label style={labelStyle}>SL (*)</label>
+                            <label style={labelStyle}>Số lượng (*)</label>
                             <input 
                                 type="number" 
                                 name="quantity" 
-                                placeholder="0" 
+                                placeholder="Nhập số lượng" 
                                 min="1"
-                                // --- ĐÃ SỬA: Chặn phím dấu trừ (-), dấu cộng (+) và chữ e ---
                                 onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
                                 value={medication.quantity} 
                                 onChange={(e) => handleChange(index, e)} 
@@ -171,17 +205,21 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
                             />
                         </div>
 
-                        {/* 3. Liều lượng */}
                         <div>
-                            <label style={labelStyle}>Liều dùng</label>
-                            <input name="dosage" placeholder="VD: 1" value={medication.dosage} onChange={(e) => handleChange(index, e)} style={commonInputStyle} />
+                            <label style={labelStyle}>Liều dùng (*)</label>
+                            <input 
+                                name="dosage" 
+                                placeholder="VD: 1 viên/lần (Bắt buộc)" 
+                                value={medication.dosage} 
+                                onChange={(e) => handleChange(index, e)} 
+                                style={commonInputStyle} 
+                            />
                         </div>
                         
-                        {/* 4. Tần suất */}
                         <div>
-                            <label style={labelStyle}>Tần suất</label>
+                            <label style={labelStyle}>Cách sử dụng (*)</label>
                             <select name="frequency" value={medication.frequency} onChange={(e) => handleChange(index, e)} style={commonInputStyle}>
-                                <option value="">-- Chọn --</option>
+                                <option value="">-- Chọn (Bắt buộc) --</option>
                                 <option value="Sáng">Sáng</option>
                                 <option value="Trưa">Trưa</option>
                                 <option value="Tối">Tối</option>
@@ -191,19 +229,17 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
                                 <option value="Sáng - Trưa - Tối">Sáng - Trưa - Tối</option>
                             </select>
                         </div>
-
-                        {/* 5. Thời gian */}
-                        <div>
-                            <label style={labelStyle}>Thời gian</label>
-                            <input name="duration" placeholder="VD: 5 ngày" value={medication.duration} onChange={(e) => handleChange(index, e)} style={commonInputStyle} />
-                        </div>
                     </div>
                 </div>
             ))}
 
-            <div style={{ marginTop: '20px' }}>
-                <button onClick={handleAddDrug} style={{ marginRight: '10px', padding: '10px 20px', background: 'white', border: '1px solid #008CBA', color: '#008CBA', cursor: 'pointer', borderRadius: '4px', fontWeight: 'bold' }}>+ Thêm dòng</button>
-                <button onClick={handleSubmit} style={{ padding: '10px 20px', background: '#008CBA', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px', fontWeight: 'bold' }}>Lưu đơn thuốc</button>
+            <div style={{ marginTop: '20px', textAlign: 'left' }}>
+                <button onClick={handleAddDrug} style={{ marginRight: '10px', padding: '10px 20px', background: 'white', border: '1px solid #008CBA', color: '#008CBA', cursor: 'pointer', borderRadius: '4px', fontWeight: 'bold' }}>
+                    + Thêm dòng
+                </button>
+                <button onClick={handleSubmit} style={{ padding: '10px 20px', background: '#008CBA', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px', fontWeight: 'bold' }}>
+                    Lưu đơn thuốc
+                </button>
             </div>
         </div>
     );

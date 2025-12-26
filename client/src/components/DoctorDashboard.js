@@ -1,23 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
     FaCalendarCheck, FaComments, FaUserInjured, FaFilePrescription, 
     FaHome, FaMagic, FaSignOutAlt 
 } from 'react-icons/fa';
 import './DoctorDashboard.css'; 
-import PrescriptionForm from './PrescriptionForm'; 
-import PrescriptionHistory from './PrescriptionHistory';
-import DoctorAppointments from './DoctorAppointments'; // Import component Lịch khám
-import PatientProfile from './PatientProfile'; // THÊM DÒNG NÀY
+import DoctorAppointments from './DoctorAppointments';
+import PatientProfile from './PatientProfile';
 
 const DoctorDashboard = ({ user, activeView }) => {
     const navigate = useNavigate();
-
-    // 1. State lưu bệnh nhân đang được chọn để kê đơn
-    const [selectedPatient, setSelectedPatient] = useState(null);
-    
-    // Ref dùng để tự động cuộn xuống form khi chọn bệnh nhân
-    const prescriptionRef = useRef(null);
 
     const handleLogout = () => {
         localStorage.removeItem('user');
@@ -30,14 +22,6 @@ const DoctorDashboard = ({ user, activeView }) => {
         { id: 2, patientId: 2, name: 'Hoàng Bệnh Nhân B', type: 'Tư vấn', time: '10:30', avatar: 'B' },
         { id: 3, patientId: 1, name: 'Phạm Bệnh Nhân A', type: 'Tái khám', time: '14:00', avatar: 'A' },
     ];
-
-    // Hàm xử lý khi bấm nút "Kê đơn ngay"
-    const handleSelectPatient = (patient) => {
-        setSelectedPatient(patient);
-        setTimeout(() => {
-            prescriptionRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-    };
 
     return (
         <div className="doctor-layout">
@@ -63,7 +47,6 @@ const DoctorDashboard = ({ user, activeView }) => {
 
             {/* --- MAIN CONTENT --- */}
             <main className="doc-main">
-                {/* Header (Luôn hiển thị) */}
                 <header className="doc-header">
                     <div className="welcome-text"></div> 
                     <div className="user-info">
@@ -77,14 +60,10 @@ const DoctorDashboard = ({ user, activeView }) => {
                 <div className="content-wrapper">
                     {/* KIỂM TRA ĐIỀU KIỆN ĐỂ HIỂN THỊ NỘI DUNG */}
                     {activeView === 'appointments' ? (
-                        /* HIỂN THỊ TRANG LỊCH KHÁM */
                         <DoctorAppointments />
-                    ) : 
-                    /* TRƯỜNG HỢP 2: XEM CHI TIẾT HỒ SƠ BỆNH NHÂN (UC005) */
-                    activeView === 'patient-detail' ? (
-                    <PatientProfile />
+                    ) : activeView === 'patient-detail' ? (
+                        <PatientProfile />
                     ) : (
-                        /* HIỂN THỊ BẢNG ĐIỀU KHIỂN MẶC ĐỊNH */
                         <>
                             <h1 className="page-title">Bảng điều khiển</h1>
                             <p className="page-subtitle">Quản lý lịch khám và bệnh nhân của bạn</p>
@@ -146,39 +125,16 @@ const DoctorDashboard = ({ user, activeView }) => {
                                             </div>
                                             <div className="app-right">
                                                 <span className="app-time">{app.time}</span>
-                                                <button className="btn-detail" onClick={() => handleSelectPatient(app)}>
-                                                    Kê đơn ngay
+                                                <button 
+                                                    className="btn-detail" 
+                                                    onClick={() => navigate(`/patient-profile/${app.patientId}`)}
+                                                >
+                                                    Xem chi tiết
                                                 </button>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                            </div>
-                            
-                            {/* KHU VỰC KÊ ĐƠN THUỐC */}
-                            <div ref={prescriptionRef} className="prescription-section" style={{ marginTop: '40px', paddingBottom: '50px' }}>
-                                <h2 className="section-header">Kê đơn & Lịch sử dùng thuốc</h2>
-                                {selectedPatient ? (
-                                    <div style={{ display: 'grid', gridTemplateColumns: '65% 33%', gap: '2%' }}>
-                                        <div>
-                                            <div style={{ marginBottom: '15px', padding: '15px', background: '#d4edda', color: '#155724', borderRadius: '8px', border: '1px solid #c3e6cb' }}>
-                                                Đang kê đơn cho bệnh nhân: <strong>{selectedPatient.name}</strong>
-                                            </div>
-                                            <PrescriptionForm 
-                                                patientId={selectedPatient.patientId} 
-                                                doctorId={user?.StaffID || user?.id || 2}
-                                            />
-                                        </div>
-                                        <div>
-                                            <PrescriptionHistory patientId={selectedPatient.patientId} />
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div style={{ padding: '40px', textAlign: 'center', background: '#f8f9fa', borderRadius: '10px', color: '#6c757d', border: '2px dashed #dee2e6' }}>
-                                        <FaFilePrescription size={40} style={{ marginBottom: '10px', opacity: 0.5 }} />
-                                        <p>Vui lòng chọn một bệnh nhân để bắt đầu.</p>
-                                    </div>
-                                )}
                             </div>
                         </>
                     )}
