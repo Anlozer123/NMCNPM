@@ -67,4 +67,5 @@ INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Quantity, Dosage, Freq
 VALUES 
 (1, 1, 10, N'1 viên', N'Sáng - Chiều', N'5 ngày', N'Uống sau ăn'),
 (1, 3, 20, N'2 viên', N'Sáng - Tối', N'10 ngày', N'Uống nhiều nước');
+
 GO

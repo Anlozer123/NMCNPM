@@ -106,3 +106,15 @@ CREATE TABLE Schedule (
     EndTime TIME
 );
 
+-- Thêm thuộc tính cho bảng Patient
+
+ALTER TABLE Patient ADD 
+    InsuranceID VARCHAR(50),      -- Mã BHYT
+    BloodGroup NVARCHAR(5),       -- Nhóm máu
+    Allergies NVARCHAR(MAX),      -- Dị ứng thuốc
+    MedicalHistory NVARCHAR(MAX), -- Tiền sử bệnh
+    CurrentRoom NVARCHAR(20),     -- Phòng bệnh 
+    AdmissionDiagnosis NVARCHAR(MAX), -- Chẩn đoán nhập viện
+    CurrentCondition NVARCHAR(MAX);   -- Tình trạng hiện tại
+
+GO
