@@ -30,4 +30,16 @@ router.get('/patient-detail/:patientId', doctorController.getPatientDetail);
 // PUT: http://localhost:5000/api/doctor/update-patient/1
 router.put('/update-patient/:patientId', doctorController.updatePatientProfile);
 
+// 8. Gửi chỉ thị mới cho điều dưỡng (Đã cập nhật Controller để nhận nurseId)
+// POST: http://localhost:5000/api/doctor/send-instruction
+router.post('/send-instruction', doctorController.sendInstruction);
+
+// 9. Lấy lịch sử các chỉ thị điều dưỡng của một bệnh nhân
+// GET: http://localhost:5000/api/doctor/instruction-history/1
+router.get('/instruction-history/:patientId', doctorController.getInstructionHistory);
+
+// 10. Lấy danh sách Điều dưỡng (Mới thêm - Để đổ dữ liệu vào ô chọn Nurse)
+// GET: http://localhost:5000/api/doctor/nurses
+router.get('/nurses', doctorController.getNurses);
+
 module.exports = router;

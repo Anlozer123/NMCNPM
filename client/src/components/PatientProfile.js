@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './PatientProfile.css';
-// --- IMPORT THÊM CÁC COMPONENT KÊ ĐƠN ---
+
+// --- IMPORT CÁC COMPONENT CŨ (KÊ ĐƠN) ---
 import { FaPills } from 'react-icons/fa';
 import PrescriptionForm from './PrescriptionForm';
 import PrescriptionHistory from './PrescriptionHistory';
+
+// --- IMPORT MỚI: CÁC COMPONENT CHỈ THỊ ĐIỀU DƯỠNG ---
+import NursingInstructionForm from './NursingInstructionForm';
+import NursingInstructionHistory from './NursingInstructionHistory';
+import './NursingInstruction.css'; // Import CSS riêng nếu cần
 
 const PatientProfile = () => {
     const { id } = useParams();
@@ -12,10 +18,12 @@ const PatientProfile = () => {
     const [patient, setPatient] = useState(null);
     const [formData, setFormData] = useState({});
     const [isEditing, setIsEditing] = useState(false);
-
-    // --- THÊM STATE ĐỂ QUẢN LÝ TAB (Mặc định là 'info') ---
     const [activeTab, setActiveTab] = useState('info');
 
+    // --- STATE MỚI: LƯU LỊCH SỬ CHỈ THỊ ĐIỀU DƯỠNG ---
+    const [instructionHistory, setInstructionHistory] = useState([]);
+
+    // API lấy thông tin bệnh nhân (Cũ)
     useEffect(() => {
         fetch(`http://localhost:5000/api/doctor/patient-detail/${id}`)
             .then(res => res.json())
@@ -25,6 +33,26 @@ const PatientProfile = () => {
             });
     }, [id]);
 
+    // --- HÀM MỚI: GỌI API LẤY LỊCH SỬ CHỈ THỊ ---
+    // 1. Bọc hàm bằng useCallback
+    const fetchInstructionHistory = useCallback(async () => {
+        try {
+            const res = await fetch(`http://localhost:5000/api/doctor/instruction-history/${id}`);
+            const data = await res.json();
+            setInstructionHistory(data);
+        } catch (error) {
+            console.error("Lỗi tải lịch sử chỉ thị:", error);
+        }
+    }, [id]); // dependencies của useCallback
+
+    // 2. Thêm fetchInstructionHistory vào dependency của useEffect
+    useEffect(() => {
+        if (activeTab === 'nursing') {
+            fetchInstructionHistory();
+        }
+    }, [activeTab, fetchInstructionHistory]);
+
+    // Hàm lưu thông tin bệnh nhân (Cũ)
     const handleSave = async () => {
         const response = await fetch(`http://localhost:5000/api/doctor/update-patient/${id}`, {
             method: 'PUT',
@@ -48,7 +76,7 @@ const PatientProfile = () => {
             </div>
             <div className="breadcrumb">Hồ sơ bệnh nhân / {patient.FullName}</div>
 
-            {/* PHẦN 1: TÓM TẮT (Giữ nguyên cấu trúc cũ) */}
+            {/* PHẦN TÓM TẮT (Giữ nguyên) */}
             <div className="card summary-card">
                 <div className="header-info">
                     <div className="avatar">{patient.FullName?.[0]}</div>
@@ -68,7 +96,7 @@ const PatientProfile = () => {
                 </div>
             </div>
 
-            {/* TAB MENU: Cập nhật sự kiện onClick để đổi Tab */}
+            {/* TAB MENU (Cập nhật nút Chỉ thị điều dưỡng) */}
             <div className="profile-tabs">
                 <button
                     className={`tab-item ${activeTab === 'info' ? 'active' : ''}`}
@@ -82,13 +110,22 @@ const PatientProfile = () => {
                 >
                     Kê đơn thuốc
                 </button>
-                <button className="tab-item">Chỉ thị điều dưỡng</button>
+                
+                {/* --- CẬP NHẬT NÚT NÀY --- */}
+                <button 
+                    className={`tab-item ${activeTab === 'nursing' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('nursing')}
+                >
+                    Chỉ thị điều dưỡng
+                </button>
+
                 <button className="tab-item">Hồ sơ bệnh án</button>
             </div>
 
-            {/* NỘI DUNG THAY ĐỔI DỰA TRÊN TAB ĐANG CHỌN */}
-            {activeTab === 'info' ? (
-                /* HIỂN THỊ PHẦN 2 CŨ: THÔNG TIN CHI TIẾT (Giữ nguyên cấu trúc cũ) */
+            {/* --- NỘI DUNG TAB --- */}
+            
+            {/* 1. TAB THÔNG TIN CÁ NHÂN (Giữ nguyên) */}
+            {activeTab === 'info' && (
                 <div className="card detail-card">
                     <div className="detail-header">
                         <h3>👤 Thông tin chi tiết</h3>
@@ -159,13 +196,14 @@ const PatientProfile = () => {
                         </div>
                     )}
                 </div>
-            ) : (
-                /* --- NHÚNG PHẦN KÊ ĐƠN TỪ DASHBOARD SANG ĐÂY --- */
+            )}
+
+            {/* 2. TAB KÊ ĐƠN THUỐC (Giữ nguyên) */}
+            {activeTab === 'prescription' && (
                 <div className="prescription-tab-wrapper">
                     <div style={{ display: 'grid', gridTemplateColumns: '65% 33%', gap: '2%' }}>
                         <div className="card">
                             <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                {/* ĐÃ ĐỔI BIỂU TƯỢNG TẠI ĐÂY */}
                                 <FaPills color="#0081c9" /> Kê đơn thuốc
                             </h3>
                             <PrescriptionForm
@@ -180,6 +218,28 @@ const PatientProfile = () => {
                     </div>
                 </div>
             )}
+
+            {/* --- 3. TAB CHỈ THỊ ĐIỀU DƯỠNG (MỚI THÊM VÀO) --- */}
+            {activeTab === 'nursing' && (
+                <div className="nursing-tab-wrapper" style={{ marginTop: '20px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '60% 38%', gap: '2%' }}>
+                        {/* Cột Trái: Form nhập chỉ thị */}
+                        <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+                            <NursingInstructionForm 
+                                patientId={id} 
+                                doctorId={2} // Giả định ID bác sĩ là 2
+                                onInstructionSent={fetchInstructionHistory} // Truyền hàm refresh
+                            />
+                        </div>
+
+                        {/* Cột Phải: Lịch sử chỉ thị */}
+                        <div className="card" style={{ backgroundColor: '#f9f9f9', borderLeft: '1px solid #ddd' }}>
+                            <NursingInstructionHistory history={instructionHistory} />
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };

@@ -117,4 +117,17 @@ ALTER TABLE Patient ADD
     AdmissionDiagnosis NVARCHAR(MAX), -- Chẩn đoán nhập viện
     CurrentCondition NVARCHAR(MAX);   -- Tình trạng hiện tại
 
+-- 11.
+CREATE TABLE NursingInstructions (
+    InstructionID INT PRIMARY KEY IDENTITY(1,1), -- Sửa lỗi AUTO_INCREMENT
+    PatientID INT NOT NULL,
+    DoctorID INT NOT NULL,
+    NurseID INT DEFAULT NULL,
+    InstructionType NVARCHAR(100), -- Dùng NVARCHAR để hỗ trợ tiếng Việt có dấu
+    Priority NVARCHAR(50),
+    Content NVARCHAR(MAX),
+    Status NVARCHAR(50) DEFAULT N'Chờ xử lý',
+    CreatedAt DATETIME DEFAULT GETDATE() -- GETDATE() tương đương CURRENT_TIMESTAMP
+);
+
 GO

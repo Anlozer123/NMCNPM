@@ -259,3 +259,79 @@ exports.updatePatientProfile = async (req, res) => {
         res.status(500).json({ message: "Lỗi Server khi cập nhật dữ liệu" });
     }
 };
+
+// --- 8. Hàm lấy lịch sử chỉ thị điều dưỡng (Hiển thị cột bên phải UI) ---
+exports.getInstructionHistory = async (req, res) => {
+    const { patientId } = req.params;
+
+    try {
+        // Lấy danh sách chỉ thị kèm theo tên điều dưỡng (nếu đã được tiếp nhận)
+        const result = await sql.query`
+            SELECT 
+                ni.InstructionType AS type,
+                ni.Priority AS priority,
+                ni.Content AS content,
+                ni.Status AS status,
+                FORMAT(ni.CreatedAt, 'dd/MM/yyyy HH:mm') AS time,
+                s.FullName AS nurseName
+            FROM NursingInstructions ni
+            LEFT JOIN Staff s ON ni.NurseID = s.StaffID
+            WHERE ni.PatientID = ${patientId}
+            ORDER BY ni.CreatedAt DESC
+        `;
+
+        res.json(result.recordset);
+    } catch (err) {
+        console.error("Lỗi lấy lịch sử chỉ thị:", err);
+        res.status(500).json({ message: "Lỗi Server khi lấy lịch sử chỉ thị" });
+    }
+};
+
+// --- 9. Hàm lấy danh sách Điều dưỡng (Mới - Dùng cho ô chọn 'Điều dưỡng thực hiện') ---
+exports.getNurses = async (req, res) => {
+    try {
+        // Lấy tất cả nhân viên có Role là Nurse hoặc Điều dưỡng
+        const result = await sql.query`
+            SELECT StaffID, FullName 
+            FROM Staff 
+            WHERE Role = N'Nurse' OR Role = N'Điều dưỡng'
+            ORDER BY FullName ASC
+        `;
+        res.json(result.recordset);
+    } catch (err) {
+        console.error("Lỗi lấy danh sách điều dưỡng:", err);
+        res.status(500).json({ message: "Lỗi Server khi lấy danh sách điều dưỡng" });
+    }
+};
+
+// --- 10. Hàm gửi chỉ thị có chỉ định Điều dưỡng (Thay thế hàm số 8 cũ) ---
+exports.sendInstruction = async (req, res) => {
+    // Nhận thêm nurseId từ Client
+    const { patientId, doctorId, nurseId, type, priority, content } = req.body;
+
+    // Validate: Bắt buộc phải chọn Điều dưỡng và nhập nội dung
+    if (!content || content.trim() === "" || !nurseId) {
+        return res.status(400).json({ msg: "Vui lòng nhập nội dung và chọn điều dưỡng thực hiện" });
+    }
+
+    try {
+        // Insert vào DB với NurseID đã chọn
+        await sql.query`
+            INSERT INTO NursingInstructions (PatientID, DoctorID, NurseID, InstructionType, Priority, Content, Status)
+            VALUES (
+                ${patientId}, 
+                ${doctorId}, 
+                ${nurseId}, 
+                ${type}, 
+                ${priority}, 
+                ${content}, 
+                N'Chờ xử lý'
+            )
+        `;
+
+        res.status(200).json({ msg: "Gửi chỉ thị thành công!" });
+    } catch (err) {
+        console.error("Lỗi gửi chỉ thị:", err);
+        res.status(500).json({ message: "Lỗi Server khi gửi chỉ thị điều dưỡng" });
+    }
+};
