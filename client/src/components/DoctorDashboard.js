@@ -7,6 +7,8 @@ import {
 import './DoctorDashboard.css'; 
 import DoctorAppointments from './DoctorAppointments';
 import PatientProfile from './PatientProfile';
+// --- MỚI THÊM: Import component Tư vấn trực tuyến ---
+import OnlineConsultation from './OnlineConsultation';
 
 const DoctorDashboard = ({ user, activeView }) => {
     const navigate = useNavigate();
@@ -39,7 +41,10 @@ const DoctorDashboard = ({ user, activeView }) => {
                     <li className={activeView === 'appointments' ? "active" : ""} onClick={() => navigate('/doctor/appointments')}>
                         <FaCalendarCheck /> Lịch khám
                     </li>
-                    <li><FaComments /> Tư vấn</li>
+                    {/* --- CẬP NHẬT: Thêm onClick và class active cho menu Tư vấn --- */}
+                    <li className={activeView === 'online-consultation' ? "active" : ""} onClick={() => navigate('/online-consultation')}>
+                        <FaComments /> Tư vấn
+                    </li>
                     <li><FaUserInjured /> Bệnh nhân</li>
                     <li><FaMagic /> AI Tóm tắt</li>
                 </ul>
@@ -50,6 +55,7 @@ const DoctorDashboard = ({ user, activeView }) => {
                 <header className="doc-header">
                     <div className="welcome-text"></div> 
                     <div className="user-info">
+                        {/* Truyền StaffID nếu có, hoặc ID mặc định để test */}
                         <span>BS. {user?.FullName || 'Nguyễn Văn A'}</span>
                         <button onClick={handleLogout} className="btn-logout">
                             <FaSignOutAlt /> Đăng xuất
@@ -63,6 +69,9 @@ const DoctorDashboard = ({ user, activeView }) => {
                         <DoctorAppointments />
                     ) : activeView === 'patient-detail' ? (
                         <PatientProfile />
+                    ) : activeView === 'online-consultation' ? (
+                        /* --- MỚI THÊM: Hiển thị giao diện Tư vấn trực tuyến --- */
+                        <OnlineConsultation doctorId={user?.StaffID || 2} />
                     ) : (
                         <>
                             <h1 className="page-title">Bảng điều khiển</h1>
@@ -96,7 +105,8 @@ const DoctorDashboard = ({ user, activeView }) => {
                                     <h4>Xem lịch khám</h4>
                                     <p>UC007</p>
                                 </div>
-                                <div className="action-card">
+                                {/* --- CẬP NHẬT: Thêm onClick để điều hướng nhanh --- */}
+                                <div className="action-card" onClick={() => navigate('/online-consultation')}>
                                     <FaComments className="action-icon teal" />
                                     <h4>Tư vấn trực tuyến</h4><p>UC008</p>
                                 </div>

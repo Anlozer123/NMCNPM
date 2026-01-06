@@ -32,6 +32,10 @@ function App() {
         {/* --- THÊM MỚI: Route cho chức năng Xem hồ sơ (UC005) --- */}
         <Route path="/patient-profile/:id" element={<Dashboard activeView="patient-detail" />} />
 
+        {/* --- THÊM MỚI: Route cho chức năng Tư vấn trực tuyến (UC008) --- */}
+        {/* URL: http://localhost:3000/online-consultation */}
+        <Route path="/online-consultation" element={<Dashboard activeView="online-consultation" />} />
+
       </Routes>
     </Router>
   );

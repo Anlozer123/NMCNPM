@@ -42,4 +42,12 @@ router.get('/instruction-history/:patientId', doctorController.getInstructionHis
 // GET: http://localhost:5000/api/doctor/nurses
 router.get('/nurses', doctorController.getNurses);
 
+// 11. Lấy danh sách các yêu cầu tư vấn
+// GET: http://localhost:5000/api/doctor/consultations
+router.get('/consultations', doctorController.getConsultationRequests);
+
+// 12. Gửi phản hồi cho một yêu cầu tư vấn
+// PUT: http://localhost:5000/api/doctor/consultation/reply/1
+router.put('/consultation/reply/:requestId', doctorController.replyConsultation);
+
 module.exports = router;

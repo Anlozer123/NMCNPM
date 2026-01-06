@@ -335,3 +335,61 @@ exports.sendInstruction = async (req, res) => {
         res.status(500).json({ message: "Lỗi Server khi gửi chỉ thị điều dưỡng" });
     }
 };
+
+// --- 11. Lấy danh sách yêu cầu tư vấn (Hiển thị bên trái màn hình) ---
+exports.getConsultationRequests = async (req, res) => {
+    try {
+        // Lấy danh sách, ưu tiên hiển thị tin chưa trả lời lên trước
+        const result = await sql.query`
+            SELECT 
+                cr.RequestID,
+                cr.PatientID,
+                p.FullName AS PatientName,
+                cr.Specialty,
+                cr.Priority,
+                cr.Symptoms,
+                cr.Status,
+                cr.ResponseContent,
+                FORMAT(cr.CreatedDate, 'dd/MM/yyyy HH:mm') AS CreatedTime,
+                FORMAT(cr.ResponseDate, 'dd/MM/yyyy HH:mm') AS ResponseTime
+            FROM ConsultationRequests cr
+            JOIN Patient p ON cr.PatientID = p.PatientID
+            ORDER BY 
+                CASE WHEN cr.Status = N'Chờ phản hồi' THEN 0 ELSE 1 END,
+                cr.CreatedDate DESC
+        `;
+        res.json(result.recordset);
+    } catch (err) {
+        console.error("Lỗi lấy danh sách tư vấn:", err);
+        res.status(500).json({ message: "Lỗi Server khi lấy danh sách tư vấn" });
+    }
+};
+
+// --- 12. Gửi phản hồi cho bệnh nhân (Nút "Gửi phản hồi") ---
+exports.replyConsultation = async (req, res) => {
+    const { requestId } = req.params;
+    const { doctorId, responseContent } = req.body;
+
+    // Validate dữ liệu
+    if (!responseContent || !responseContent.trim()) {
+        return res.status(400).json({ msg: "Nội dung phản hồi không được để trống" });
+    }
+
+    try {
+        // Cập nhật câu trả lời và đổi trạng thái thành 'Đã phản hồi'
+        await sql.query`
+            UPDATE ConsultationRequests
+            SET 
+                DoctorID = ${doctorId}, -- Lưu bác sĩ nào đã trả lời
+                ResponseContent = ${responseContent},
+                Status = N'Đã phản hồi',
+                ResponseDate = GETDATE()
+            WHERE RequestID = ${requestId}
+        `;
+
+        res.json({ msg: "Gửi phản hồi thành công!" });
+    } catch (err) {
+        console.error("Lỗi gửi phản hồi:", err);
+        res.status(500).json({ message: "Lỗi Server khi gửi phản hồi" });
+    }
+};
