@@ -2,21 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   FaComments, 
-  FaSignOutAlt, 
   FaUpload,
   FaExclamationCircle,
   FaStethoscope
 } from "react-icons/fa";
-import PatientSidebar from "../Sidebar/PatientSidebar"; // <--- Import Sidebar dùng chung
+import PatientSidebar from "../Sidebar/PatientSidebar"; 
+import UserDropdown from "../UserDropdown/UserDropdown"; // Import Dropdown menu
 import "./RequestConsultation.css";
 
 const RequestConsultation = () => {
   const navigate = useNavigate();
-  
-  // Giả lập thông tin user
-  const user = JSON.parse(localStorage.getItem("user")) || { FullName: "Nguyễn Văn X" };
 
-  // State quản lý form
+  // State form
   const [formData, setFormData] = useState({
     department: "",
     urgency: "",
@@ -26,7 +23,6 @@ const RequestConsultation = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // Load bản nháp nếu có
   useEffect(() => {
     const savedDraft = localStorage.getItem("consultation_draft");
     if (savedDraft) {
@@ -34,86 +30,58 @@ const RequestConsultation = () => {
     }
   }, []);
 
-  // Xử lý thay đổi input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Xử lý file upload
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setFormData(prev => ({ ...prev, file: e.target.files[0] }));
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
-
-  // Xử lý gửi yêu cầu
   const handleSubmit = async () => {
     if (!formData.department || !formData.urgency || !formData.symptoms) {
-      alert("Vui lòng điền đầy đủ các trường thông tin bắt buộc (Chuyên khoa, Mức độ, Triệu chứng).");
-      return;
+      alert("Vui lòng điền đầy đủ thông tin (*)"); return;
     }
-
     setLoading(true);
-
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const isNetworkError = Math.random() < 0.1; 
-          if (isNetworkError) reject(new Error("Network Error"));
-          else resolve();
-        }, 1500);
-      });
-
-      alert("Gửi yêu cầu tư vấn thành công! Bác sĩ sẽ phản hồi sớm.");
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // Giả lập API
+      alert("Gửi yêu cầu thành công!");
       localStorage.removeItem("consultation_draft");
       navigate("/dashboard");
-
     } catch (error) {
-      console.error(error);
       const draftData = { ...formData, file: null };
       localStorage.setItem("consultation_draft", JSON.stringify(draftData));
-      alert("Lỗi kết nối! Hệ thống đã lưu bản nháp, vui lòng thử lại sau.");
+      alert("Lỗi kết nối! Đã lưu nháp.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="layout-container">
-      {/* Header */}
-      <header className="top-header">
-        <div className="logo-section" onClick={() => navigate("/dashboard")} style={{cursor: 'pointer'}}>
-          <FaStethoscope className="logo-icon" />
-          <span className="brand-name">MediCare Hospital</span>
-        </div>
-        <div className="user-section">
-          <span className="user-name">{user.FullName}</span>
-          <button className="header-logout-btn" onClick={handleLogout}>
-            <FaSignOutAlt /> Đăng xuất
-          </button>
-        </div>
-      </header>
-
-      <div className="body-container">
-        {/* --- SỬ DỤNG SIDEBAR DÙNG CHUNG --- */}
+    // Sử dụng Layout chuẩn Dashboard
+    <div className="pd-layout">
+      {/* 1. Sidebar */}
+      <div className="pd-sidebar-container">
         <PatientSidebar />
-        {/* ---------------------------------- */}
+      </div>
 
-        {/* Main Content Area */}
-        <main className="main-content-area">
-          <div className="page-title-group">
-            <h1>Yêu cầu tư vấn bác sĩ</h1>
-            <p className="subtitle">UC002: Request Doctor Consultation - Gửi yêu cầu tư vấn trực tuyến</p>
-          </div>
+      {/* 2. Main Content */}
+      <div className="pd-main-content">
+        
+        {/* HEADER: Tiêu đề + Dropdown */}
+        <header className="pd-header">
+          <h2 className="header-title">TƯ VẤN TRỰC TUYẾN</h2>
+          <UserDropdown />
+        </header>
 
+        {/* BODY: Nội dung cuộn */}
+        <div className="pd-body-scroll">
+    
           <div className="form-card">
-            {/* Section: Thông tin tư vấn */}
+            {/* Section Header */}
             <div className="form-section-header">
               <FaComments className="section-icon" />
               <h3>Thông tin tư vấn</h3>
@@ -122,7 +90,10 @@ const RequestConsultation = () => {
 
             {/* Field: Chuyên khoa */}
             <div className="form-group">
-              <label><FaStethoscope className="input-icon"/> Chuyên khoa cần tư vấn</label>
+              <label>
+                 <FaStethoscope className="input-icon"/> 
+                 <span>Chuyên khoa cần tư vấn</span>
+              </label>
               <select name="department" value={formData.department} onChange={handleChange} className="form-control">
                 <option value="">Chọn chuyên khoa</option>
                 <option value="General">Đa khoa</option>
@@ -134,7 +105,10 @@ const RequestConsultation = () => {
 
             {/* Field: Mức độ khẩn cấp */}
             <div className="form-group">
-              <label><FaExclamationCircle className="input-icon"/> Mức độ khẩn cấp</label>
+              <label>
+                  <FaExclamationCircle className="input-icon"/> 
+                  <span>Mức độ khẩn cấp</span>
+              </label>
               <select name="urgency" value={formData.urgency} onChange={handleChange} className="form-control">
                 <option value="">Chọn mức độ</option>
                 <option value="Low">Thấp - Cần tư vấn thông thường</option>
@@ -151,14 +125,17 @@ const RequestConsultation = () => {
                 value={formData.symptoms}
                 onChange={handleChange}
                 className="form-control textarea-field"
-                placeholder="Mô tả chi tiết các triệu chứng, thời gian bắt đầu, mức độ nghiêm trọng..."
+                placeholder="Mô tả chi tiết các triệu chứng, thời gian bắt đầu..."
               />
               <span className="helper-text">Càng chi tiết càng giúp bác sĩ tư vấn chính xác hơn</span>
             </div>
 
             {/* Field: Đính kèm hình ảnh */}
             <div className="form-group">
-              <label><FaUpload className="input-icon"/> Đính kèm hình ảnh/tài liệu (tùy chọn)</label>
+              <label>
+                  <FaUpload className="input-icon"/> 
+                  <span>Đính kèm hình ảnh/tài liệu (tùy chọn)</span>
+              </label>
               <div className="upload-box">
                 <input type="file" id="file-upload" onChange={handleFileChange} hidden />
                 <label htmlFor="file-upload" className="upload-label">
@@ -171,10 +148,10 @@ const RequestConsultation = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
+            {/* Actions */}
             <div className="form-actions">
               <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
-                {loading ? "Đang gửi..." : "Gửi yêu cầu tư vấn"}
+                {loading ? "Đang gửi..." : "Gửi yêu cầu"}
               </button>
               <button className="btn-secondary" onClick={() => navigate("/dashboard")}>
                 Hủy
@@ -182,7 +159,7 @@ const RequestConsultation = () => {
             </div>
 
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

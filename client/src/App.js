@@ -8,7 +8,6 @@ import DoctorAppointments from "./components/Doctor/Appointments/DoctorAppointme
 import Prescription from "./components/Patient/Prescription/Prescription";
 import PatientAppointment from "./components/Patient/Appointment/PatientAppointments";
 import RequestConsultation from "./components/Patient/RequestConsultation/RequestConsultation";
-import AppointmentManagement from "./components/Patient/Appointment/AppointmentManagement/AppointmentManagement";
 import Billing from "./components/Patient/Billing/Billing";
 import BillingSuccess from "./components/Patient/Billing/BillingSuccess";
 function App() {
@@ -30,7 +29,7 @@ function App() {
         {/* UC003 – Register Appointment */}
         <Route path="/appointment" element={<PatientAppointment />} />
 
-        <Route path="/my-appointments" element={<AppointmentManagement />} />
+        
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing-success" element={<BillingSuccess />} />
       </Routes>

@@ -1,211 +1,118 @@
-/* Layout chung */
-.layout-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: #f8f9fa; /* Màu nền xám nhẹ tổng thể */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* --- 1. LAYOUT GLOBAL (Đồng bộ với Dashboard) --- */
+.pd-layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
 }
 
-/* Header */
-.top-header {
-  height: 60px;
-  background-color: #ffffff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 24px;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+.pd-sidebar-container {
+    width: 250px;
+    flex-shrink: 0;
+    height: 100%;
+    background: #f8f9fa;
+    border-right: 1px solid #eee;
 }
 
-.logo-section {
-  display: flex;
-  align-items: center;
-  color: #0089d0; /* Màu xanh thương hiệu */
-  font-weight: bold;
-  font-size: 18px;
+.pd-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: #f9f9f9;
 }
 
-.logo-icon { margin-right: 8px; font-size: 22px; }
-
-.user-section {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+.pd-header {
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #fff;
 }
 
-.user-name { color: #555; font-weight: 500; }
+.header-title { font-size: 16px; font-weight: 700; color: #444; text-transform: uppercase; }
 
-.header-logout-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-weight: 500;
-  color: #333;
+.pd-body-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px 50px;
 }
 
-/* Body Container (Sidebar + Main) */
-.body-container {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
+/* --- 2. FORM STYLES --- */
+.page-intro p { color: #666; margin-bottom: 20px; font-size: 14px; }
 
-/* --- [ĐÃ XÓA] Sidebar CSS cũ vì đã dùng Component chung --- */
-
-/* Main Content */
-.main-content-area {
-  flex: 1;
-  padding: 30px 40px;
-  overflow-y: auto;
-}
-
-.page-title-group { margin-bottom: 24px; }
-.page-title-group h1 { font-size: 28px; margin: 0 0 8px 0; color: #1a1a1a; }
-.subtitle { color: #666; font-size: 14px; margin: 0; }
-
-/* Form Card */
 .form-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 30px;
-  border: 1px solid #e0e0e0;
-  max-width: 800px; /* Giới hạn chiều rộng giống ảnh */
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 40px;
+    border: 1px solid #e0e0e0;
+    max-width: 800px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    margin-bottom: 40px;
 }
 
-.form-section-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
+.form-section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.section-icon { color: #0089d0; font-size: 20px; }
+.form-section-header h3 { margin: 0; font-size: 18px; color: #333; font-weight: 700; }
+.section-desc { color: #777; margin-bottom: 30px; font-size: 14px; }
 
-.section-icon { color: #0089d0; font-size: 18px; }
-.form-section-header h3 { margin: 0; font-size: 18px; color: #333; }
-.section-desc { color: #777; margin-bottom: 24px; font-size: 14px; }
-
-/* Form Elements */
+/* Form Group & Label */
 .form-group { margin-bottom: 24px; }
 
+/* FIX ICON LỖI: Buộc label dùng Flexbox để căn icon và chữ thẳng hàng */
 .form-group label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 14px;
 }
 
-.input-icon { color: #0089d0; }
+/* FIX ICON LỖI: Reset thuộc tính position để icon không bị bay */
+.input-icon { 
+    position: static !important; /* Quan trọng */
+    transform: none !important;
+    color: #0089d0;
+    font-size: 16px;
+    min-width: 16px; /* Giữ icon không bị méo */
+}
 
 .form-control {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
+    font-size: 14px; outline: none; transition: 0.2s; background-color: #fff; color: #333;
 }
+.form-control:focus { border-color: #0089d0; box-shadow: 0 0 0 3px rgba(0, 137, 208, 0.1); }
+.textarea-field { height: 120px; resize: vertical; font-family: inherit; }
+.helper-text { display: block; font-size: 12px; color: #888; margin-top: 6px; font-style: italic; }
 
-.form-control:focus {
-  border-color: #0089d0;
-}
-
-.textarea-field {
-  height: 120px;
-  resize: vertical;
-}
-
-.helper-text {
-  display: block;
-  font-size: 12px;
-  color: #888;
-  margin-top: 5px;
-}
-
-/* File Upload Box */
+/* Upload Box */
 .upload-box {
-  border: 2px dashed #ddd;
-  border-radius: 8px;
-  padding: 30px;
-  text-align: center;
-  background-color: #fafafa;
-  transition: background-color 0.2s;
+    border: 2px dashed #ddd; border-radius: 8px; padding: 30px;
+    text-align: center; background-color: #fafafa; transition: all 0.2s;
 }
-
 .upload-box:hover { background-color: #f0f7ff; border-color: #0089d0; }
-
 .upload-label {
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+    cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;
 }
-
-.upload-icon-center { color: #888; margin-bottom: 5px; }
+.upload-icon-center { color: #888; position: static !important; } /* Fix cả icon upload */
 .upload-label span { color: #333; font-weight: 500; }
 .upload-label small { color: #999; }
 
 /* Actions */
-.form-actions {
-  display: flex;
-  gap: 16px;
-  margin-top: 30px;
-}
-
+.form-actions { display: flex; gap: 15px; margin-top: 40px; }
 .btn-primary {
-  background-color: #0089d0;
-  color: white;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  min-width: 180px;
+    background-color: #0089d0; color: white; border: none; padding: 12px 30px;
+    border-radius: 6px; font-weight: 600; cursor: pointer; min-width: 160px;
 }
-
 .btn-primary:hover { background-color: #0077b5; }
-.btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
-
 .btn-secondary {
-  background-color: white;
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 12px 30px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  min-width: 100px;
+    background-color: white; color: #555; border: 1px solid #ddd;
+    padding: 12px 30px; border-radius: 6px; font-weight: 600; cursor: pointer;
 }
-
 .btn-secondary:hover { background-color: #f5f5f5; }
-
-
-/* --- FIX LỖI ICON BỊ DÍNH LỀ TRÁI --- */
-/* Buộc các icon trong form phải nằm yên tại chỗ, hủy bỏ lệnh absolute từ nơi khác */
-.form-group .input-icon, 
-.upload-label svg, 
-.form-section-header .section-icon {
-  position: static !important; /* Quan trọng: Hủy lệnh dính lề */
-  left: auto !important;
-  top: auto !important;
-  transform: none !important;
-  display: inline-block;
-  margin-right: 10px; /* Tạo khoảng cách đẹp với chữ */
-}
-
-/* Đảm bảo thẻ label hiển thị flex để icon và chữ thẳng hàng */
-.form-group label, 
-.form-section-header {
-  display: flex;
-  align-items: center;
-}

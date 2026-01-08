@@ -1,168 +1,187 @@
-/* --- LAYOUT CHUNG (Header Top + Body Flex) --- */
-.layout-container {
+/* --- LAYOUT CHUNG (Kế thừa từ Dashboard) --- */
+.pd-layout {
+    display: flex; width: 100vw; height: 100vh; background: #fff; font-family: 'Segoe UI', sans-serif;
+}
+.pd-sidebar-container { width: 250px; flex-shrink: 0; background: #f8f9fa; border-right: 1px solid #eee; }
+.pd-main-content { flex: 1; display: flex; flex-direction: column; background: #f9f9f9; }
+.pd-header { height: 70px; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; border-bottom: 1px solid #e0e0e0; background: #fff; }
+.header-title { font-size: 16px; font-weight: 700; color: #444; text-transform: uppercase; }
+.pd-body-scroll { flex: 1; overflow-y: auto; padding: 40px 60px; }
+
+/* --- PRESCRIPTION MAIN CARD --- */
+.prescription-main-card {
+    background-color: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* SECTION 1: SELECT ĐƠN THUỐC */
+.prescription-select-section { margin-bottom: 40px; }
+.section-label-blue {
+    font-size: 18px; font-weight: 700; color: #34495e; display: flex; align-items: center; gap: 8px; margin-bottom: 15px;
+}
+.icon-label { color: #3498db; }
+.section-title-red {
+    font-size: 18px; font-weight: 700; color: #34495e; display: flex; align-items: center; gap: 8px; margin-bottom: 25px;
+}
+.section-title-red .icon-label { color: #e74c3c; }
+
+.custom-select-wrapper { position: relative; }
+.form-control-blue {
+    width: 100%; padding: 12px 15px; border-radius: 6px; border: none;
+    background-color: #8fbbd9; /* Màu xanh nhạt giống hình */
+    color: white; font-weight: 600; appearance: none; cursor: pointer;
+}
+.select-arrow {
+    position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: white; pointer-events: none;
+}
+
+/* --- GRID LAYOUT (2 CỘT) --- */
+.prescription-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+/* CỘT TRÁI: FORM INPUT */
+.form-group { margin-bottom: 20px; }
+.form-group label {
+    display: block; font-size: 14px; color: #666; margin-bottom: 8px; font-weight: 500;
+}
+.form-control {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+    font-size: 14px; outline: none; transition: 0.2s; box-sizing: border-box;
+}
+.form-control:focus { border-color: #3498db; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+
+.select-arrow-sm {
+    position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #3498db; pointer-events: none;
+}
+
+.btn-checkout {
+    margin-top: 20px; width: 100%; padding: 15px; border: none;
+    background-color: #2563eb; color: white; font-weight: 700; font-size: 15px;
+    border-radius: 8px; cursor: pointer; transition: 0.2s;
+}
+.btn-checkout:hover { background-color: #1d4ed8; }
+
+/* CỘT PHẢI: BILL CARD */
+.bill-card {
+    background-color: #aab7c4; /* Màu nền xám xanh */
+    border-radius: 20px;
+    padding: 0;
+    overflow: hidden;
+    color: #333;
+}
+
+.bill-header {
+    padding: 30px 30px 10px 30px; margin: 0;
+    font-size: 18px; font-weight: 700; color: #2c3e50; text-transform: uppercase;
+}
+
+.bill-table-header {
+    padding: 0 30px 20px 30px; font-size: 14px; font-weight: 600; color: #555;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.bill-items-list {
+    background-color: #dbe4eb; /* Màu nền list sáng hơn */
+    padding: 20px 30px;
+    min-height: 150px;
+}
+
+.bill-item {
+    display: flex; justify-content: space-between; margin-bottom: 25px;
+    font-size: 14px; color: #2c3e50; font-weight: 500;
+}
+
+.item-details { display: flex; gap: 40px; text-align: right; }
+.item-details span { min-width: 60px; }
+
+.bill-footer {
+    padding: 30px; font-size: 18px; font-weight: 700; color: #2c3e50;
+    display: flex; gap: 10px; align-items: center;
+}
+
+/* --- ERROR MODAL STYLES --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center;
+    z-index: 9999; animation: fadeInModal 0.2s;
+}
+.error-modal {
+    background: white; width: 380px; padding: 40px; border-radius: 20px;
+    text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: scaleModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.error-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: #333; text-transform: uppercase; }
+.error-message { font-size: 14px; color: #666; margin-bottom: 30px; line-height: 1.5; }
+.btn-retry {
+    background: #2d3436; color: white; border: none; padding: 12px 0; width: 100%;
+    border-radius: 8px; font-weight: 600; cursor: pointer; text-transform: uppercase;
+}
+@keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleModal { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+/* --- SUCCESS MODAL STYLES (MỚI) --- */
+.success-modal {
+    background: white;
+    width: 400px;
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: scaleModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-top: 6px solid #00b894; /* Viền trên màu xanh lá */
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    background-color: #fff;
-    font-family: 'Segoe UI', sans-serif;
+    align-items: center;
 }
 
-/* Header (Full Width) */
-.top-header {
-    height: 60px;
-    background-color: #fff;
-    border-bottom: 1px solid #e0e0e0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 40px; /* Padding rộng giống hình */
+.success-icon-large {
+    font-size: 60px;
+    color: #00b894;
+    margin-bottom: 20px;
+    animation: popIn 0.5s ease;
 }
 
-.logo-section {
-    display: flex;
-    align-items: center;
-    color: #1a1a1a;
+.success-title {
+    font-size: 20px;
     font-weight: 700;
-    font-size: 18px;
+    color: #2d3436;
+    margin-bottom: 10px;
+    text-transform: uppercase;
 }
-.logo-icon { color: #0089d0; margin-right: 8px; font-size: 22px; }
 
-.user-section {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+.success-message {
     font-size: 14px;
-}
-.user-name { color: #666; }
-
-.header-logout-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 600;
-    color: #000;
+    color: #636e72;
+    margin-bottom: 30px;
+    line-height: 1.5;
 }
 
-/* Body Container */
-.body-container {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-}
-
-/* --- [ĐÃ XÓA] Sidebar CSS cũ vì đã dùng Component chung --- */
-
-/* --- MAIN CONTENT --- */
-.main-content-area {
-    flex: 1;
-    padding: 30px 60px;
-    overflow-y: auto;
-}
-
-.page-header { margin-bottom: 30px; }
-.page-header h1 { font-size: 32px; font-weight: 700; color: #000; margin: 0; }
-.page-header p { color: #888; margin-top: 8px; font-size: 14px; }
-
-/* CARD FORM */
-.prescription-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 40px;
-    background-color: #fff;
-    max-width: 900px;
-}
-
-/* Section Header */
-.section-header-group {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-.section-icon { 
-    font-size: 20px; 
-    margin-top: 2px;
-    position: static !important; /* Fix lỗi icon bay */
-}
-.icon-teal { color: #00b894; }
-.icon-blue { color: #0984e3; }
-
-.section-header-group h3 { margin: 0; font-size: 18px; font-weight: 700; color: #000; }
-.sub-text { margin: 5px 0 0 0; font-size: 14px; color: #666; }
-
-.mt-40 { margin-top: 40px; }
-
-/* Form Controls */
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 10px; font-weight: 600; color: #000; font-size: 14px; }
-
-.form-control {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 14px;
-    outline: none;
-    background-color: #fff;
-}
-.form-control:focus { border-color: #0089d0; }
-.textarea { height: 100px; resize: vertical; font-family: inherit; }
-
-/* Medicine Summary Box */
-.medicine-summary-box {
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 25px;
-    margin-top: 20px;
-}
-.medicine-summary-box h4 { margin: 0 0 20px 0; font-size: 16px; font-weight: 700; }
-
-.medicine-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #444;
-}
-.med-qty { color: #888; }
-.divider { height: 1px; background-color: #e0e0e0; margin: 20px 0; }
-.total-row { display: flex; justify-content: space-between; font-weight: 700; font-size: 16px; color: #000; }
-
-/* Checkbox & Buttons */
-.checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin: 25px 0; }
-.checkbox-wrapper input { width: 18px; height: 18px; }
-.checkbox-wrapper label { font-size: 14px; color: #555; }
-
-.form-actions { display: flex; gap: 20px; }
-.btn-primary {
-    flex: 2;
-    background-color: #0089d0;
+.btn-success-modal {
+    background-color: #00b894;
     color: white;
     border: none;
-    padding: 14px;
-    border-radius: 6px;
+    padding: 12px 0;
+    width: 100%;
+    border-radius: 8px;
     font-weight: 600;
-    font-size: 15px;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+    text-transform: uppercase;
+    transition: background 0.2s;
 }
-.btn-primary:hover { background-color: #0077b3; }
 
-.btn-secondary {
-    flex: 1;
-    background-color: white;
-    color: #000;
-    border: 1px solid #ddd;
-    padding: 14px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
+.btn-success-modal:hover {
+    background-color: #00a884;
 }
-.btn-secondary:hover { background-color: #f5f5f5; }
+
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    80% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}

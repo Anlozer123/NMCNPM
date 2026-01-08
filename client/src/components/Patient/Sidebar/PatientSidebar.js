@@ -1,66 +1,53 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom"; // Dùng NavLink để tự động thêm class 'active' khi ở trang đó
 import {
   FaHome,
-  FaCalendarPlus, // Icon Đặt lịch (Dấu cộng)
-  FaCalendarAlt,  // Icon Quản lý lịch (Cuốn lịch)
+  FaCalendarPlus,
+  FaCalendarCheck,
   FaComments,
-  FaFilePrescription,
-  FaCalendarCheck, // Icon cho Quản lý lịch hẹn
-  FaPrescriptionBottle
+  FaPrescriptionBottleAlt,
+  FaStethoscope
 } from "react-icons/fa";
-import "./PatientSidebar.css"; // Dùng chung CSS của Sidebar cũ
+import "./PatientSidebar.css";
 
 const PatientSidebar = () => {
-  const navigate = useNavigate();
-  const location = useLocation(); // Hook này giúp lấy đường dẫn hiện tại
-
-  // Hàm kiểm tra active
-  const isActive = (path) => location.pathname === path ? "active" : "";
-
   return (
-    <aside className="sidebar-nav">
-      <ul>
-        {/* 1. Trang chủ */}
-        <li 
-          className={isActive("/dashboard")} 
-          onClick={() => navigate("/dashboard")}
-        >
-          <FaHome /> Trang chủ
-        </li>
+    <aside className="ps-sidebar">
+      {/* 1. Logo & Tên bệnh viện */}
+      <div className="ps-logo-section">
+        <FaStethoscope className="ps-logo-icon" />
+        <span className="ps-brand-name">MediCare</span>
+      </div>
 
-        {/* 2. Đặt lịch khám (UC003) */}
-        <li 
-          className={isActive("/appointment")} 
-          onClick={() => navigate("/appointment")}
-        >
-          <FaCalendarPlus /> Đặt lịch khám
-        </li>
-
-        {/* 3. MỤC MỚI: Quản lý lịch hẹn (UC List) */}
-        <li 
-          className={isActive("/my-appointments")} 
-          onClick={() => navigate("/my-appointments")}
-        >
-          <FaCalendarCheck /> Quản lý lịch hẹn
-        </li>
-
-        {/* 4. Tư vấn */}
-        <li 
-          className={isActive("/request-consultation")} 
-          onClick={() => navigate("/request-consultation")}
-        >
-          <FaComments /> Tư vấn
-        </li>
-
-        {/* 5. Đơn thuốc */}
-        <li 
-          className={isActive("/prescription")} 
-          onClick={() => navigate("/prescription")}
-        >
-          <FaFilePrescription /> Đơn thuốc
-        </li>
-      </ul>
+      {/* 2. Danh sách Menu điều hướng */}
+      <nav className="ps-nav">
+        <ul>
+          <li>
+            <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>
+              <FaHome className="ps-icon" />
+              <span>Tổng quan</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/appointment" className={({ isActive }) => (isActive ? "active" : "")}>
+              <FaCalendarPlus className="ps-icon" />
+              <span>Đặt lịch khám</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/request-consultation" className={({ isActive }) => (isActive ? "active" : "")}>
+              <FaComments className="ps-icon" />
+              <span>Tư vấn</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/prescription" className={({ isActive }) => (isActive ? "active" : "")}>
+              <FaPrescriptionBottleAlt className="ps-icon" />
+              <span>Đơn thuốc</span>
+            </NavLink>
+          </li>
+        </ul>
+      </nav>
     </aside>
   );
 };
