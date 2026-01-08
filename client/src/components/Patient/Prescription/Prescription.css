@@ -185,3 +185,44 @@
     80% { transform: scale(1.2); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
 }
+/* --- DATE PICKER STYLING (Mới) --- */
+.date-input-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background-color: #fff;
+    position: relative;
+}
+
+.text-placeholder {
+    color: #999;
+}
+
+.text-dark {
+    color: #333;
+}
+
+.calendar-icon-right {
+    color: #666;
+}
+
+/* Container chứa CustomCalendar để nó nổi lên trên */
+.calendar-dropdown-container {
+    position: absolute;
+    top: 100%; /* Hiển thị ngay bên dưới input */
+    left: 0;
+    z-index: 100; /* Đảm bảo nổi lên trên các thành phần khác */
+    margin-top: 5px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    border: 1px solid #eee;
+    padding: 10px;
+}
+
+/* Đảm bảo form-group có relative để dropdown định vị theo nó */
+.form-group { 
+    margin-bottom: 20px; 
+    position: relative; /* Thêm thuộc tính này */
+}

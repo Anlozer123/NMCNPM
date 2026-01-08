@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaMapMarkerAlt,
   FaPills,
   FaChevronDown,
-  FaCheckCircle // <--- Import icon tích xanh
+  FaCalendarAlt // Import thêm icon lịch
 } from "react-icons/fa";
 import PatientSidebar from "../Sidebar/PatientSidebar"; 
 import UserDropdown from "../UserDropdown/UserDropdown"; 
+// ĐIỀU CHỈNH ĐƯỜNG DẪN IMPORT NÀY THEO CẤU TRÚC THỰC TẾ CỦA BẠN
+import CustomCalendar from "../../Common/CustomCalendar/CustomCalendar"; 
 import "./Prescription.css";
 
 const Prescription = () => {
@@ -40,25 +42,53 @@ const Prescription = () => {
   const [formData, setFormData] = useState({
     address: "",
     phone: "",
-    deliveryDate: "",
+    deliveryDate: "", // Sẽ lưu Date Object hoặc String ISO
     note: "",
     paymentMethod: ""
   });
   
-  // State quản lý Modal
+  // State mới để quản lý việc hiển thị lịch
+  const [showCalendar, setShowCalendar] = useState(false);
+  const calendarRef = useRef(null); // Ref để xử lý click outside
+
   const [errorModal, setErrorModal] = useState({ show: false, title: "", message: "" });
-  const [successModal, setSuccessModal] = useState(false); // <--- State Modal Thành công
 
   const currentPrescription = mockPrescriptions.find(p => p.id === selectedPrescriptionId) || mockPrescriptions[0];
+
+  // Xử lý click ra ngoài để đóng lịch
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        setShowCalendar(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [calendarRef]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // --- XỬ LÝ THANH TOÁN ---
+  // Hàm mới xử lý khi chọn ngày từ CustomCalendar
+  const handleDateSelect = (date) => {
+    setFormData({ ...formData, deliveryDate: date });
+    setShowCalendar(false); // Đóng lịch sau khi chọn
+  };
+
+  // Helper function để hiển thị ngày đẹp hơn (dd/mm/yyyy)
+  const formatDateDisplay = (dateInput) => {
+    if (!dateInput) return "";
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return ""; // Check invalid date
+    return date.toLocaleDateString('vi-VN'); // Format kiểu Việt Nam
+  };
+
   const handleSubmit = () => {
-    // 1. Validate Bỏ trống
+    // 1. Validate
     if (!formData.address || !formData.phone || !formData.paymentMethod || !formData.deliveryDate) {
       setErrorModal({
         show: true,
@@ -68,10 +98,12 @@ const Prescription = () => {
       return;
     }
 
-    // 2. Validate Ngày
     const selectedDate = new Date(formData.deliveryDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    // So sánh ngày (lưu ý: CustomCalendar thường trả về thời gian cụ thể, nên cần reset time để so sánh chính xác)
+    selectedDate.setHours(0, 0, 0, 0);
 
     if (selectedDate < today) {
         setErrorModal({
@@ -82,58 +114,36 @@ const Prescription = () => {
         return;
     }
 
-    // 3. THÀNH CÔNG: Hiển thị Modal thay vì Alert
-    setSuccessModal(true);
-  };
-
-  // Hàm đóng modal thành công và có thể điều hướng đi nơi khác
-  const closeSuccessModal = () => {
-      setSuccessModal(false);
-      // navigate("/dashboard"); // Bỏ comment dòng này nếu muốn quay về trang chủ
+    // 2. Chuyển hướng sang Billing với dữ liệu
+    navigate("/billing", { 
+      state: { 
+        prescription: currentPrescription, 
+        shippingInfo: formData, 
+        shippingFee: 50000 
+      } 
+    });
   };
 
   return (
     <div className="pd-layout">
-      
-      {/* --- ERROR MODAL --- */}
+      {/* ERROR MODAL */}
       {errorModal.show && (
         <div className="modal-overlay">
           <div className="error-modal">
             <h3 className="error-title">{errorModal.title}</h3>
             <p className="error-message">{errorModal.message}</p>
-            <button 
-                className="btn-retry" 
-                onClick={() => setErrorModal({ show: false, title: "", message: "" })}
-            >
+            <button className="btn-retry" onClick={() => setErrorModal({ show: false, title: "", message: "" })}>
                 THỬ LẠI
             </button>
           </div>
         </div>
       )}
 
-      {/* --- SUCCESS MODAL (MỚI) --- */}
-      {successModal && (
-        <div className="modal-overlay">
-          <div className="success-modal">
-            <FaCheckCircle className="success-icon-large" />
-            <h3 className="success-title">ĐẶT HÀNG THÀNH CÔNG!</h3>
-            <p className="success-message">
-                Đơn thuốc của bạn đã được ghi nhận.<br/>
-                Chúng tôi sẽ sớm liên hệ để giao hàng.
-            </p>
-            <button className="btn-success-modal" onClick={closeSuccessModal}>
-                HOÀN TẤT
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Sidebar */}
+      {/* Main UI */}
       <div className="pd-sidebar-container">
         <PatientSidebar />
       </div>
 
-      {/* Main Content */}
       <div className="pd-main-content">
         <header className="pd-header">
            <h2 className="header-title">ĐƠN THUỐC</h2> 
@@ -141,20 +151,14 @@ const Prescription = () => {
         </header>
 
         <div className="pd-body-scroll">
-          
           <div className="prescription-main-card">
             
-            {/* Select Đơn thuốc */}
             <div className="prescription-select-section">
                 <label className="section-label-blue">
                     <FaPills className="icon-label" /> Đơn thuốc của bạn
                 </label>
                 <div className="custom-select-wrapper">
-                    <select 
-                        className="form-control-blue"
-                        value={selectedPrescriptionId}
-                        onChange={(e) => setSelectedPrescriptionId(e.target.value)}
-                    >
+                    <select className="form-control-blue" value={selectedPrescriptionId} onChange={(e) => setSelectedPrescriptionId(e.target.value)}>
                         {mockPrescriptions.map(p => (
                             <option key={p.id} value={p.id}>{p.label}</option>
                         ))}
@@ -164,90 +168,74 @@ const Prescription = () => {
             </div>
 
             <div className="prescription-grid-layout">
-                
-                {/* Form Column */}
+                {/* Form Inputs */}
                 <div className="left-form-column">
-                    <h3 className="section-title-red">
-                        <FaMapMarkerAlt className="icon-label" /> Thông tin nhận hàng
-                    </h3>
-
+                    <h3 className="section-title-red"><FaMapMarkerAlt className="icon-label" /> Thông tin nhận hàng</h3>
+                    
                     <div className="form-group">
                         <label>Địa chỉ giao hàng(*)</label>
-                        <input 
-                            type="text" 
-                            name="address"
-                            className="form-control" 
-                            value={formData.address}
-                            onChange={handleInputChange}
-                        />
+                        <input type="text" name="address" className="form-control" value={formData.address} onChange={handleInputChange} />
                     </div>
-
                     <div className="form-group">
                         <label>Số điện thoại liên hệ(*)</label>
-                        <input 
-                            type="text" 
-                            name="phone"
-                            className="form-control" 
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                        />
+                        <input type="text" name="phone" className="form-control" value={formData.phone} onChange={handleInputChange} />
                     </div>
-
-                    <div className="form-group">
+                    
+                    {/* --- PHẦN THAY THẾ CALENDAR --- */}
+                    <div className="form-group" ref={calendarRef}>
                         <label>Ngày giao hàng(*)</label>
-                        <div className="input-with-icon">
-                            <input 
-                                type="date" 
-                                name="deliveryDate"
-                                className="form-control" 
-                                value={formData.deliveryDate}
-                                onChange={handleInputChange}
-                            />
+                        <div 
+                            className="form-control date-input-trigger" 
+                            onClick={() => setShowCalendar(!showCalendar)}
+                        >
+                            <span className={formData.deliveryDate ? "text-dark" : "text-placeholder"}>
+                                {formData.deliveryDate ? formatDateDisplay(formData.deliveryDate) : "dd/mm/yyyy"}
+                            </span>
+                            <FaCalendarAlt className="calendar-icon-right" />
                         </div>
+                        
+                        {/* Dropdown Calendar */}
+                  {showCalendar && (
+                    <div className="calendar-dropdown-container">
+                      <CustomCalendar
+                        onClose={() => setShowCalendar(false)}
+                        onChange={handleDateSelect}
+                        value={formData.deliveryDate} />
                     </div>
+                  )}
+                    </div>
+                    {/* ------------------------------- */}
 
                     <div className="form-group">
                         <label>Ghi chú (tuỳ chọn)</label>
-                        <input 
-                            type="text" 
-                            name="note"
-                            className="form-control" 
-                            value={formData.note}
-                            onChange={handleInputChange}
-                        />
+                        <input type="text" name="note" className="form-control" value={formData.note} onChange={handleInputChange} />
                     </div>
-
+                    
                     <div className="form-group">
                         <label>Phương thức thanh toán(*)</label>
                         <div className="custom-select-wrapper">
                             <select 
-                                name="paymentMethod"
-                                className="form-control"
-                                value={formData.paymentMethod}
+                                name="paymentMethod" 
+                                className="form-control" 
+                                value={formData.paymentMethod} 
                                 onChange={handleInputChange}
                             >
                                 <option value="">-- Chọn phương thức --</option>
-                                <option value="cod">Thanh toán khi nhận hàng(COD)</option>
+                                <option value="cod">Thanh toán khi nhận hàng (COD)</option>
                                 <option value="qr">Thanh toán bằng QR</option>
                             </select>
                             <FaChevronDown className="select-arrow-sm" />
                         </div>
                     </div>
 
-                    <button className="btn-checkout" onClick={handleSubmit}>
-                        Tiến hành thanh toán
-                    </button>
+                    <button className="btn-checkout" onClick={handleSubmit}>Tiến hành thanh toán</button>
                 </div>
 
-                {/* Bill Column */}
+                {/* Bill Preview */}
                 <div className="right-bill-column">
                     <div className="bill-card">
                         <h3 className="bill-header">CHI TIẾT ĐƠN THUỐC</h3>
-                        
-                        <div className="bill-table-header">
-                            <span>Tên thuốc/Đơn giá/Số lượng/Thành tiền</span>
-                        </div>
-
+                        <div className="bill-table-header"><span>Tên thuốc/Đơn giá/Số lượng/Thành tiền</span></div>
                         <div className="bill-items-list">
                             {currentPrescription.medicines.map((med, idx) => (
                                 <div key={idx} className="bill-item">
@@ -260,17 +248,14 @@ const Prescription = () => {
                                 </div>
                             ))}
                         </div>
-
                         <div className="bill-footer">
                             <span>Tổng tiền:</span>
                             <span className="total-amount">{currentPrescription.totalBill.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
-
             </div>
           </div>
-
         </div>
       </div>
     </div>
