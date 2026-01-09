@@ -5,10 +5,9 @@ import {
     FaHome, FaMagic, FaSignOutAlt 
 } from 'react-icons/fa';
 import './DoctorDashboard.css'; 
-import DoctorAppointments from './DoctorAppointments';
-import PatientProfile from './PatientProfile';
-// --- MỚI THÊM: Import component Tư vấn trực tuyến ---
-import OnlineConsultation from './OnlineConsultation';
+import DoctorAppointments from "../Appointments/DoctorAppointments";
+import PatientProfile from "../../PatientProfile";
+import OnlineConsultation from "../../OnlineConsultation";
 
 const DoctorDashboard = ({ user, activeView }) => {
     const navigate = useNavigate();
