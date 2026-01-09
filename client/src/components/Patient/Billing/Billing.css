@@ -1,0 +1,259 @@
+/* Container chính */
+.billing-container-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.billing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+/* --- COMMON COLUMN STYLES --- */
+.bill-col {
+    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 400px;
+}
+
+.col-title {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- LEFT COLUMN: CHI TIẾT HÓA ĐƠN (GRID LAYOUT MỚI) --- */
+.left-col {
+    background-color: #9cb5c0; 
+    color: #1f2937;
+}
+
+/* Định nghĩa lưới: 
+   - Tên thuốc: chiếm 2 phần (2fr)
+   - Đơn giá: 1 phần (1fr)
+   - SL: 0.5 phần (0.5fr) - nhỏ hơn
+   - Thành tiền: 1 phần (1fr)
+*/
+.grid-header, .grid-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 0.5fr 1fr; 
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.grid-header {
+    font-weight: 700;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+    color: #2d3436;
+    text-transform: uppercase;
+}
+
+.grid-row {
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255,255,255,0.1); /* Đường kẻ mờ giữa các dòng */
+}
+
+/* Căn lề cho từng cột */
+.g-name { 
+    text-align: left; 
+    font-weight: 600;
+}
+.g-price { 
+    text-align: right; 
+}
+.g-qty { 
+    text-align: center; 
+}
+.g-total { 
+    text-align: right; 
+    font-weight: 700;
+}
+
+.fee-row {
+    margin-top: 20px;
+    font-style: italic;
+    border-bottom: none;
+}
+
+.bill-list-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px; /* Để tránh thanh cuộn che chữ */
+}
+
+/* --- RIGHT COLUMN: THÔNG TIN THANH TOÁN --- */
+.right-col {
+    background-color: #9daeb6; /* Màu xám đậm hơn một chút */
+    color: #1f2937;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4b5563; /* Màu chữ tiêu đề nhạt hơn */
+}
+
+.info-val {
+    font-size: 15px;
+    font-weight: 500;
+    color: #111;
+}
+
+/* --- ACTION BUTTON --- */
+.billing-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.btn-confirm-billing {
+    background-color: #2563eb; /* Màu xanh dương đậm */
+    color: white;
+    border: none;
+    padding: 15px 60px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.btn-confirm-billing:hover {
+    background-color: #1d4ed8;
+}
+
+/* --- SUCCESS MODAL OVERRIDES (Nếu chưa có trong global css) --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000;
+}
+.success-modal {
+    background: white; width: 380px; padding: 40px; border-radius: 20px;
+    text-align: center; border-top: 6px solid #00b894;
+}
+.success-icon-large { font-size: 60px; color: #00b894; margin-bottom: 20px; }
+.btn-success-modal {
+    background: #00b894; color: white; border: none; padding: 12px 0; width: 100%;
+    border-radius: 8px; font-weight: 700; cursor: pointer;
+}
+/* --- QR MODAL STYLES --- */
+.qr-modal {
+    background: white;
+    width: 400px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    animation: scaleModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+}
+
+.qr-header {
+    background-color: #2563eb; /* Header màu xanh */
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.qr-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.close-icon {
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.8;
+}
+.close-icon:hover { opacity: 1; }
+
+.qr-body {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+
+.qr-instruct {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.qr-image-box {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.qr-img-real {
+    width: 250px; /* Kích thước mã QR */
+    height: auto;
+    display: block;
+}
+
+.qr-amount-display {
+    font-size: 16px;
+    color: #333;
+}
+
+.qr-amount-display span {
+    font-weight: 700;
+    color: #d63031; /* Màu đỏ cho số tiền nổi bật */
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+.btn-qr-paid {
+    background-color: #00b894; /* Nút màu xanh lá */
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.2s;
+    text-transform: uppercase;
+}
+
+.btn-qr-paid:hover {
+    background-color: #00a884;
+}
