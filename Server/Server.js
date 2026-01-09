@@ -1,6 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const doctorRoutes = require('./Routes/doctorRoutes');
+
+const nurseRoutes = require('./Routes/nurseRoutes');
+
+const adminRoutes = require('./Routes/adminRoutes');
+
 const { connectDB, sql } = require('./Config/db'); 
 require('dotenv').config();
 
@@ -36,6 +41,8 @@ app.get('/api/test-users', async (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/doctor', doctorRoutes);
+app.use('/api/nurse', nurseRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Khởi động Server
 app.listen(PORT, () => {

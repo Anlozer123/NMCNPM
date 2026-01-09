@@ -1,0 +1,517 @@
+/* --- ADMIN DASHBOARD (LIGHT THEME - GIỐNG HÌNH ẢNH) --- */
+
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f9fafb; /* Màu nền tổng thể xám rất nhạt */
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* --- SIDEBAR --- */
+.admin-sidebar {
+  width: 260px;
+  background-color: #ffffff; /* Nền trắng */
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e5e7eb; /* Đường viền mỏng ngăn cách */
+}
+
+/* LOGO */
+.sidebar-brand {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827; /* Màu chữ đen đậm */
+  letter-spacing: -0.5px;
+}
+
+.logo-icon {
+  color: #0090e7; /* Màu xanh dương của icon nhịp tim */
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+/* MENU */
+.sidebar-menu {
+  flex: 1;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Khoảng cách giữa các mục */
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #4b5563; /* Màu chữ xám vừa */
+  font-weight: 500;
+  font-size: 16px;
+  border-left: 4px solid transparent; /* Viền trái ẩn */
+}
+
+.menu-link i {
+  width: 24px;
+  margin-right: 15px;
+  font-size: 18px;
+  text-align: center;
+  color: #6b7280; /* Icon màu nhạt hơn chữ chút */
+}
+
+/* HOVER STATE */
+.menu-link:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.menu-link:hover i {
+  color: #374151;
+}
+
+/* ACTIVE STATE (Tab đang chọn) */
+.menu-link.active {
+  background-color: #eff6ff; /* Nền xanh rất nhạt */
+  color: #0090e7; /* Chữ màu xanh thương hiệu */
+  border-left: 4px solid #0090e7; /* Viền trái màu xanh */
+}
+
+.menu-link.active i {
+  color: #0090e7;
+}
+
+/* --- MAIN CONTENT & HEADER --- */
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.admin-header {
+  height: 80px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 40px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-logout {
+  background: none;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 6px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+.admin-content-body {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+/* --- PROFILE CARD STYLE (Giữ lại style cũ nhưng chỉnh màu cho hợp nền sáng) --- */
+.profile-full-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  display: flex;
+  min-height: 400px;
+  border: 1px solid #e5e7eb;
+}
+/* ... Các class profile-left-col, profile-right-col giữ nguyên hoặc chỉnh nhẹ màu ... */
+.profile-left-col {
+  width: 320px;
+  background: linear-gradient(135deg, #0090e7 0%, #00d4ff 100%); /* Chỉnh về tông xanh dương cho khớp logo */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 30px;
+}
+
+/* --- WORK SCHEDULE (LỊCH LÀM VIỆC) --- */
+.schedule-container {
+    padding: 10px;
+}
+
+/* Header & Filter */
+.schedule-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.btn-add-shift {
+    background-color: #0090e7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.filter-bar {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.date-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+}
+.btn-nav-arrow {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* TABLE GRID */
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.schedule-table th, .schedule-table td {
+    border: 1px solid #e5e7eb;
+    padding: 15px;
+    text-align: center;
+    vertical-align: top;
+}
+
+.schedule-table th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Cột đầu tiên (Nhân viên) cố định hoặc to hơn */
+.col-staff {
+    width: 250px;
+    text-align: left !important;
+}
+
+.staff-cell {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.staff-avatar-small {
+    width: 40px; height: 40px;
+    background: #e0f2fe; color: #0090e7;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+
+/* SHIFT BOXES (Các ô ca làm việc) */
+.shift-box {
+    padding: 8px;
+    border-radius: 6px;
+    text-align: left;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+/* Màu sắc theo loại ca */
+.shift-morning {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border-left: 3px solid #1565c0;
+}
+.shift-afternoon {
+    background-color: #fff3e0;
+    color: #e65100;
+    border-left: 3px solid #e65100;
+}
+.shift-night {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    border-left: 3px solid #7b1fa2;
+}
+
+.shift-time { font-weight: 700; display: block; margin-bottom: 2px; }
+
+/* --- PATIENT MANAGER (QUẢN LÝ BỆNH NHÂN) --- */
+
+.patient-manager-container {
+    padding: 10px;
+}
+
+.patient-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.btn-add-patient {
+    background-color: #0090e7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.btn-add-patient:hover {
+    background-color: #007ac1;
+}
+
+/* KHUNG TÌM KIẾM */
+.search-container {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: #333;
+}
+
+/* DANH SÁCH THẺ BỆNH NHÂN */
+.patient-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.patient-item-card {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.patient-item-card:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-color: #0090e7;
+}
+
+/* Thông tin bên trái thẻ */
+.p-card-info h4 {
+    margin: 0 0 8px 0;
+    font-size: 17px;
+    color: #111827;
+    font-weight: 700;
+}
+
+.p-card-meta {
+    font-size: 14px;
+    color: #6b7280;
+    display: flex;
+    gap: 20px;
+}
+
+.p-card-meta span {
+    display: inline-block;
+}
+
+/* Hành động bên phải thẻ */
+.p-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Badge trạng thái */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-active { background-color: #e8f5e9; color: #2e7d32; } /* Xanh lá */
+.status-out { background-color: #ffebee; color: #c62828; }    /* Đỏ */
+.status-wait { background-color: #fff3e0; color: #ef6c00; }   /* Cam */
+
+/* Nút icon mắt/bút */
+.action-icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #4b5563;
+    transition: 0.2s;
+}
+
+.action-icon-btn:hover {
+    color: #0090e7;
+}
+
+/* --- MODAL STYLES (Cửa sổ bật lên) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Mờ nền đen */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    width: 500px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-header h3 { margin: 0; color: #111827; }
+
+.close-btn {
+    background: none; border: none; font-size: 20px; cursor: pointer; color: #666;
+}
+
+/* Form Styles trong Modal */
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 14px; }
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box; /* Quan trọng để không bị tràn khung */
+}
+.form-select {
+    width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;
+}
+
+.modal-actions {
+    display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;
+}
+
+.btn-cancel {
+    background-color: #f3f4f6; color: #374151; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;
+}
+.btn-submit {
+    background-color: #0090e7; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;
+}
+.btn-submit:hover { background-color: #007bb5; }
+
+/* --- STAFF MANAGER: GIAO DIỆN QUẢN LÝ NHÂN VIÊN --- */
+
+/* 1. Thanh Tab chuyển đổi */
+.staff-tabs-container {
+    background-color: #f3f4f6; /* Nền xám nhạt bao quanh */
+    padding: 4px;
+    border-radius: 8px;
+    display: inline-flex;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.staff-tab-btn {
+    padding: 8px 24px;
+    border: none;
+    background: transparent;
+    color: #6b7280; /* Màu chữ xám */
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+/* Trạng thái Tab đang chọn (Nền trắng, chữ đen, đổ bóng nhẹ) */
+.staff-tab-btn.active {
+    background-color: #ffffff;
+    color: #111827;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.staff-tab-btn:hover:not(.active) {
+    background-color: #e5e7eb;
+}
+
+/* 2. Khung chứa danh sách bên dưới */
+.staff-list-box {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Style bổ sung cho thẻ nhân viên (kế thừa từ patient-item-card) */
+.staff-role-badge {
+    font-size: 12px;
+    background: #e0f2fe;
+    color: #0090e7;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+}

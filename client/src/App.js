@@ -5,6 +5,8 @@ import Login from './Login';       // Import trang đăng nhập
 import Dashboard from './Dashboard'; // Import Dashboard
 import Register from './Register';
 import DoctorAppointments from './components/DoctorAppointments';
+import NurseDashboard from './NurseDashboard';
+import AdminDashboard from './AdminDashboard';
 
 function App() {
   return (
@@ -24,6 +26,12 @@ function App() {
 
         {/* Dashboard appointment của bác sĩ */}
         <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+
+        {/* Route dẫn đến Dashboard Y tá */}
+        <Route path="/nurse-dashboard" element={<NurseDashboard />} />
+
+        {/* Route dẫn đến Dashboard Quản trị viên */}
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );

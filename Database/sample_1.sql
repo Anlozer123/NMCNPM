@@ -53,4 +53,26 @@ INSERT INTO MedicalRecord (PatientID, DoctorID, Diagnosis, Notes, Date)
 VALUES 
 (1, 2, N'Cảm cúm mùa', N'Bệnh nhân sốt nhẹ, ho khan. Đã kê thuốc hạ sốt.', DATEADD(month, -1, GETDATE()));
 
+INSERT INTO DoctorInstruction (DoctorID, PatientID, Instruction, Status, CreatedAt)
+VALUES 
+(2, 1, N'Tiêm thuốc kháng sinh liều 2 sau ăn trưa', 'New', GETDATE()), 
+(2, 2, N'Theo dõi nhịp tim mỗi 1 tiếng', 'New', GETDATE()),
+(2, 1, N'Thay băng vết thương', 'Completed', DATEADD(hour, -2, GETDATE())); -- Đã làm xong
+
+-- 9. Thêm dữ liệu cho UC013: Handle Patient Request (Xử lý yêu cầu bệnh nhân)
+-- Giả định: Bệnh nhân A và B gửi yêu cầu từ App của họ.
+-- Mục đích: Khi Nurse đăng nhập, sẽ thấy các yêu cầu này cần xử lý.
+INSERT INTO PatientRequest (PatientID, NurseID, Content, Status, CreatedAt)
+VALUES 
+(1, NULL, N'Tôi thấy khó thở, cần hỗ trợ gấp', 'Pending', GETDATE()), -- Chưa có y tá nhận
+(2, 3, N'Xin đổi ga giường mới', 'Processing', DATEADD(minute, -30, GETDATE())); -- Y tá (ID 3) đang xử lý
+
+-- 10. Thêm dữ liệu cho UC011: Request Medical Equipment Supply (Yêu cầu vật tư)
+-- Giả định: Y tá (ID 3) đã từng yêu cầu vật tư trước đó.
+-- Mục đích: Để xem lại lịch sử yêu cầu vật tư.
+INSERT INTO EquipmentRequest (StaffID, EquipmentID, Quantity, Urgency, Reason, Status, RequestDate)
+VALUES 
+(3, 1, 2, 'High', N'Máy đo huyết áp phòng 101 bị hỏng màn hình', 'Pending', GETDATE()),
+(3, 2, 1, 'Normal', N'Cần thêm xe lăn cho khu vực sảnh chờ', 'Approved', DATEADD(day, -1, GETDATE()));
+
 GO
