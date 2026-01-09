@@ -224,13 +224,15 @@ exports.getPatientDetail = async (req, res) => {
     }
 };
 
-// --- 7. Hàm cập nhật hồ sơ bệnh nhân (Đáp ứng UC005 - Ảnh 1 & 3) ---
+// --- 7. Hàm cập nhật hồ sơ bệnh nhân (Đã cập nhật thêm thông tin người thân) ---
 exports.updatePatientProfile = async (req, res) => {
     const { patientId } = req.params;
     const { 
         FullName, Gender, DoB, Phone, Address, InsuranceID, 
         BloodGroup, Allergies, MedicalHistory, CurrentRoom, 
-        AdmissionDiagnosis, CurrentCondition 
+        AdmissionDiagnosis, CurrentCondition,
+        // Thêm 3 trường mới ở đây:
+        RelativeName, RelativePhone, Relationship 
     } = req.body;
 
     try {
@@ -249,7 +251,11 @@ exports.updatePatientProfile = async (req, res) => {
                 MedicalHistory = ${MedicalHistory},
                 CurrentRoom = ${CurrentRoom},
                 AdmissionDiagnosis = ${AdmissionDiagnosis},
-                CurrentCondition = ${CurrentCondition}
+                CurrentCondition = ${CurrentCondition},
+                -- Cập nhật thêm 3 cột mới vào DB --
+                RelativeName = ${RelativeName},
+                RelativePhone = ${RelativePhone},
+                Relationship = ${Relationship}
             WHERE PatientID = ${patientId}
         `;
 

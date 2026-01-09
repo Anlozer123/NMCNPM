@@ -108,7 +108,9 @@ const DoctorAppointments = () => {
                                             <button className="btn-primary-blue" onClick={() => navigate(`/patient-profile/${p.PatientID}`)}>
                                                 <FaFileMedical /> Xem hồ sơ
                                             </button>
-                                            <button className="btn-secondary-white">Cập nhật</button>
+                                            <button className="btn-secondary-white" onClick={() => navigate(`/patient-profile/${p.PatientID}`, { state: { autoEdit: true, targetTab: 'info' } })}>
+                                                Cập nhật
+                                            </button>
                                         </div>
                                     </div>
                                 ))}

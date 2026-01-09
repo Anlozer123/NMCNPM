@@ -148,4 +148,9 @@ CREATE TABLE ConsultationRequests (
     CONSTRAINT FK_Consult_Doctor FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID)
 );
 
+ALTER TABLE Patient
+ADD RelativeName NVARCHAR(255),
+    RelativePhone VARCHAR(15),
+    Relationship NVARCHAR(100);
+
 GO
