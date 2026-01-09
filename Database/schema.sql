@@ -106,3 +106,51 @@ CREATE TABLE Schedule (
     EndTime TIME
 );
 
+-- Thêm thuộc tính cho bảng Patient
+
+ALTER TABLE Patient ADD 
+    InsuranceID VARCHAR(50),      -- Mã BHYT
+    BloodGroup NVARCHAR(5),       -- Nhóm máu
+    Allergies NVARCHAR(MAX),      -- Dị ứng thuốc
+    MedicalHistory NVARCHAR(MAX), -- Tiền sử bệnh
+    CurrentRoom NVARCHAR(20),     -- Phòng bệnh 
+    AdmissionDiagnosis NVARCHAR(MAX), -- Chẩn đoán nhập viện
+    CurrentCondition NVARCHAR(MAX);   -- Tình trạng hiện tại
+
+-- 11.
+CREATE TABLE NursingInstructions (
+    InstructionID INT PRIMARY KEY IDENTITY(1,1), -- Sửa lỗi AUTO_INCREMENT
+    PatientID INT NOT NULL,
+    DoctorID INT NOT NULL,
+    NurseID INT DEFAULT NULL,
+    InstructionType NVARCHAR(100), -- Dùng NVARCHAR để hỗ trợ tiếng Việt có dấu
+    Priority NVARCHAR(50),
+    Content NVARCHAR(MAX),
+    Status NVARCHAR(50) DEFAULT N'Chờ xử lý',
+    CreatedAt DATETIME DEFAULT GETDATE() -- GETDATE() tương đương CURRENT_TIMESTAMP
+);
+
+-- 12.
+CREATE TABLE ConsultationRequests (
+    RequestID INT PRIMARY KEY IDENTITY(1,1),
+    PatientID INT NOT NULL,
+    DoctorID INT NULL, -- Để NULL vì lúc đầu chưa có bác sĩ nào nhận
+    Specialty NVARCHAR(100), -- Chuyên khoa (Tim mạch, Da liễu...)
+    Priority NVARCHAR(50), -- Mức độ: Khẩn cấp, Trung bình, Thấp
+    Symptoms NVARCHAR(MAX), -- Triệu chứng/Mô tả bệnh
+    ResponseContent NVARCHAR(MAX) NULL, -- Nội dung phản hồi của bác sĩ
+    Status NVARCHAR(50) DEFAULT N'Chờ phản hồi', -- 'Chờ phản hồi' hoặc 'Đã phản hồi'
+    CreatedDate DATETIME DEFAULT GETDATE(), -- Thời gian gửi yêu cầu
+    ResponseDate DATETIME NULL, -- Thời gian bác sĩ trả lời
+    
+    -- Tạo khóa ngoại
+    CONSTRAINT FK_Consult_Patient FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    CONSTRAINT FK_Consult_Doctor FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID)
+);
+
+ALTER TABLE Patient
+ADD RelativeName NVARCHAR(255),
+    RelativePhone VARCHAR(15),
+    Relationship NVARCHAR(100);
+
+GO

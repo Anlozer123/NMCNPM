@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import DoctorDashboard from './components/DoctorDashboard';
 import PatientDashboard from './components/PatientDashboard';
 
-const Dashboard = () => {
+// Thêm activeView vào props nhận từ App.js
+const Dashboard = ({ activeView }) => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
 
@@ -24,11 +25,15 @@ const Dashboard = () => {
     // Phân quyền hiển thị
     return (
         <div>
-            {/* Dashboard Bác sĩ */}
-            {user.Role === 'Doctor' && <DoctorDashboard user={user} />}
+            {/* Dashboard Bác sĩ: Truyền thêm activeView xuống */}
+            {user.Role === 'Doctor' && (
+                <DoctorDashboard user={user} activeView={activeView} />
+            )}
 
             {/* Hiện Dashboard Bệnh nhân */}
-            {(user.Role === 'Patient' || !user.Role) && <PatientDashboard user={user} />}
+            {(user.Role === 'Patient' || !user.Role) && (
+                <PatientDashboard user={user} />
+            )}
             
             {/* Sprint sau sẽ làm thêm Admin/Nurse */}
             {user.Role === 'Admin' && <h1>Chào Admin (Tính năng đang phát triển)</h1>}

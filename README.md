@@ -13,6 +13,7 @@
 Mở terminal tại thư mục `server`:
 ```bash
 cd server
+node seed_db.js
 npm install
 npm run dev
 ```

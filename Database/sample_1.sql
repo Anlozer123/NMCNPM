@@ -53,4 +53,19 @@ INSERT INTO MedicalRecord (PatientID, DoctorID, Diagnosis, Notes, Date)
 VALUES 
 (1, 2, N'Cảm cúm mùa', N'Bệnh nhân sốt nhẹ, ho khan. Đã kê thuốc hạ sốt.', DATEADD(month, -1, GETDATE()));
 
+-- 8. Thêm dữ liệu mẫu cho Đơn thuốc (Prescription)
+-- Lấy RecordID = 1 (Hồ sơ bệnh án của Bệnh nhân A mà ta đã tạo ở mục 7)
+INSERT INTO Prescription (RecordID, CreatedDate)
+VALUES (1, GETDATE());
+
+-- 9. Thêm chi tiết đơn thuốc (PrescriptionItem)
+-- Giả sử đơn thuốc trên có ID = 1. Ta kê 2 loại thuốc:
+-- Thuốc 1: Paracetamol (MedicineID = 1 trong bảng Medicine)
+-- Thuốc 2: Vitamin C (MedicineID = 3 trong bảng Medicine)
+
+INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Quantity, Dosage, Frequency, Duration, Note)
+VALUES 
+(1, 1, 10, N'1 viên', N'Sáng - Chiều', N'5 ngày', N'Uống sau ăn'),
+(1, 3, 20, N'2 viên', N'Sáng - Tối', N'10 ngày', N'Uống nhiều nước');
+
 GO

@@ -1,10 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Homepage from './Homepage'; // Import trang chủ mới
-import Login from './Login';       // Import trang đăng nhập 
-import Dashboard from './Dashboard'; // Import Dashboard
+import Homepage from './Homepage'; 
+import Login from './Login';        
+import Dashboard from './Dashboard'; 
 import Register from './Register';
-import DoctorAppointments from './components/DoctorAppointments';
+// XÓA HOẶC COMMENT DÒNG DƯỚI ĐÂY:
+// import DoctorAppointments from './components/DoctorAppointments'; 
 
 function App() {
   return (
@@ -19,11 +20,22 @@ function App() {
         {/* Đăng ký */}
         <Route path="/register" element={<Register />} />
         
-        {/* Dashboard sau khi đăng nhập */}
+        {/* Dashboard mặc định */}
         <Route path="/dashboard" element={<Dashboard />} />
 
-        {/* Dashboard appointment của bác sĩ */}
-        <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+        {/* Trang Lịch khám: Gọi qua Dashboard và truyền tin hiệu activeView */}
+        <Route 
+          path="/doctor/appointments" 
+          element={<Dashboard activeView="appointments" />} 
+        />
+
+        {/* --- THÊM MỚI: Route cho chức năng Xem hồ sơ (UC005) --- */}
+        <Route path="/patient-profile/:id" element={<Dashboard activeView="patient-detail" />} />
+
+        {/* --- THÊM MỚI: Route cho chức năng Tư vấn trực tuyến (UC008) --- */}
+        {/* URL: http://localhost:3000/online-consultation */}
+        <Route path="/online-consultation" element={<Dashboard activeView="online-consultation" />} />
+
       </Routes>
     </Router>
   );
