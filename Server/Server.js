@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const doctorRoutes = require('./Routes/doctorRoutes');
+const patientRoutes = require('./Routes/patientRoutes');
 const { connectDB, sql } = require('./Config/db'); 
 require('dotenv').config();
 
@@ -36,7 +37,7 @@ app.get('/api/test-users', async (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/doctor', doctorRoutes);
-
+app.use('/api/patient', patientRoutes);
 // Khởi động Server
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);
