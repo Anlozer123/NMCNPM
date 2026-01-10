@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaLock, FaHospitalSymbol } from 'react-icons/fa'; // Import Icon
-import './Login.css'; // Import CSS vừa tạo
+import { FaUser, FaLock, FaHospitalSymbol } from 'react-icons/fa'; 
+import './Login.css'; 
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // Hiệu ứng loading
+    const [isLoading, setIsLoading] = useState(false); 
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -23,15 +23,42 @@ const Login = () => {
                 password
             });
 
+            // Kiểm tra dữ liệu trả về
+            // Lưu ý: Backend cần trả về cấu trúc có chứa thông tin user và role
             if (response.data.user) {
+                // 1. Lưu thông tin vào localStorage
                 localStorage.setItem('user', JSON.stringify(response.data.user));
-                // Chuyển hướng sau 1s để trải nghiệm mượt hơn
+                
+                // Lấy Role từ dữ liệu user (Lưu ý: check kỹ xem backend trả về là 'Role' hay 'role')
+                // Dựa theo SQL của bạn thì tên cột là Role (viết hoa chữ R)
+                const userRole = response.data.user.Role || response.data.user.role; 
+                
+                // Lưu role riêng để tiện kiểm tra sau này
+                localStorage.setItem('role', userRole);
+
+                // 2. Chuyển hướng sau 0.5s dựa trên Role
                 setTimeout(() => {
-                    navigate('/dashboard');
+                    if (userRole === 'Nurse') {
+                        console.log("Là Y tá -> Chuyển sang Nurse Dashboard");
+                        navigate('/nurse-dashboard'); 
+                    } 
+                    else if (userRole === 'Doctor') {
+                        console.log("Là Bác sĩ -> Chuyển sang Doctor Dashboard");
+                        navigate('/doctor/appointments');
+                    } 
+                    else if (userRole === 'Admin') {
+                        console.log("Là Admin -> Chuyển sang Admin Dashboard");
+                        navigate('/admin-dashboard'); 
+                    } 
+                    else {
+                        // Mặc định nếu không nhận diện được quyền hoặc là Bệnh nhân
+                        navigate('/'); 
+                    }
                 }, 500);
             }
         } catch (err) {
             setIsLoading(false);
+            console.error("Lỗi đăng nhập:", err); // Log lỗi ra console để dễ debug
             if (err.response && err.response.data) {
                 setError(err.response.data.message);
             } else {

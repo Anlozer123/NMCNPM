@@ -1,156 +1,254 @@
-﻿-- Tạo Database
-CREATE DATABASE HospitalManagement;
-GO
-USE HospitalManagement;
+﻿USE [master]
 GO
 
--- 1. Bảng Staff (Gộp chung Doctor, Nurse, Admin)
-CREATE TABLE Staff (
-    StaffID INT PRIMARY KEY IDENTITY(1,1),
-    FullName NVARCHAR(100) NOT NULL,
-    DoB DATE,
-    Phone VARCHAR(15),
-    Email VARCHAR(100) UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL, 
-    Role NVARCHAR(20) NOT NULL CHECK (Role IN ('Doctor', 'Nurse', 'Admin')), -- Phân quyền
-    Specialization NVARCHAR(100), -- Chỉ dành cho Doctor [cite: 1]
-    AdminPrivilege BIT DEFAULT 0  -- Chỉ dành cho Admin [cite: 6]
+-- 1. TẠO DATABASE
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'HospitalManagement')
+BEGIN
+    CREATE DATABASE [HospitalManagement]
+END
+GO
+
+USE [HospitalManagement]
+GO
+
+-- =========================
+-- 2. TABLE DEFINITIONS
+-- =========================
+
+-- Staff
+CREATE TABLE [dbo].[Staff](
+    [StaffID] INT IDENTITY(1,1) PRIMARY KEY,
+    [FullName] NVARCHAR(100) NOT NULL,
+    [DoB] DATE NULL,
+    [Phone] VARCHAR(15) NULL,
+    [Email] VARCHAR(100) UNIQUE,
+    [PasswordHash] VARCHAR(255) NOT NULL,
+    [Role] NVARCHAR(20) NOT NULL CHECK ([Role] IN ('Admin','Nurse','Doctor')),
+    [Specialization] NVARCHAR(100) NULL,
+    [AdminPrivilege] BIT DEFAULT 0
 );
+GO
 
--- 2. Bảng Patient (Bệnh nhân)
-CREATE TABLE Patient (
-    PatientID INT PRIMARY KEY IDENTITY(1,1),
-    FullName NVARCHAR(100) NOT NULL,
-    Gender NVARCHAR(10),
-    DoB DATE,
-    Phone VARCHAR(15),
-    Email VARCHAR(100), 
-    Address NVARCHAR(200),
-    PasswordHash VARCHAR(255) NOT NULL
+-- Patient
+CREATE TABLE [dbo].[Patient](
+    [PatientID] INT IDENTITY(1,1) PRIMARY KEY,
+    [FullName] NVARCHAR(100) NOT NULL,
+    [Gender] NVARCHAR(10),
+    [DoB] DATE,
+    [Phone] VARCHAR(15),
+    [Email] VARCHAR(100),
+    [Address] NVARCHAR(200),
+    [PasswordHash] VARCHAR(255) NOT NULL,
+    [CurrentRoom] NVARCHAR(20),
+    [NurseID] INT NULL
 );
+GO
 
--- 3. Bảng Medicine (Thuốc)
-CREATE TABLE Medicine (
-    MedicineID INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100) NOT NULL,
-    UnitPrice DECIMAL(10, 2),
-    StockQuantity INT DEFAULT 0, -- Quản lý tồn kho 
-    ExpiryDate DATE
+-- Medicine
+CREATE TABLE [dbo].[Medicine](
+    [MedicineID] INT IDENTITY(1,1) PRIMARY KEY,
+    [Name] NVARCHAR(100) NOT NULL,
+    [UnitPrice] DECIMAL(10,2),
+    [StockQuantity] INT DEFAULT 0,
+    [ExpiryDate] DATE
 );
+GO
 
--- 4. Bảng MedicalRecord (Hồ sơ bệnh án)
-CREATE TABLE MedicalRecord (
-    RecordID INT PRIMARY KEY IDENTITY(1,1),
-    PatientID INT FOREIGN KEY REFERENCES Patient(PatientID),
-    DoctorID INT FOREIGN KEY REFERENCES Staff(StaffID), -- Bác sĩ phụ trách
-    Diagnosis NVARCHAR(MAX), -- Chẩn đoán
-    Notes NVARCHAR(MAX),     -- Ghi chú
-    Date DATETIME DEFAULT GETDATE()
+-- Equipment
+CREATE TABLE [dbo].[Equipment](
+    [EquipmentID] INT IDENTITY(1,1) PRIMARY KEY,
+    [Name] NVARCHAR(100) NOT NULL,
+    [Status] NVARCHAR(50),
+    [Info] NVARCHAR(MAX),
+    [Quantity] INT DEFAULT 0
 );
+GO
 
--- 5. Bảng Prescription (Đơn thuốc - Phần đầu)
-CREATE TABLE Prescription (
-    PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
-    RecordID INT FOREIGN KEY REFERENCES MedicalRecord(RecordID),
-    CreatedDate DATETIME DEFAULT GETDATE()
+-- Appointment
+CREATE TABLE [dbo].[Appointment](
+    [AppointmentID] INT IDENTITY(1,1) PRIMARY KEY,
+    [PatientID] INT,
+    [DoctorID] INT,
+    [AppointmentDate] DATETIME NOT NULL,
+    [Reason] NVARCHAR(200),
+    [Status] NVARCHAR(20) DEFAULT 'Pending'
+        CHECK ([Status] IN ('Cancelled','Completed','Confirmed','Pending'))
 );
+GO
 
--- 6. Bảng PrescriptionItem (Chi tiết đơn thuốc)
-CREATE TABLE PrescriptionItem (
-    ItemID INT PRIMARY KEY IDENTITY(1,1),
-    PrescriptionID INT FOREIGN KEY REFERENCES Prescription(PrescriptionID),
-    MedicineID INT FOREIGN KEY REFERENCES Medicine(MedicineID),
-    Quantity INT,
-    Dosage NVARCHAR(100),    -- Liều lượng (VD: 2 viên/ngày)
-    Frequency NVARCHAR(100), -- Tần suất
-    Duration NVARCHAR(50),   -- Thời gian dùng
-    Note NVARCHAR(200)
+-- MedicalRecord
+CREATE TABLE [dbo].[MedicalRecord](
+    [RecordID] INT IDENTITY(1,1) PRIMARY KEY,
+    [PatientID] INT,
+    [DoctorID] INT,
+    [Diagnosis] NVARCHAR(MAX),
+    [Notes] NVARCHAR(MAX),
+    [Date] DATETIME DEFAULT GETDATE()
 );
+GO
 
--- 7. Bảng Appointment (Lịch hẹn)
-CREATE TABLE Appointment (
-    AppointmentID INT PRIMARY KEY IDENTITY(1,1),
-    PatientID INT FOREIGN KEY REFERENCES Patient(PatientID),
-    DoctorID INT FOREIGN KEY REFERENCES Staff(StaffID),
-    AppointmentDate DATETIME NOT NULL,
-    Status NVARCHAR(20) DEFAULT 'Pending' CHECK (Status IN ('Pending', 'Confirmed', 'Completed', 'Cancelled')),
-    Reason NVARCHAR(200)
+-- Prescription (Header)
+CREATE TABLE [dbo].[Prescription](
+    [PrescriptionID] INT IDENTITY(1,1) PRIMARY KEY,
+    [RecordID] INT,
+    [CreatedDate] DATETIME DEFAULT GETDATE()
 );
+GO
 
--- 8. Bảng Equipment (Thiết bị y tế)
-CREATE TABLE Equipment (
-    EquipmentID INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100) NOT NULL,
-    Status NVARCHAR(50), -- Tình trạng (Tốt/Hỏng)
-    Info NVARCHAR(MAX),
-    Quantity INT DEFAULT 0
+-- PrescriptionItem
+CREATE TABLE [dbo].[PrescriptionItem](
+    [ItemID] INT IDENTITY(1,1) PRIMARY KEY,
+    [PrescriptionID] INT,
+    [MedicineID] INT,
+    [Quantity] INT,
+    [Dosage] NVARCHAR(100),
+    [Frequency] NVARCHAR(100),
+    [Duration] NVARCHAR(50),
+    [Note] NVARCHAR(200)
 );
+GO
 
--- 9. Bảng EquipmentRequest (Yêu cầu thiết bị - Của Y tá/Bác sĩ)
-CREATE TABLE EquipmentRequest (
-    RequestID INT PRIMARY KEY IDENTITY(1,1),
-    StaffID INT FOREIGN KEY REFERENCES Staff(StaffID), -- Người yêu cầu
-    EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
-    Quantity INT,
-    RequestDate DATETIME DEFAULT GETDATE(),
-    Status NVARCHAR(20) DEFAULT 'Pending' -- Pending/Approved/Rejected
+-- DoctorInstruction
+CREATE TABLE [dbo].[DoctorInstruction](
+    [InstructionID] INT IDENTITY(1,1) PRIMARY KEY,
+    [DoctorID] INT,
+    [PatientID] INT,
+    [Instruction] NVARCHAR(MAX) NOT NULL,
+    [NurseNote] NVARCHAR(MAX),
+    [CreatedAt] DATETIME DEFAULT GETDATE(),
+    [CompletedAt] DATETIME NULL,
+    [Status] NVARCHAR(20) DEFAULT 'Pending'
+        CHECK ([Status] IN ('Completed','Pending'))
 );
+GO
 
--- 10. Bảng Schedule (Lịch làm việc nhân viên)
-CREATE TABLE Schedule (
-    ScheduleID INT PRIMARY KEY IDENTITY(1,1),
-    StaffID INT FOREIGN KEY REFERENCES Staff(StaffID),
-    Room NVARCHAR(50),
-    WorkDate DATE,
-    StartTime TIME,
-    EndTime TIME
+-- NursingInstructions
+CREATE TABLE [dbo].[NursingInstructions](
+    [InstructionID] INT IDENTITY(1,1) PRIMARY KEY,
+    [PatientID] INT NOT NULL,
+    [DoctorID] INT NOT NULL,
+    [NurseID] INT NULL,
+    [InstructionType] NVARCHAR(100),
+    [Priority] NVARCHAR(50),
+    [Content] NVARCHAR(MAX),
+    [Status] NVARCHAR(50) DEFAULT N'Chờ xử lý',
+    [CreatedAt] DATETIME DEFAULT GETDATE()
 );
+GO
 
--- Thêm thuộc tính cho bảng Patient
-
-ALTER TABLE Patient ADD 
-    InsuranceID VARCHAR(50),      -- Mã BHYT
-    BloodGroup NVARCHAR(5),       -- Nhóm máu
-    Allergies NVARCHAR(MAX),      -- Dị ứng thuốc
-    MedicalHistory NVARCHAR(MAX), -- Tiền sử bệnh
-    CurrentRoom NVARCHAR(20),     -- Phòng bệnh 
-    AdmissionDiagnosis NVARCHAR(MAX), -- Chẩn đoán nhập viện
-    CurrentCondition NVARCHAR(MAX);   -- Tình trạng hiện tại
-
--- 11.
-CREATE TABLE NursingInstructions (
-    InstructionID INT PRIMARY KEY IDENTITY(1,1), -- Sửa lỗi AUTO_INCREMENT
-    PatientID INT NOT NULL,
-    DoctorID INT NOT NULL,
-    NurseID INT DEFAULT NULL,
-    InstructionType NVARCHAR(100), -- Dùng NVARCHAR để hỗ trợ tiếng Việt có dấu
-    Priority NVARCHAR(50),
-    Content NVARCHAR(MAX),
-    Status NVARCHAR(50) DEFAULT N'Chờ xử lý',
-    CreatedAt DATETIME DEFAULT GETDATE() -- GETDATE() tương đương CURRENT_TIMESTAMP
+-- ConsultationRequests
+CREATE TABLE [dbo].[ConsultationRequests](
+    [RequestID] INT IDENTITY(1,1) PRIMARY KEY,
+    [PatientID] INT NOT NULL,
+    [DoctorID] INT NULL,
+    [Specialty] NVARCHAR(100),
+    [Priority] NVARCHAR(50),
+    [Symptoms] NVARCHAR(MAX),
+    [ResponseContent] NVARCHAR(MAX),
+    [Status] NVARCHAR(50) DEFAULT N'Chờ phản hồi',
+    [CreatedDate] DATETIME DEFAULT GETDATE(),
+    [ResponseDate] DATETIME NULL
 );
+GO
 
--- 12.
-CREATE TABLE ConsultationRequests (
-    RequestID INT PRIMARY KEY IDENTITY(1,1),
-    PatientID INT NOT NULL,
-    DoctorID INT NULL, -- Để NULL vì lúc đầu chưa có bác sĩ nào nhận
-    Specialty NVARCHAR(100), -- Chuyên khoa (Tim mạch, Da liễu...)
-    Priority NVARCHAR(50), -- Mức độ: Khẩn cấp, Trung bình, Thấp
-    Symptoms NVARCHAR(MAX), -- Triệu chứng/Mô tả bệnh
-    ResponseContent NVARCHAR(MAX) NULL, -- Nội dung phản hồi của bác sĩ
-    Status NVARCHAR(50) DEFAULT N'Chờ phản hồi', -- 'Chờ phản hồi' hoặc 'Đã phản hồi'
-    CreatedDate DATETIME DEFAULT GETDATE(), -- Thời gian gửi yêu cầu
-    ResponseDate DATETIME NULL, -- Thời gian bác sĩ trả lời
-    
-    -- Tạo khóa ngoại
-    CONSTRAINT FK_Consult_Patient FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
-    CONSTRAINT FK_Consult_Doctor FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID)
+-- PatientRequest
+CREATE TABLE [dbo].[PatientRequest](
+    [RequestID] INT IDENTITY(1,1) PRIMARY KEY,
+    [PatientID] INT,
+    [NurseID] INT,
+    [Content] NVARCHAR(MAX) NOT NULL,
+    [CreatedAt] DATETIME DEFAULT GETDATE(),
+    [UpdatedAt] DATETIME NULL,
+    [Status] NVARCHAR(20) DEFAULT 'Pending'
+        CHECK ([Status] IN ('Escalated','Completed','Processing','Pending'))
 );
+GO
 
-ALTER TABLE Patient
-ADD RelativeName NVARCHAR(255),
+-- EquipmentRequest
+CREATE TABLE [dbo].[EquipmentRequest](
+    [RequestID] INT IDENTITY(1,1) PRIMARY KEY,
+    [StaffID] INT,
+    [EquipmentID] INT,
+    [Quantity] INT,
+    [RequestDate] DATETIME DEFAULT GETDATE(),
+    [Reason] NVARCHAR(200),
+    [PatientID] INT,
+    [Status] NVARCHAR(20) DEFAULT 'Pending',
+    [Urgency] NVARCHAR(20) DEFAULT 'Normal'
+        CHECK ([Urgency] IN ('Critical','High','Normal','Low'))
+);
+GO
+
+-- Schedule
+CREATE TABLE [dbo].[Schedule](
+    [ScheduleID] INT IDENTITY(1,1) PRIMARY KEY,
+    [StaffID] INT,
+    [Room] NVARCHAR(50),
+    [WorkDate] DATE,
+    [StartTime] TIME,
+    [EndTime] TIME
+);
+GO
+
+-- WorkSchedule
+CREATE TABLE [dbo].[WorkSchedule](
+    [ScheduleID] INT IDENTITY(1,1) PRIMARY KEY,
+    [StaffID] INT,
+    [WorkDate] DATE NOT NULL,
+    [Note] NVARCHAR(100),
+    [ShiftType] NVARCHAR(20)
+        CHECK ([ShiftType] IN ('Weekend','Night','Afternoon','Morning'))
+);
+GO
+
+-- =========================
+-- 3. EXTEND PATIENT
+-- =========================
+ALTER TABLE Patient ADD
+    InsuranceID VARCHAR(50),
+    BloodGroup NVARCHAR(5),
+    Allergies NVARCHAR(MAX),
+    MedicalHistory NVARCHAR(MAX),
+    AdmissionDiagnosis NVARCHAR(MAX),
+    CurrentCondition NVARCHAR(MAX),
+    RelativeName NVARCHAR(255),
     RelativePhone VARCHAR(15),
     Relationship NVARCHAR(100);
+GO
 
+-- =========================
+-- 4. FOREIGN KEYS
+-- =========================
+ALTER TABLE Patient ADD FOREIGN KEY (NurseID) REFERENCES Staff(StaffID);
+
+ALTER TABLE Appointment ADD FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID);
+ALTER TABLE Appointment ADD FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
+
+ALTER TABLE MedicalRecord ADD FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID);
+ALTER TABLE MedicalRecord ADD FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
+
+ALTER TABLE Prescription ADD FOREIGN KEY (RecordID) REFERENCES MedicalRecord(RecordID);
+
+ALTER TABLE PrescriptionItem ADD FOREIGN KEY (PrescriptionID) REFERENCES Prescription(PrescriptionID);
+ALTER TABLE PrescriptionItem ADD FOREIGN KEY (MedicineID) REFERENCES Medicine(MedicineID);
+
+ALTER TABLE DoctorInstruction ADD FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID);
+ALTER TABLE DoctorInstruction ADD FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
+
+ALTER TABLE NursingInstructions ADD FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
+ALTER TABLE NursingInstructions ADD FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID);
+ALTER TABLE NursingInstructions ADD FOREIGN KEY (NurseID) REFERENCES Staff(StaffID);
+
+ALTER TABLE ConsultationRequests ADD FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
+ALTER TABLE ConsultationRequests ADD FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID);
+
+ALTER TABLE PatientRequest ADD FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
+ALTER TABLE PatientRequest ADD FOREIGN KEY (NurseID) REFERENCES Staff(StaffID);
+
+ALTER TABLE EquipmentRequest ADD FOREIGN KEY (EquipmentID) REFERENCES Equipment(EquipmentID);
+ALTER TABLE EquipmentRequest ADD FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
+ALTER TABLE EquipmentRequest ADD FOREIGN KEY (StaffID) REFERENCES Staff(StaffID);
+
+ALTER TABLE Schedule ADD FOREIGN KEY (StaffID) REFERENCES Staff(StaffID);
+ALTER TABLE WorkSchedule ADD FOREIGN KEY (StaffID) REFERENCES Staff(StaffID);
 GO
