@@ -61,6 +61,35 @@ function AdminDashboard() {
     };
     const [staffFormData, setStaffFormData] = useState(initialStaffForm);
 
+    // State thống kê nhanh trên Trang chủ
+    const [stats, setStats] = useState({
+        patientCount: 0,
+        doctorCount: 0,
+        nurseCount: 0,
+        appointmentCount: 0,
+        requestCount: 0
+    });
+
+    // useEffect để gọi API stats khi vào tab 'home'
+    useEffect(() => {
+        if (activeTab === 'home') {
+            // 1. Luôn lấy số liệu thống kê mới nhất khi vào trang chủ
+            fetch('http://localhost:5000/api/admin/stats')
+                .then(res => res.json())
+                .then(data => setStats(data))
+                .catch(err => console.error("Lỗi tải stats:", err));
+            
+            // 2. Chỉ lấy Profile nếu chưa có dữ liệu (tránh gọi dư thừa)
+            if (!adminProfile) {
+                const user = JSON.parse(localStorage.getItem('user')) || { StaffID: 1 };
+                fetch(`http://localhost:5000/api/admin/profile?id=${user.StaffID}`)
+                    .then(res => res.json())
+                    .then(data => setAdminProfile(data))
+                    .catch(err => console.error("Lỗi tải profile:", err));
+            }
+        }
+    }, [activeTab, adminProfile]);
+
     // --- EFFECT: Nạp Font Awesome cho icons
     useEffect(() => {
         const link = document.createElement("link");
@@ -113,6 +142,10 @@ function AdminDashboard() {
         if (activeTab === 'patients') {
             fetchPatients();
         }
+
+        if (activeTab === 'staff') {
+            fetchStaffList();
+        }
     }, [activeTab]);
 
     const fetchPatients = () => {
@@ -152,9 +185,23 @@ function AdminDashboard() {
         setShowModal(true);
     };
 
+    const validatePhoneNumber = (phone) => {
+    const regex = /^\d{10}$/;
+    if (!regex.test(phone)) {
+        alert("❌ Lỗi: Số điện thoại phải có đúng 10 chữ số!");
+        return false;
+    }
+    return true;
+    };
+
     // --- XỬ LÝ SỰ KIỆN NÚT LƯU / CẬP NHẬT ---
     const handleSubmit = (e) => {
         e.preventDefault(); // Ngăn trình duyệt reload trang
+
+        // Check số điện thoại trước khi gửi
+        if (!validatePhoneNumber(formData.phone)) {
+            return; // Dừng lại, không gửi lên server
+        }
 
         // === TRƯỜNG HỢP 1: ĐANG CHỈNH SỬA (UPDATE) ===
         if (isEditing) {
@@ -254,6 +301,10 @@ function AdminDashboard() {
     // 3. Hàm Gửi dữ liệu (Submit) lên Server
     const handleStaffSubmit = (e) => {
         e.preventDefault();
+
+        if (!validatePhoneNumber(staffFormData.phone)) {
+            return; // Dừng lại, không gửi lên server
+        }
         
         // Kiểm tra xem là Đang sửa hay Đang thêm để chọn URL phù hợp
         const url = isEditingStaff 
@@ -346,78 +397,67 @@ function AdminDashboard() {
         switch (activeTab) {
             case 'home':
                 return (
-                    <div className="home-wrapper">
-                         <h2 style={{marginBottom: '25px', color: '#111827'}}>Tổng quan tài khoản</h2>
-                        {adminProfile ? (
-                            <div className="profile-full-card">
-                                {/* CỘT TRÁI */}
-                                <div className="profile-left-col">
-                                    <div style={{
-                                        width: '120px', height: '120px', backgroundColor: 'white', 
-                                        borderRadius: '50%', display: 'flex', alignItems: 'center', 
-                                        justifyContent: 'center', fontSize: '50px', color: '#0090e7', 
-                                        marginBottom: '15px', boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
-                                    }}>
-                                        <i className="fas fa-user-shield"></i>
-                                    </div>
-                                    <h2 style={{margin: 0, fontSize: '24px', fontWeight: '700'}}>{adminProfile.FullName}</h2>
-                                    <p style={{opacity: 0.9, marginTop: '5px'}}>Quản trị viên</p>
-                                    <div style={{
-                                        marginTop: '15px', backgroundColor: 'rgba(255,255,255,0.25)', 
-                                        padding: '5px 15px', borderRadius: '20px', fontSize: '14px', fontWeight: 'bold'
-                                    }}>
-                                        ID: {adminProfile.StaffID}
-                                    </div>
-                                </div>
+                    <div className="home-container">
+                        {/* Header Chào Mừng */}
+                        <div className="welcome-section">
+                            <h2 className="welcome-title">Xin chào,</h2>
+                            <p className="welcome-sub">Chúc bạn một ngày mới tốt lành nhé !</p>
+                        </div>
 
-                                {/* CỘT PHẢI */}
-                                <div className="profile-right-col" style={{flex: 1, padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
-                                    <h3 style={{borderBottom: '1px solid #e5e7eb', paddingBottom: '15px', marginBottom: '25px', color: '#374151'}}>
-                                        Thông tin liên hệ
-                                    </h3>
-                                    <div style={{display: 'flex', flexDirection: 'column', gap: '25px'}}>
-                                        {/* Ngày sinh */}
-                                        <div style={{display: 'flex', alignItems: 'center'}}>
-                                            <div style={{width: '40px', height: '40px', backgroundColor: '#eff6ff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '15px', color: '#0090e7'}}>
-                                                <i className="fas fa-birthday-cake"></i>
-                                            </div>
-                                            <div>
-                                                <div style={{fontSize: '13px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase'}}>Ngày sinh</div>
-                                                <div style={{fontSize: '16px', fontWeight: '500', color: '#111827'}}>
-                                                    {new Date(adminProfile.DoB).toLocaleDateString('vi-VN')}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {/* Email */}
-                                        <div style={{display: 'flex', alignItems: 'center'}}>
-                                            <div style={{width: '40px', height: '40px', backgroundColor: '#eff6ff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '15px', color: '#0090e7'}}>
-                                                <i className="fas fa-envelope"></i>
-                                            </div>
-                                            <div>
-                                                <div style={{fontSize: '13px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase'}}>Email</div>
-                                                <div style={{fontSize: '16px', fontWeight: '500', color: '#111827'}}>
-                                                    {adminProfile.Email}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {/* Phone */}
-                                        <div style={{display: 'flex', alignItems: 'center'}}>
-                                            <div style={{width: '40px', height: '40px', backgroundColor: '#eff6ff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '15px', color: '#0090e7'}}>
-                                                <i className="fas fa-phone"></i>
-                                            </div>
-                                            <div>
-                                                <div style={{fontSize: '13px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase'}}>Số điện thoại</div>
-                                                <div style={{fontSize: '16px', fontWeight: '500', color: '#111827'}}>
-                                                    {adminProfile.Phone}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                        {/* Hàng 1: 3 Thẻ (Bệnh nhân, Điều dưỡng, Bác sĩ) */}
+                        <div className="stats-grid-top">
+                            {/* Thẻ Bệnh nhân */}
+                            <div className="stat-card">
+                                <div className="card-header-row">
+                                    <div className="stat-icon-box"><i className="far fa-id-card"></i></div>
+                                    <span className="stat-title">Bệnh nhân</span>
+                                </div>
+                                <div className="stat-count">{stats.patientCount}</div>
+                            </div>
+
+                            {/* Thẻ Điều dưỡng */}
+                            <div className="stat-card">
+                                <div className="card-header-row">
+                                    <div className="stat-icon-box"><i className="fas fa-user-nurse"></i></div>
+                                    <span className="stat-title">Điều dưỡng</span>
+                                </div>
+                                <div className="stat-count">{stats.nurseCount}</div>
+                            </div>
+
+                            {/* Thẻ Bác sĩ */}
+                            <div className="stat-card">
+                                <div className="card-header-row">
+                                    <div className="stat-icon-box"><i className="fas fa-user-md"></i></div>
+                                    <span className="stat-title">Bác sĩ</span>
+                                </div>
+                                <div className="stat-count">{stats.doctorCount}</div>
+                            </div>
+                        </div>
+
+                        {/* Hàng 2: 2 Thẻ lớn (Lịch hẹn, Yêu cầu) */}
+                        <div className="stats-grid-bottom">
+                            {/* Lịch hẹn hôm nay */}
+                            <div className="stat-card-wide">
+                                <div className="wide-content">
+                                    <span className="wide-title">Lịch hẹn hôm nay</span>
+                                    <div className="wide-count">{stats.appointmentCount}</div>
+                                </div>
+                                <div className="wide-icon">
+                                    <i className="far fa-calendar-alt"></i>
                                 </div>
                             </div>
-                        ) : (
-                            <p>Đang tải dữ liệu...</p>
-                        )}
+
+                            {/* Yêu cầu từ bệnh nhân */}
+                            <div className="stat-card-wide">
+                                <div className="wide-content">
+                                    <span className="wide-title">Yêu cầu từ bệnh nhân</span>
+                                    <div className="wide-count">{stats.requestCount}</div>
+                                </div>
+                                <div className="wide-icon">
+                                    <i className="far fa-edit"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 );
 
@@ -666,7 +706,7 @@ function AdminDashboard() {
         <div className="admin-layout">
             {/* SIDEBAR */}
             <aside className="admin-sidebar">
-                <div className="sidebar-brand"><i className="fas fa-heartbeat logo-icon"></i> MediCare Admin</div>
+                <div className="sidebar-brand"><i className="fas fa-heartbeat logo-icon"></i> MediCare Hospital</div>
                 <nav className="sidebar-menu">
                     <div className={`menu-link ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}><i className="fas fa-home"></i> Trang chủ</div>
                     <div className={`menu-link ${activeTab === 'patients' ? 'active' : ''}`} onClick={() => setActiveTab('patients')}><i className="fas fa-user-injured"></i> Bệnh nhân</div>
@@ -679,7 +719,7 @@ function AdminDashboard() {
             <main className="admin-main">
                 <header className="admin-header">
                     <div className="header-profile">
-                        <span style={{color: '#374151'}}>Xin chào, <b>{user.FullName}</b></span>
+                        <span style={{color: '#374151'}}>Admin <b>{user.FullName}</b></span>
                         <button className="btn-logout" onClick={handleLogout}><i className="fas fa-sign-out-alt"></i> Đăng xuất</button>
                     </div>
                 </header>

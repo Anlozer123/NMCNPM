@@ -1,5 +1,10 @@
 const { sql } = require('../Config/db');
 
+const isValidPhone = (phone) => {
+    // Regex: Bắt buộc 10 ký tự số
+    return /^\d{10}$/.test(phone);
+};
+
 // Lấy thông tin Profile của Admin (Rút gọn)
 exports.getAdminProfile = async (req, res) => {
     const { id } = req.query; 
@@ -88,17 +93,15 @@ exports.getAllPatients = async (req, res) => {
 // Thêm bệnh nhân mới
 exports.addPatient = async (req, res) => {
     const { fullName, gender, dob, phone, address } = req.body;
+
+    if (!isValidPhone(phone)) {
+        return res.status(400).json({ success: false, message: "Số điện thoại phải bao gồm đúng 10 chữ số!" });
+    }
+
     try {
         await sql.query`
             INSERT INTO Patient (FullName, Gender, DoB, Phone, Address, PasswordHash)
-            VALUES (
-                ${fullName}, 
-                ${gender}, 
-                ${dob}, 
-                ${phone}, 
-                ${address}, 
-                '123456' -- Mật khẩu mặc định
-            )
+            VALUES (${fullName}, ${gender}, ${dob}, ${phone}, ${address}, '123456')
         `;
         res.json({ success: true, message: "Thêm bệnh nhân thành công!" });
     } catch (err) {
@@ -111,6 +114,12 @@ exports.updatePatient = async (req, res) => {
     const { id } = req.params; // Lấy ID từ URL
     // Lấy dữ liệu gửi lên từ Frontend
     const { fullName, gender, dob, phone, address, email, password, currentRoom, nurseId } = req.body;
+    
+    if (phone && !isValidPhone(phone)) 
+    {
+        return res.status(400).json({ success: false, message: "Số điện thoại phải bao gồm đúng 10 chữ số!" });
+    }
+
     try {
         let query = `
             UPDATE Patient 
@@ -168,6 +177,11 @@ exports.getAllStaff = async (req, res) => {
 // --- THÊM MỚI NHÂN VIÊN ---
 exports.addStaff = async (req, res) => {
     const { fullName, role, specialization, phone, email, password } = req.body;
+
+    if (!isValidPhone(phone)) {
+        return res.status(400).json({ success: false, message: "Số điện thoại phải bao gồm đúng 10 chữ số!" });
+    }
+
     try {
         await sql.query`
             INSERT INTO Staff (FullName, Role, Specialization, Phone, Email, PasswordHash)
@@ -191,6 +205,10 @@ exports.addStaff = async (req, res) => {
 exports.updateStaff = async (req, res) => {
     const { id } = req.params;
     const { fullName, role, specialization, phone, email, password } = req.body;
+
+    if (phone && !isValidPhone(phone)) {
+        return res.status(400).json({ success: false, message: "Số điện thoại phải bao gồm đúng 10 chữ số!" });
+    }
 
     try {
         // Tạo câu query cơ bản
@@ -216,5 +234,27 @@ exports.updateStaff = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+exports.getDashboardStats = async (req, res) => {
+    try {
+        const patients = await sql.query`SELECT COUNT(*) AS count FROM Patient`;
+        const doctors = await sql.query`SELECT COUNT(*) AS count FROM Staff WHERE Role = 'Doctor'`;
+        const nurses = await sql.query`SELECT COUNT(*) AS count FROM Staff WHERE Role = 'Nurse'`;
+        // Giả sử chưa có bảng Appointment thì trả về 0
+        // const appointments = await sql.query`SELECT COUNT(*) AS count FROM Appointment WHERE CAST(AppointmentDate AS DATE) = CAST(GETDATE() AS DATE)`;
+        const requests = await sql.query`SELECT COUNT(*) AS count FROM PatientRequest WHERE Status = 'Pending'`;
+
+        res.json({
+            patientCount: patients.recordset[0].count,
+            doctorCount: doctors.recordset[0].count,
+            nurseCount: nurses.recordset[0].count,
+            appointmentCount: 0, // Tạm thời để 0 nếu chưa có bảng
+            requestCount: requests.recordset[0].count
+        });
+    } catch (err) {
+        console.error(err);
+        res.json({ patientCount: 0, doctorCount: 0, nurseCount: 0, appointmentCount: 0, requestCount: 0 });
     }
 };

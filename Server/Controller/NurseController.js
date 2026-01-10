@@ -195,3 +195,41 @@ exports.getNurseProfile = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+// API: Lấy số liệu thống kê cho Dashboard Y Tá
+exports.getNurseStats = async (req, res) => {
+    const { id } = req.query; // Lấy ID y tá đang đăng nhập
+    try {
+        // 1. Đếm "Chỉ thị" (Pending)
+        // Giả sử đếm tất cả chỉ thị đang chờ (hoặc lọc theo bệnh nhân của y tá này nếu muốn chặt chẽ hơn)
+        const instructions = await sql.query`SELECT COUNT(*) AS count FROM DoctorInstruction WHERE Status = 'Pending'`;
+
+        // 2. Đếm "Yêu cầu chưa được xử lý" (Từ bệnh nhân)
+        const patientReqs = await sql.query`SELECT COUNT(*) AS count FROM PatientRequest WHERE Status = 'Pending'`;
+
+        // 3. Đếm "Bệnh nhân đảm nhận" (Của riêng y tá này)
+        const myPatients = await sql.query`SELECT COUNT(*) AS count FROM Patient WHERE NurseID = ${id}`;
+
+        // 4. Đếm "Thiết bị đã duyệt" (Của y tá này yêu cầu)
+        // Giả sử trạng thái duyệt là 'Approved' hoặc 'Delivered'
+        const approvedEquip = await sql.query`SELECT COUNT(*) AS count FROM EquipmentRequest WHERE StaffID = ${id} AND Status IN ('Approved', 'Delivered')`;
+
+        // 5. Đếm "Thiết bị chưa duyệt" (Pending)
+        const pendingEquip = await sql.query`SELECT COUNT(*) AS count FROM EquipmentRequest WHERE StaffID = ${id} AND Status = 'Pending'`;
+
+        res.json({
+            instructionCount: instructions.recordset[0].count,
+            requestCount: patientReqs.recordset[0].count,
+            patientCount: myPatients.recordset[0].count,
+            equipApprovedCount: approvedEquip.recordset[0].count,
+            equipPendingCount: pendingEquip.recordset[0].count
+        });
+
+    } catch (err) {
+        console.error("Lỗi lấy stats y tá:", err);
+        res.json({ 
+            instructionCount: 0, requestCount: 0, patientCount: 0, 
+            equipApprovedCount: 0, equipPendingCount: 0 
+        });
+    }
+};

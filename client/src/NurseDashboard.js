@@ -8,9 +8,6 @@ function NurseDashboard() {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user')) || { fullName: 'ĐD. Phạm Thị X', StaffID: 3 };
 
-    // --- STATE LƯU THÔNG TIN Y TÁ 
-    const [nurseProfile, setNurseProfile] = useState(null);
-
     // --- DATA STATES (CÁC BIẾN DỮ LIỆU TỪ SERVER) ---
     const [instructions, setInstructions] = useState([]);       // UC010: Chỉ thị
     const [patientRequests, setPatientRequests] = useState([]); // UC013: Yêu cầu BN
@@ -28,6 +25,15 @@ function NurseDashboard() {
     // --- STATE CHO XỬ LÝ YÊU CẦU BỆNH NHÂN (UC013) ---
     const [expandedReqId, setExpandedReqId] = useState(null); 
     const [processNote, setProcessNote] = useState(''); 
+
+    // State thống kê cho dashboard
+    const [nurseStats, setNurseStats] = useState({
+        instructionCount: 0,
+        requestCount: 0,
+        patientCount: 0,
+        equipApprovedCount: 0,
+        equipPendingCount: 0
+    });
     
     // --- EFFECT: Nạp Font Awesome --- cho icons
     useEffect(() => {
@@ -37,49 +43,62 @@ function NurseDashboard() {
         document.head.appendChild(link);
     }, []);
 
-    // --- EFFECT: GỌI API KHI MỞ TRANG ---
     useEffect(() => {
         const nurseId = user.StaffID || 3;
-        // 0. Lấy thông tin Profile Y tá
-        fetch(`http://localhost:5000/api/nurse/profile?id=${nurseId}`)
-            .then(res => res.json())
-            .then(data => setNurseProfile(data))
-            .catch(console.log);
+
+        // 1. Tab Trang chủ (HOME)
+        if (activeTab === 'home') {
+            // Lấy thống kê
+            fetch(`http://localhost:5000/api/nurse/stats?id=${nurseId}`)
+                .then(res => res.json())
+                .then(data => setNurseStats(data))
+                .catch(err => console.error("Lỗi stats:", err));
             
-        // 1. Lấy Y lệnh
-        fetch('http://localhost:5000/api/nurse/doctor-instructions')
-            .then(res => res.json())
-            .then(data => Array.isArray(data) && setInstructions(data))
-            .catch(console.log);
+            // Xóa fetch profile ở đây nếu không dùng tới nữa (để tránh warning)
+        }
 
-        // 2. Lấy DS Thiết bị
-        fetch('http://localhost:5000/api/nurse/equipments')
-            .then(res => res.json())
-            .then(data => Array.isArray(data) && setEquipList(data))
-            .catch(console.log);
-        
-        // 3. Lấy Lịch sử Yêu cầu Thiết bị
-        fetch('http://localhost:5000/api/nurse/equipment-requests')
-            .then(res => res.json())
-            .then(data => Array.isArray(data) && setEquipRequests(data))
-            .catch(console.log);
+        // 2. Tab Chỉ thị (INSTRUCTIONS)
+        if (activeTab === 'instructions') {
+            fetch('http://localhost:5000/api/nurse/doctor-instructions')
+                .then(res => res.json())
+                .then(data => Array.isArray(data) && setInstructions(data))
+                .catch(console.log);
+        }
 
-        // 4. Lấy Yêu cầu từ Bệnh nhân
-        fetch('http://localhost:5000/api/nurse/patient-requests')
-            .then(res => res.json())
-            .then(data => Array.isArray(data) && setPatientRequests(data))
-            .catch(console.log);
+        // 3. Tab Thiết bị (EQUIPMENT)
+        if (activeTab === 'equipment') {
+            // Lấy danh sách thiết bị (để chọn trong form)
+            fetch('http://localhost:5000/api/nurse/equipments')
+                .then(res => res.json())
+                .then(data => Array.isArray(data) && setEquipList(data))
+                .catch(console.log);
+            
+            // Lấy lịch sử yêu cầu
+            fetch('http://localhost:5000/api/nurse/equipment-requests')
+                .then(res => res.json())
+                .then(data => Array.isArray(data) && setEquipRequests(data))
+                .catch(console.log);
+        }
 
-        // 5. Lấy Danh sách Bệnh nhân phụ trách (UC12)
-        //nurseId = user.StaffID || 3;
-        fetch(`http://localhost:5000/api/nurse/my-patients?nurseId=${nurseId}`)
-            .then(res => res.json())
-            .then(data => {
-                if (Array.isArray(data)) setMyPatients(data);
-            })
-            .catch(err => console.log("Lỗi lấy DS bệnh nhân:", err));
+        // 4. Tab Yêu cầu (REQUESTS)
+        if (activeTab === 'requests') {
+            fetch('http://localhost:5000/api/nurse/patient-requests')
+                .then(res => res.json())
+                .then(data => Array.isArray(data) && setPatientRequests(data))
+                .catch(console.log);
+        }
 
-    }, [user.StaffID]);
+        // 5. Tab Bệnh nhân (PATIENTS)
+        if (activeTab === 'patients') {
+            fetch(`http://localhost:5000/api/nurse/my-patients?nurseId=${nurseId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data)) setMyPatients(data);
+                })
+                .catch(err => console.log("Lỗi lấy DS bệnh nhân:", err));
+        }
+
+    }, [activeTab, user.StaffID]);
 
     // ============================================================
     // CÁC HÀM XỬ LÝ SỰ KIỆN (HANDLERS)
@@ -158,23 +177,41 @@ function NurseDashboard() {
     };
 
     const handleConfirmRequest = (id) => {
-        fetch('http://localhost:5000/api/nurse/handle-request', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                requestId: id, 
-                status: 'Completed', 
-                note: processNote 
-            })
+    // Kiểm tra xem đã nhập ghi chú chưa (nếu cần)
+    // if (!processNote.trim()) return alert("Vui lòng nhập ghi chú!");
+
+    fetch('http://localhost:5000/api/nurse/handle-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            requestId: id, 
+            status: 'Completed', 
+            note: processNote // Đảm bảo biến này có giá trị
         })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message);
-            setExpandedReqId(null);
-            setPatientRequests(prev => prev.filter(req => req.RequestID !== id));
-        })
-        .catch(err => console.log(err));
-    };
+    })
+    .then(async (res) => {
+        const data = await res.json();
+        
+        // --- ĐOẠN QUAN TRỌNG: CHECK LỖI ---
+        if (!res.ok) {
+            // Nếu server trả về lỗi (400, 500...), ném lỗi ra để nhảy xuống catch
+            throw new Error(data.error || "Lỗi server không xác định");
+        }
+        return data;
+    })
+    .then(data => {
+        // Chỉ chạy vào đây khi Backend báo thành công
+        alert(data.message);
+        setExpandedReqId(null);
+        // Lúc này mới cập nhật giao diện xóa item đi
+        setPatientRequests(prev => prev.filter(req => req.RequestID !== id));
+    })
+    .catch(err => {
+        // Nếu có lỗi, hiện thông báo và KHÔNG xóa item khỏi giao diện
+        console.error("Lỗi:", err);
+        alert("Không thể xử lý yêu cầu: " + err.message);
+    });
+};
 
     const handleLogout = () => {
         localStorage.clear();
@@ -200,74 +237,66 @@ function NurseDashboard() {
     // ============================================================
     const renderContent = () => {
         switch (activeTab) {
-            // --- VIEW UC00: TRANG CHỦ (FULL SCREEN LAYOUT) ---
+            // --- TRANG CHỦ DASHBOARD ---
             case 'home':
                 return (
                     <div className="home-container">
-                        {nurseProfile ? (
-                            <div className="profile-full-card">
-                                
-                                {/* CỘT TRÁI: TỔNG QUAN */}
-                                <div className="profile-sidebar">
-                                    <div className="profile-avatar-large">
-                                        <i className="fas fa-user-nurse"></i>
-                                    </div>
-                                    <h2 className="profile-name">{nurseProfile.FullName}</h2>
-                                    <p className="profile-role">Y tá đa khoa</p>
-                                    <div className="profile-id-badge">
-                                        ID: {nurseProfile.StaffID}
-                                    </div>
+                        {/* Header Chào Mừng */}
+                        <div className="welcome-section">
+                            <h2 className="welcome-title">Xin chào,</h2>
+                            <p className="welcome-sub">Chúc bạn một ngày mới tốt lành nhé !</p>
+                        </div>
+
+                        {/* Hàng 1: 3 Thẻ (Chỉ thị, Yêu cầu chưa xử lý, Bệnh nhân đảm nhận) */}
+                        <div className="stats-grid-top">
+                            {/* Card 1: Chỉ thị */}
+                            <div className="stat-card">
+                                <div className="card-header-row">
+                                    <div className="stat-icon-box"><i className="fas fa-file-invoice"></i></div>
+                                    <span className="stat-title">Chỉ thị</span>
                                 </div>
-
-                                {/* CỘT PHẢI: CHI TIẾT */}
-                                <div className="profile-main">
-                                    <h3 className="profile-section-title">Thông tin cá nhân</h3>
-                                    
-                                    <div className="profile-grid">
-                                        {/* Ngày sinh */}
-                                        <div className="info-item">
-                                            <span className="info-label">Ngày sinh</span>
-                                            <div className="info-val">
-                                                <i className="fas fa-birthday-cake"></i>
-                                                {new Date(nurseProfile.DoB).toLocaleDateString('vi-VN')}
-                                            </div>
-                                        </div>
-
-                                        {/* Số điện thoại */}
-                                        <div className="info-item">
-                                            <span className="info-label">Số điện thoại</span>
-                                            <div className="info-val">
-                                                <i className="fas fa-phone"></i>
-                                                {nurseProfile.Phone}
-                                            </div>
-                                        </div>
-
-                                        {/* Email */}
-                                        <div className="info-item">
-                                            <span className="info-label">Email liên hệ</span>
-                                            <div className="info-val">
-                                                <i className="fas fa-envelope"></i>
-                                                {nurseProfile.Email}
-                                            </div>
-                                        </div>
-
-                                        {/* Vai trò */}
-                                        <div className="info-item">
-                                            <span className="info-label">Chức vụ</span>
-                                            <div className="info-val">
-                                                <i className="fas fa-id-badge"></i>
-                                                {nurseProfile.Role}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                <div className="stat-count">{nurseStats.instructionCount}</div>
                             </div>
-                        ) : (
-                            <p style={{textAlign: 'center', marginTop: '50px', color: '#666'}}>
-                                <i className="fas fa-spinner fa-spin"></i> Đang tải thông tin...
-                            </p>
-                        )}
+
+                            {/* Card 2: Yêu cầu chưa xử lý */}
+                            <div className="stat-card">
+                                <div className="card-header-row">
+                                    <div className="stat-icon-box"><i className="fas fa-code-branch"></i></div>
+                                    <span className="stat-title">Yêu cầu chưa được xử lý</span>
+                                </div>
+                                <div className="stat-count">{nurseStats.requestCount}</div>
+                            </div>
+
+                            {/* Card 3: Bệnh nhân đảm nhận */}
+                            <div className="stat-card">
+                                <div className="card-header-row">
+                                    <div className="stat-icon-box"><i className="fas fa-users"></i></div>
+                                    <span className="stat-title">Bệnh nhân đảm nhận</span>
+                                </div>
+                                <div className="stat-count">{nurseStats.patientCount}</div>
+                            </div>
+                        </div>
+
+                        {/* Hàng 2: 2 Thẻ (Thiết bị đã duyệt, Thiết bị chưa duyệt) */}
+                        <div className="stats-grid-bottom">
+                            {/* Card 4: Thiết bị đã duyệt */}
+                            <div className="stat-card">
+                                <div className="card-header-row">
+                                    <div className="stat-icon-box"><i className="fas fa-check"></i></div>
+                                    <span className="stat-title">Thiết bị đã duyệt</span>
+                                </div>
+                                <div className="stat-count">{nurseStats.equipApprovedCount}</div>
+                            </div>
+
+                            {/* Card 5: Thiết bị chưa duyệt (Có viền xanh) */}
+                            <div className="stat-card stat-card-highlight">
+                                <div className="card-header-row">
+                                    <div className="stat-icon-box"><i className="fas fa-ellipsis-h"></i></div>
+                                    <span className="stat-title">Thiết bị chưa duyệt</span>
+                                </div>
+                                <div className="stat-count">{nurseStats.equipPendingCount}</div>
+                            </div>
+                        </div>
                     </div>
                 );
 
@@ -472,7 +501,7 @@ function NurseDashboard() {
         <div className="dashboard-layout">
             <header className="top-header">
                 <div className="header-logo"><i className="fas fa-heartbeat logo-icon"></i><span>MediCare Hospital</span></div>
-                <div className="header-user"><span>{user.FullName}</span><button className="logout-btn" onClick={handleLogout}><i className="fas fa-sign-out-alt"></i> Đăng xuất</button></div>
+                <div className="header-user"><span><strong>{user.FullName}</strong></span><button className="logout-btn" onClick={handleLogout}><i className="fas fa-sign-out-alt"></i> Đăng xuất</button></div>
             </header>
 
             <div className="body-container">

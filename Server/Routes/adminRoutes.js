@@ -18,4 +18,6 @@ router.post('/add-staff', adminController.addStaff);
 
 router.put('/update-staff/:id', adminController.updateStaff);
 
+router.get('/stats', adminController.getDashboardStats);
+
 module.exports = router;
