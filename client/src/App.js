@@ -1,8 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import './Homepage.css';
 
 /* ===== COMMON PAGES ===== */
+import MainLayout from './layouts/MainLayout';
 import Homepage from "./components/Pages/Homepage";
+import DoctorsPage from "./components/Pages/DoctorsPage";
+import ServicesPage from "./components/Pages/ServicesPage";
+
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 
@@ -23,35 +28,32 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* ===== PUBLIC ===== */}
-        <Route path="/" element={<Homepage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* ===== NHÓM 1: TRANG CÔNG KHAI (CÓ HEADER/FOOTER) ===== */}
+        {/* Homepage phải nằm trong này mới có Header/Footer */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/doctors" element={<DoctorsPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+
+        {/* ===== NHÓM 2: TRANG RIÊNG (KHÔNG CÓ HEADER CŨ) ===== */}
+        
 
         {/* ===== DASHBOARD ===== */}
         <Route path="/dashboard" element={<Dashboard />} />
 
         {/* ===== DOCTOR ===== */}
-        {/* Dùng Dashboard + activeView (theo tuan) */}
         <Route
           path="/doctor/appointments"
           element={<Dashboard activeView="appointments" />}
         />
 
         {/* ===== PATIENT ===== */}
-        {/* UC001 – Online Prescription Ordering */}
         <Route path="/prescription" element={<Prescription />} />
-
-        {/* UC002 – Request Doctor Consultation */}
-        <Route
-          path="/request-consultation"
-          element={<RequestConsultation />}
-        />
-
-        {/* UC003 – Register Appointment */}
+        <Route path="/request-consultation" element={<RequestConsultation />} />
         <Route path="/appointment" element={<PatientAppointment />} />
-
-        {/* Billing */}
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing-success" element={<BillingSuccess />} />
 

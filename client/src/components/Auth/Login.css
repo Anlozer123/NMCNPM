@@ -21,8 +21,9 @@
     background-position: center;
     position: relative;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    flex-direction: column; /* Xếp dọc */
+    justify-content: center; /* Căn giữa theo chiều dọc */
+    align-items: center;
     padding: 40px;
     color: white;
 }

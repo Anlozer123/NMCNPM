@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Reset cơ bản */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.homepage-container, .main-layout {
+    font-family: 'Roboto', sans-serif;
+    background-color: #fff;
+    color: #333;
+}
+
+/* ================= HEADER STYLES ================= */
+.header-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Dòng 1: Logo & Liên hệ */
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1e40af;
+    letter-spacing: 1px;
+}
+
+.contact-info-group {
+    display: flex;
+    gap: 40px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-blue {
+    font-size: 1.5rem;
+    color: #1e3a8a;
+}
+
+.info-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0284c7;
+}
+
+/* Dòng 2: Menu */
+.header-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.nav-links {
+    display: flex;
+    gap: 40px;
+}
+
+.nav-link-item {
+    color: #333;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s;
+}
+
+.nav-link-item:hover, .nav-link-item.active {
+    color: #000;
+    font-weight: 700;
+}
+
+.nav-link-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: #1e3a8a;
+    transition: width 0.3s;
+}
+
+.nav-link-item:hover::after, .nav-link-item.active::after {
+    width: 100%;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* ================= HERO SECTION ================= */
+.hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
+    padding: 60px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-content {
+    flex: 1;
+    padding-right: 50px;
+}
+
+.sub-title {
+    color: #0284c7;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    line-height: 1.2;
+}
+
+.hero-image-container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.hero-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* ================= CARDS & GRID ================= */
+.doctors-grid, .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.doctor-card, .service-card {
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.doc-img-box img, .svc-img-box img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.doc-info {
+    background-color: #dbeafe;
+    padding: 15px;
+    text-align: center;
+}
+
+.doc-name { color: #1e3a8a; font-weight: 700; }
+.svc-info { padding: 15px; text-align: center; }
+
+/* ================= FOOTER ================= */
+.footer {
+    background-color: #1e2544;
+    color: white;
+    padding: 50px 0;
+    margin-top: 50px;
+}
+.footer-cols {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+.footer-logo { font-family: 'Playfair Display', serif; margin-bottom: 15px; }
+.footer-bottom { max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: right; }
+.social-icons svg {
+    margin-left: 10px; font-size: 1.2rem; cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-top, .header-bottom, .footer-cols { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .contact-info-group { flex-direction: column; gap: 15px; }
+    .hero-section { flex-direction: column; text-align: center; padding: 40px 20px; }
+    .hero-content { padding-right: 0; margin-bottom: 30px; }
+    .doctors-grid, .services-grid { grid-template-columns: 1fr; }
+    .nav-links { flex-direction: column; gap: 15px; width: 100%; }
+}
