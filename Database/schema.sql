@@ -216,6 +216,15 @@ ALTER TABLE Patient ADD
     Relationship NVARCHAR(100);
 GO
 
+ALTER TABLE Patient ADD
+    Height DECIMAL(5,2),      
+    Weight DECIMAL(5,2),      
+    [BMI] AS (CAST(Weight / POWER(CAST(Height AS FLOAT) / 100, 2) AS DECIMAL(4, 1))) PERSISTED,
+    HeartRate INT,            
+    BloodSugar DECIMAL(5,2),  
+    SystolicBP INT,           
+    DiastolicBP INT;          
+GO
 -- =========================
 -- 4. FOREIGN KEYS
 -- =========================

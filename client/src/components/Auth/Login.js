@@ -52,7 +52,7 @@ const Login = () => {
                     } 
                     else {
                         // Mặc định nếu không nhận diện được quyền hoặc là Bệnh nhân
-                        navigate('/'); 
+                        navigate('/dashboard'); 
                     }
                 }, 500);
             }
