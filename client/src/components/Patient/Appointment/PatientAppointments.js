@@ -6,7 +6,7 @@ import {
   FaUserMd,
   FaRegCalendarAlt,
   FaRegClock,
-  FaCheckCircle, // <--- Thêm icon tích xanh
+  FaCheckCircle,
 } from "react-icons/fa";
 import PatientSidebar from "../Sidebar/PatientSidebar"; 
 import UserDropdown from "../UserDropdown/UserDropdown"; 
@@ -15,35 +15,67 @@ import "./PatientAppointments.css";
 
 const PatientAppointments = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")) || { FullName: "Phùng Thanh Độ" };
+  const user = JSON.parse(localStorage.getItem("user")) || { FullName: "Guest", PatientID: 1 };
 
-  // --- STATE QUẢN LÝ GIAO DIỆN ---
+  // --- STATE ---
   const [showCalendar, setShowCalendar] = useState(false);
   const calendarRef = useRef(null);
   const [errorModal, setErrorModal] = useState({ show: false, message: "" });
   const [confirmModal, setConfirmModal] = useState({ show: false, id: null });
-  
-  // State Modal Thành Công (MỚI)
   const [successModal, setSuccessModal] = useState(false);
 
-  // --- MOCK DATA ---
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1, doctorName: "BÁC SĨ NGUYỄN VĂN A", specialty: "TIM MẠCH",
-      date: "02/12/2025", time: "09:00 - 12:00", location: "Phòng 101, tầng 1",
-      desc: "Khó thở khi gắng sức", status: "pending"
-    },
-    {
-      id: 2, doctorName: "BÁC SĨ NGUYỄN VĂN B", specialty: "DA LIỄU",
-      date: "30/11/2025", time: "15:00 - 18:00", location: "Phòng 205, tầng 5",
-      desc: "Da mẩn đỏ", status: "confirmed"
+  const [appointments, setAppointments] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [formData, setFormData] = useState({ 
+      date: "", 
+      specialty: "", 
+      doctorID: "", 
+      timeSlot: "", 
+      desc: "" 
+  });
+
+  const specialties = ["Nội khoa", "Tim mạch", "Thần kinh", "Chấn thương chỉnh hình", "Da liễu"]; 
+  const timeSlots = ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00"]; 
+  const weekDays = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"]; // Danh sách thứ để hiển thị
+
+  // --- FETCH DATA ---
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+        setLoading(true);
+        const docRes = await fetch('http://localhost:5000/api/patient/doctors-list');
+        const docData = await docRes.json();
+        setDoctors(docData);
+
+        if (user.PatientID) {
+            const apptRes = await fetch(`http://localhost:5000/api/patient/${user.PatientID}/appointments`);
+            const apptData = await apptRes.json();
+            
+            const mappedAppts = apptData.map(item => ({
+                id: item.AppointmentID,
+                doctorName: item.DoctorName,
+                specialty: item.Specialization || "Tổng quát",
+                date: new Date(item.AppointmentDate).toLocaleDateString('vi-VN'), 
+                time: new Date(item.AppointmentDate).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'}),
+                location: "Phòng khám đa khoa",
+                desc: item.Reason,
+                status: item.Status ? item.Status.toLowerCase() : 'pending'
+            }));
+            setAppointments(mappedAppts);
+        }
+    } catch (error) {
+        console.error("Lỗi tải dữ liệu:", error);
+    } finally {
+        setLoading(false);
     }
-  ]);
+  };
 
-  const [formData, setFormData] = useState({ date: "", specialty: "", doctor: "", timeSlot: "", desc: "" });
-  const specialties = ["Da liễu", "Tim mạch", "Nội khoa", "Ngoại khoa"];
-  const timeSlots = ["09:00 - 12:00", "12:00 - 15:00", "15:00 - 18:00", "18:00 - 19:00"];
-
+  // --- HANDLERS ---
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (calendarRef.current && !calendarRef.current.contains(event.target)) {
@@ -64,59 +96,68 @@ const PatientAppointments = () => {
     setShowCalendar(false);
   };
 
-  // --- HÀM XỬ LÝ ĐẶT LỊCH (ĐÃ SỬA) ---
-  const handleBooking = () => {
-    // 1. Validate
-    if (!formData.date || !formData.specialty || !formData.doctor || !formData.timeSlot) {
-      setErrorModal({ show: true, message: "Những nội dung có dấu (*) không được bỏ trống" });
+  const handleBooking = async () => {
+    if (!formData.date || !formData.doctorID || !formData.timeSlot) {
+      setErrorModal({ show: true, message: "Vui lòng điền đầy đủ: Ngày, Bác sĩ, Giờ khám (*)" });
       return;
     }
-
-    const selectedDate = new Date(formData.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (selectedDate < today) {
-      setErrorModal({ show: true, message: "Ngày chọn phải sau ngày hiện hành" });
-      return;
-    }
-
-    if (formData.date === "2025-12-25") {
-        setErrorModal({ show: true, message: "Ngày chọn đã kín lịch" });
-        return;
-    }
-
-    // 2. Thêm lịch mới
-    const newAppt = {
-      id: Date.now(),
-      doctorName: formData.doctor.toUpperCase(),
-      specialty: formData.specialty.toUpperCase(),
-      date: formData.date.split("-").reverse().join("/"),
-      time: formData.timeSlot,
-      location: "Phòng chờ số 1",
-      desc: formData.desc || "Không có mô tả",
-      status: "pending"
+    const appointmentDateTime = `${formData.date} ${formData.timeSlot}:00`;
+    const payload = {
+        DoctorID: formData.doctorID,
+        AppointmentDate: appointmentDateTime,
+        Reason: formData.desc
     };
-    setAppointments([newAppt, ...appointments]);
 
-    // 3. Hiển thị Modal Thành Công thay cho Alert
-    setSuccessModal(true); 
-    
-    // 4. Reset Form
-    setFormData({ date: "", specialty: "", doctor: "", timeSlot: "", desc: "" });
+    try {
+        const response = await fetch(`http://localhost:5000/api/patient/${user.PatientID}/appointments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            setSuccessModal(true);
+            setFormData({ date: "", specialty: "", doctorID: "", timeSlot: "", desc: "" });
+            fetchData(); 
+        } else {
+            const err = await response.json();
+            setErrorModal({ show: true, message: err.message || "Đặt lịch thất bại" });
+        }
+    } catch (error) {
+        setErrorModal({ show: true, message: "Lỗi kết nối server" });
+    }
   };
 
-  // Các hàm xử lý Hủy (Confirm Modal)
+// --- 3. XỬ LÝ HỦY LỊCH (Đã sửa để xóa ngay khỏi giao diện) ---
+  const confirmCancel = async () => {
+    if (confirmModal.id) {
+      try {
+          const response = await fetch(`http://localhost:5000/api/patient/appointments/${confirmModal.id}/cancel`, {
+              method: 'PUT'
+          });
+          
+          if (response.ok) {
+              // [QUAN TRỌNG] Thay đổi từ .map sang .filter
+              // .filter sẽ giữ lại những lịch CÓ ID KHÁC với lịch vừa hủy
+              // => Lịch vừa hủy sẽ biến mất ngay lập tức khỏi state
+              setAppointments(prev => prev.filter(a => a.id !== confirmModal.id));
+              
+              closeConfirmModal();
+          } else {
+              setErrorModal({ show: true, message: "Không thể hủy lịch lúc này" });
+          }
+      } catch (error) {
+          setErrorModal({ show: true, message: "Lỗi kết nối khi hủy lịch" });
+      }
+    }
+  };
+
   const openConfirmModal = (id) => setConfirmModal({ show: true, id: id });
   const closeConfirmModal = () => setConfirmModal({ show: false, id: null });
-  const confirmCancel = () => {
-    if (confirmModal.id) {
-      setAppointments(appointments.filter(a => a.id !== confirmModal.id));
-      closeConfirmModal();
-    }
-  };
 
   const renderStatus = (status, id) => {
-    switch(status) {
+    const s = status ? status.toLowerCase() : "";
+    switch(s) {
         case "pending": return (
             <div className="status-group">
                 <button className="btn-cancel" onClick={() => openConfirmModal(id)}>Huỷ lịch hẹn</button>
@@ -125,27 +166,23 @@ const PatientAppointments = () => {
         );
         case "confirmed": return <span className="badge-confirmed">Đã xác nhận</span>;
         case "completed": return <span className="badge-completed">Đã hoàn thành</span>;
-        default: return null;
+        case "cancelled": return <span className="badge-cancelled" style={{color:'red'}}>Đã hủy</span>;
+        default: return <span className="badge-pending">Pending</span>;
     }
   };
 
   return (
     <div className="pd-layout">
-      
-      {/* 1. ERROR MODAL */}
+      {/* Modals */}
       {errorModal.show && (
         <div className="modal-overlay">
           <div className="error-modal">
             <h3 className="error-title">THÔNG BÁO LỖI</h3>
             <p className="error-message">{errorModal.message}</p>
-            <button className="btn-retry" onClick={() => setErrorModal({ show: false, message: "" })}>
-                THỬ LẠI
-            </button>
+            <button className="btn-retry" onClick={() => setErrorModal({ show: false, message: "" })}>THỬ LẠI</button>
           </div>
         </div>
       )}
-
-      {/* 2. CONFIRM MODAL (HỦY) */}
       {confirmModal.show && (
         <div className="modal-overlay">
           <div className="confirm-modal">
@@ -158,30 +195,19 @@ const PatientAppointments = () => {
           </div>
         </div>
       )}
-
-      {/* 3. SUCCESS MODAL (MỚI) */}
       {successModal && (
         <div className="modal-overlay">
           <div className="success-modal">
             <FaCheckCircle className="success-icon-large" />
             <h3 className="success-title">ĐẶT LỊCH THÀNH CÔNG!</h3>
-            <p className="success-message">
-                Yêu cầu đặt lịch của bạn đã được gửi. <br/> 
-                Vui lòng theo dõi trạng thái ở danh sách bên dưới.
-            </p>
-            <button className="btn-success-modal" onClick={() => setSuccessModal(false)}>
-                HOÀN TẤT
-            </button>
+            <p className="success-message">Vui lòng theo dõi trạng thái bên dưới.</p>
+            <button className="btn-success-modal" onClick={() => setSuccessModal(false)}>HOÀN TẤT</button>
           </div>
         </div>
       )}
 
-      {/* SIDEBAR */}
-      <div className="pd-sidebar-container">
-        <PatientSidebar />
-      </div>
+      <div className="pd-sidebar-container"><PatientSidebar /></div>
 
-      {/* MAIN CONTENT */}
       <div className="pd-main-content">
         <header className="pd-header">
            <h2 className="header-title">LỊCH KHÁM</h2> 
@@ -194,27 +220,15 @@ const PatientAppointments = () => {
           <div className="booking-container">
             <div className="booking-form">
                 <div className="form-stack">
+                    {/* INPUTS */}
                     <div className="form-group" ref={calendarRef}>
                         <label>Ngày <span className="req">(*)</span></label>
                         <div className="input-box" onClick={() => setShowCalendar(!showCalendar)} style={{cursor: 'pointer'}}>
-                             <input 
-                                type="text" 
-                                placeholder="dd/mm/yyyy"
-                                value={formData.date ? formData.date.split("-").reverse().join("/") : ""}
-                                className="inp-dark" 
-                                readOnly 
-                             />
+                             <input type="text" value={formData.date ? formData.date.split("-").reverse().join("/") : ""} className="inp-dark" readOnly placeholder="dd/mm/yyyy" />
                              <FaRegCalendarAlt className="icon-arrow" />
-                             {showCalendar && (
-                                <CustomCalendar 
-                                    selectedDate={formData.date}
-                                    onChange={handleDateChange}
-                                    onClose={() => setShowCalendar(false)}
-                                />
-                             )}
+                             {showCalendar && <CustomCalendar selectedDate={formData.date} onChange={handleDateChange} onClose={() => setShowCalendar(false)} />}
                         </div>
                     </div>
-
                     <div className="form-group">
                         <label>Khoa <span className="req">(*)</span></label>
                         <div className="input-box">
@@ -225,69 +239,75 @@ const PatientAppointments = () => {
                              <FaChevronDown className="icon-arrow"/>
                         </div>
                     </div>
-
                     <div className="form-group">
                         <label>Bác sĩ <span className="req">(*)</span></label>
                         <div className="input-box">
-                             <select name="doctor" value={formData.doctor} className="inp-dark" onChange={handleInputChange}>
+                             <select name="doctorID" value={formData.doctorID} className="inp-dark" onChange={handleInputChange}>
                                 <option value="">Chọn bác sĩ</option>
-                                <option value="Bác sĩ Nguyễn Văn A">Bác sĩ Nguyễn Văn A</option>
-                                <option value="Bác sĩ Nguyễn Văn B">Bác sĩ Nguyễn Văn B</option>
+                                {doctors.filter(d => !formData.specialty || d.Specialization === formData.specialty).map((doc) => (
+                                    <option key={doc.StaffID} value={doc.StaffID}>{doc.FullName}</option>
+                                ))}
                              </select>
                              <FaChevronDown className="icon-arrow"/>
                         </div>
                     </div>
-
                     <div className="form-group">
                         <label>Khung giờ <span className="req">(*)</span></label>
                         <div className="input-box">
                              <select name="timeSlot" value={formData.timeSlot} className="inp-dark" onChange={handleInputChange}>
-                                <option value="">Chọn khung giờ</option>
+                                <option value="">Chọn giờ</option>
                                 {timeSlots.map((t, i) => <option key={i} value={t}>{t}</option>)}
                              </select>
                              <FaChevronDown className="icon-arrow"/>
                         </div>
                     </div>
-
                     <div className="form-group desc-group">
-                        <label>Mô tả:</label>
-                        <textarea name="desc" value={formData.desc} className="txt-dark" onChange={handleInputChange}></textarea>
+                        <label>Mô tả / Lý do khám:</label>
+                        <textarea name="desc" value={formData.desc} className="txt-dark" onChange={handleInputChange} placeholder="Nhập triệu chứng..."></textarea>
                     </div>
                 </div>
                 <button className="btn-book" onClick={handleBooking}>ĐẶT LỊCH</button>
             </div>
 
+            {/* --- CẬP NHẬT PHẦN GIỜ HOẠT ĐỘNG --- */}
             <div className="working-hours">
                 <h3 className="wh-head">Giờ hoạt động</h3>
                 <div className="wh-table">
-                   <div className="wh-row"><span>Thứ 2</span><span className="dash">—</span><span>09:00 AM - 07:00 PM</span></div>
-                   <div className="wh-row"><span>Thứ 3</span><span className="dash">—</span><span>09:00 AM - 07:00 PM</span></div>
-                   <div className="wh-row"><span>Thứ 4</span><span className="dash">—</span><span>09:00 AM - 07:00 PM</span></div>
-                   <div className="wh-row"><span>Thứ 5</span><span className="dash">—</span><span>09:00 AM - 07:00 PM</span></div>
-                   <div className="wh-row"><span>Thứ 6</span><span className="dash">—</span><span>09:00 AM - 07:00 PM</span></div>
-                   <div className="wh-row"><span>Thứ 7</span><span className="dash">—</span><span>09:00 AM - 07:00 PM</span></div>
-                   <div className="wh-row"><span>Chủ Nhật</span><span className="dash">—</span><span>Không làm việc</span></div>
+                   {/* Map qua danh sách thứ để hiển thị từng dòng */}
+                   {weekDays.map((day) => (
+                       <div className="wh-row" key={day}>
+                           <span className="wh-day">{day}</span>
+                           <span className="dash">—</span>
+                           <span className="wh-time">07:00 AM - 05:00 PM</span>
+                       </div>
+                   ))}
+                   {/* Chủ nhật */}
+                   <div className="wh-row">
+                       <span className="wh-day">Chủ Nhật</span>
+                       <span className="dash">—</span>
+                       <span className="wh-time">Nghỉ</span>
+                   </div>
                 </div>
             </div>
           </div>
 
+          <h3 className="section-heading" style={{marginTop: '30px'}}>LỊCH SỬ KHÁM BỆNH</h3>
           <div className="history-list">
-             {appointments.map((appt) => (
+             {loading ? <p style={{color: '#fff', textAlign: 'center'}}>Đang tải...</p> : 
+                appointments.map((appt) => (
                  <div key={appt.id} className="card-item">
                      <div className="card-header-row">
                          <div className="doc-info">
                              <h4 className="name">{appt.doctorName}</h4>
                              <span className="spec">{appt.specialty}</span>
                          </div>
-                         <div className="actions">
-                             {renderStatus(appt.status, appt.id)}
-                         </div>
+                         <div className="actions">{renderStatus(appt.status, appt.id)}</div>
                      </div>
                      <div className="card-body-grid">
                          <div className="c-item"><FaRegCalendarAlt className="c-icon" /><span>{appt.date}</span></div>
                          <div className="c-item"><FaMapMarkerAlt className="c-icon" /><span>{appt.location}</span></div>
                          <div className="c-item"><FaRegClock className="c-icon" /><span>{appt.time}</span></div>
-                         <div className="c-item"><FaUserMd className="c-icon" /><span>Mô tả: {appt.desc}</span></div>
+                         <div className="c-item"><FaUserMd className="c-icon" /><span>Lý do: {appt.desc}</span></div>
                      </div>
                  </div>
              ))}

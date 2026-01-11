@@ -1,4 +1,4 @@
-/* --- 1. LAYOUT KHUNG SƯỜN (Đồng bộ PatientDashboard) --- */
+/* --- 1. LAYOUT KHUNG SƯỜN --- */
 .pd-layout {
     display: flex;
     width: 100vw;
@@ -47,47 +47,165 @@
     padding: 30px 50px;
 }
 
-/* --- 2. FORM ĐẶT LỊCH (Giao diện xanh đậm) --- */
-.section-heading { font-size: 18px; font-weight: 700; color: #4a5568; margin-bottom: 20px; text-transform: uppercase; }
-
-.booking-container { display: flex; gap: 0; margin-bottom: 40px; min-height: 400px; }
-
-.booking-form {
-    flex: 1.5; background: #1e2a5e; padding: 25px 35px;
-    display: flex; flex-direction: column; justify-content: space-between;
-    border-radius: 4px 0 0 4px; position: relative;
+/* --- 2. FORM ĐẶT LỊCH --- */
+.section-heading { 
+    font-size: 18px; 
+    font-weight: 700; 
+    color: #4a5568; 
+    margin-bottom: 20px; 
+    text-transform: uppercase; 
 }
 
-.form-stack { display: flex; flex-direction: column; flex: 1; gap: 15px; }
-.form-group { display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 8px; position: relative; }
-.desc-group { align-items: flex-start; border-bottom: none; flex: 1; }
-.form-group label { width: 100px; color: #dcdde1; font-size: 14px; }
-.req { color: #ff4757; }
+.booking-container { 
+    display: flex; 
+    gap: 0; 
+    margin-bottom: 40px; 
+    min-height: 400px; 
+}
+
+.booking-form {
+    flex: 1.5; 
+    background: #1e2a5e; 
+    padding: 25px 35px;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between;
+    border-radius: 4px 0 0 4px; 
+    position: relative;
+}
+
+.form-stack { 
+    display: flex; 
+    flex-direction: column; 
+    flex: 1; 
+    gap: 15px; 
+}
+
+.form-group { 
+    display: flex; 
+    align-items: center; 
+    border-bottom: 1px solid rgba(255,255,255,0.15); 
+    padding-bottom: 8px; 
+    position: relative; 
+}
+
+.desc-group { 
+    align-items: flex-start; 
+    border-bottom: none; 
+    flex: 1; 
+}
+
+/* === [PHẦN CHỈNH SỬA QUAN TRỌNG] === */
+/* Ép buộc chữ Label (Ngày, Khoa...) thành màu TRẮNG */
+.booking-form .form-group label { 
+    width: 100px; 
+    color: #ffffff !important; /* Quan trọng: Màu trắng */
+    font-size: 14px; 
+    font-weight: 500;
+}
+
+/* Ép buộc dấu sao (*) thành màu ĐỎ */
+.booking-form .form-group label .req { 
+    color: #ff4757 !important; /* Quan trọng: Màu đỏ */
+}
+/* =================================== */
+
 .input-box { flex: 1; position: relative; display: flex; align-items: center; }
 
-.inp-dark, .txt-dark { width: 100%; background: none; border: none; color: white; outline: none; font-size: 14px; }
+.inp-dark, .txt-dark { 
+    width: 100%; 
+    background: none; 
+    border: none; 
+    color: white; 
+    outline: none; 
+    font-size: 14px;   
+    -webkit-appearance: none; 
+    -moz-appearance: none;    
+    appearance: none;         
+}
+
+.inp-dark::placeholder, .txt-dark::placeholder {
+    color: #bbbbbb;
+}
+
 .inp-dark option { color: #333; }
 .txt-dark { resize: none; height: 100%; font-family: inherit; }
 .icon-arrow { color: #a4b0be; position: absolute; right: 0; pointer-events: none; font-size: 12px; }
 
 .btn-book {
-    width: calc(100% + 70px); margin-left: -35px; margin-bottom: -25px;
-    background: #a6c1ee; color: #1e2a5e; font-weight: 700; padding: 15px; border: none; cursor: pointer;
-    text-transform: uppercase; font-size: 16px; margin-top: 20px;
+    width: calc(100% + 70px); 
+    margin-left: -35px; 
+    margin-bottom: -25px;
+    background: #a6c1ee; 
+    color: #1e2a5e; 
+    font-weight: 700; 
+    padding: 15px; 
+    border: none; 
+    cursor: pointer;
+    text-transform: uppercase; 
+    font-size: 16px; 
+    margin-top: 20px;
 }
 .btn-book:hover { background: #93b3e8; }
 
+/* --- CẬP NHẬT PHẦN GIỜ HOẠT ĐỘNG --- */
+
 .working-hours {
-    flex: 1; background: #161d40; color: white; padding: 30px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 1; 
+    background: #161d40; 
+    color: white; 
+    padding: 30px;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
     border-radius: 0 4px 4px 0;
 }
-.wh-head { font-family: serif; font-size: 30px; margin-bottom: 20px; color: #dbeafe; }
-.wh-table { width: 100%; max-width: 320px; font-size: 13px; color: #ced6e0; }
-.wh-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
-.dash { color: #747d8c; }
 
-/* --- 3. MODALS (Error & Confirm) --- */
+.wh-head { 
+    font-family: serif; 
+    font-size: 30px; 
+    margin-bottom: 20px; 
+    color: #dbeafe; 
+}
+
+.wh-table { 
+    width: 100%; 
+    max-width: 320px; 
+    font-size: 13px; 
+    color: #ffffff;
+}
+
+/* Sử dụng Flexbox nhưng kiểm soát độ rộng từng phần tử con */
+.wh-row { 
+    display: flex; 
+    align-items: center; 
+    margin-bottom: 10px; 
+    width: 100%;
+}
+
+/* 1. Cột "Thứ": Đặt chiều rộng cố định (quan trọng) */
+.wh-row span:first-child {
+    width: 90px; /* Đủ rộng để chứa chữ "Chủ Nhật" */
+    text-align: left;
+}
+
+/* 2. Cột "Gạch ngang": Đặt chiều rộng cố định và căn giữa */
+.dash { 
+    color: #a4b0be; 
+    width: 40px;       /* Tạo một không gian cố định cho dấu gạch */
+    text-align: center;
+    display: inline-block;
+    flex-shrink: 0;    /* Không cho phép bị co lại */
+}
+
+/* 3. Cột "Giờ/Trạng thái": Chiếm hết phần còn lại và căn phải */
+.wh-row span:last-child {
+    flex: 1;           /* Tự động lấp đầy khoảng trống còn lại */
+    text-align: right;
+}
+
+/* --- 3. MODALS --- */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center;
@@ -112,7 +230,7 @@
 @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
 @keyframes scaleModal { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* --- 4. DANH SÁCH LỊCH SỬ (Thẻ màu be) --- */
+/* --- 4. DANH SÁCH LỊCH SỬ --- */
 .history-list { display: flex; flex-direction: column; gap: 20px; padding-bottom: 40px; }
 .card-item { background: #fdf6e7; border-radius: 8px; padding: 25px 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 .card-header-row { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); }
@@ -123,10 +241,12 @@
 .badge-pending { background: #dfe6e9; color: #636e72; padding: 6px 15px; border-radius: 4px; font-weight: 600; font-size: 13px; }
 .badge-confirmed { background: #e3dec1; color: #bca346; padding: 6px 20px; border-radius: 4px; font-weight: 700; font-size: 13px; }
 .badge-completed { background: #c1d6b0; color: #5a7d3e; padding: 6px 20px; border-radius: 4px; font-weight: 700; font-size: 13px; }
+.badge-cancelled { background: #ffcccc; color: #d63031; padding: 6px 20px; border-radius: 4px; font-weight: 700; font-size: 13px; }
 .card-body-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 .c-item { display: flex; gap: 10px; font-size: 14px; color: #636e72; align-items: center; }
 .c-icon { font-size: 16px; color: #b2bec3; }
-/* --- SUCCESS MODAL STYLES (MỚI) --- */
+
+/* --- SUCCESS MODAL STYLES --- */
 .success-modal {
     background: white;
     width: 380px;
@@ -135,7 +255,7 @@
     text-align: center;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     animation: scaleModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border-top: 6px solid #00b894; /* Viền trên màu xanh lá */
+    border-top: 6px solid #00b894;
 }
 
 .success-icon-large {
@@ -181,4 +301,33 @@
     0% { transform: scale(0); opacity: 0; }
     80% { transform: scale(1.2); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
+}
+.booking-form .form-group.desc-group label {
+    width: 150px;           /* Tăng chiều rộng để đủ chứa chữ dài, không bị ngắt dòng */
+    margin-right: 20px;     /* Tạo khoảng cách "thở" giữa chữ và cái hộp bên cạnh */
+    padding-top: 12px;      /* Căn chỉnh cho chữ ngang hàng với dòng đầu tiên trong hộp */
+}
+
+/* 2. Biến ô Textarea thành một "Box" (Hộp) rõ ràng */
+.booking-form .desc-group .txt-dark {
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Tạo viền hộp màu trắng mờ */
+    background-color: rgba(255, 255, 255, 0.05); /* Thêm màu nền nhẹ để hộp nổi bật hơn */
+    border-radius: 6px;     /* Bo tròn góc hộp */
+    padding: 12px 15px;     /* Đẩy chữ "Nhập triệu chứng..." thụt vào trong hộp */
+    height: 120px;          /* Chiều cao cố định cho hộp */
+    
+    /* Font chữ */
+    font-size: 14px;
+    line-height: 1.5;
+    color: #fff;
+    
+    /* Hiệu ứng mượt mà */
+    transition: all 0.2s ease-in-out;
+}
+
+/* 3. Hiệu ứng khi người dùng click chuột vào hộp */
+.booking-form .desc-group .txt-dark:focus {
+    border-color: #a6c1ee;           /* Viền sáng lên màu xanh nhạt */
+    background-color: rgba(255, 255, 255, 0.1); /* Nền sáng hơn một chút */
+    box-shadow: 0 0 8px rgba(166, 193, 238, 0.3); /* Hiệu ứng đổ bóng nhẹ */
 }

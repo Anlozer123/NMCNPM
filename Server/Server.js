@@ -7,6 +7,7 @@ const nurseRoutes = require('./Routes/nurseRoutes');
 const adminRoutes = require('./Routes/adminRoutes');
 
 const patientRoutes = require('./Routes/patientRoutes');
+
 const { connectDB, sql } = require('./Config/db'); 
 require('dotenv').config();
 
@@ -45,6 +46,7 @@ app.use('/api/doctor', doctorRoutes);
 app.use('/api/nurse', nurseRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/patient', patientRoutes);
+
 // Khởi động Server
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);

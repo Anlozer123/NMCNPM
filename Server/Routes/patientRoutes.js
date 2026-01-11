@@ -14,4 +14,13 @@ router.post('/:patientId/request-consultation', patientController.requestConsult
 
 // [MỚI] Lấy thông tin tư vấn gần nhất
 router.get('/:patientId/latest-consultation', patientController.getLatestConsultation);
+
+// [MỚI] Lấy danh sách bác sĩ (Dropdown)
+// URL thực tế: /api/patient/doctors-list
+router.get('/doctors-list', patientController.getDoctorsList);
+
+// [MỚI] Các route quản lý Lịch hẹn (Appointments)
+router.get('/:patientId/appointments', patientController.getPatientAppointments);
+router.post('/:patientId/appointments', patientController.bookAppointment);
+router.put('/appointments/:id/cancel', patientController.cancelAppointment); // Lưu ý route này không cần patientId ở giữa để gọn hơn
 module.exports = router;

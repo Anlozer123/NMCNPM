@@ -179,3 +179,106 @@ exports.getLatestConsultation = async (req, res) => {
         res.status(500).json({ message: "Lỗi Server" });
     }
 };
+// [MỚI] API: GET /api/patient/doctors-list
+// Lấy danh sách bác sĩ để đổ vào dropdown
+exports.getDoctorsList = async (req, res) => {
+    try {
+        // Lấy Staff có Role là Doctor (theo sample_1.sql)
+        const result = await sql.query`
+            SELECT StaffID, FullName, Specialization 
+            FROM Staff 
+            WHERE Role = 'Doctor'
+        `;
+        res.json(result.recordset);
+    } catch (err) {
+        console.error("Lỗi lấy danh sách bác sĩ:", err);
+        res.status(500).json({ message: "Lỗi Server" });
+    }
+};
+
+// [MỚI] API: GET /api/patient/:patientId/appointments
+// Lấy lịch sử khám bệnh
+exports.getPatientAppointments = async (req, res) => {
+    const { patientId } = req.params;
+    try {
+        // Join bảng Appointment và Staff để lấy tên bác sĩ
+        // Cập nhật: Thêm điều kiện status khác 'Cancelled'
+        const query = `
+            SELECT 
+                A.AppointmentID,
+                S.FullName AS DoctorName,
+                S.Specialization,
+                A.AppointmentDate,
+                A.Reason,
+                A.Status
+            FROM Appointment A
+            JOIN Staff S ON A.DoctorID = S.StaffID
+            WHERE A.PatientID = @PatientID 
+              AND A.Status != 'Cancelled' 
+            ORDER BY A.AppointmentDate DESC
+        `;
+        
+        const request = new sql.Request();
+        request.input('PatientID', sql.Int, patientId);
+        const result = await request.query(query);
+
+        res.json(result.recordset);
+    } catch (err) {
+        console.error("Lỗi lấy lịch khám:", err);
+        res.status(500).json({ message: "Lỗi Server" });
+    }
+};
+
+// [MỚI] API: POST /api/patient/:patientId/appointments
+// Đặt lịch khám mới
+exports.bookAppointment = async (req, res) => {
+    const { patientId } = req.params;
+    const { DoctorID, AppointmentDate, Reason } = req.body;
+
+    if (!DoctorID || !AppointmentDate) {
+        return res.status(400).json({ message: "Thiếu thông tin bắt buộc" });
+    }
+
+    try {
+        const query = `
+            INSERT INTO Appointment (PatientID, DoctorID, AppointmentDate, Reason, Status)
+            VALUES (@PatientID, @DoctorID, @AppointmentDate, @Reason, 'Pending')
+        `;
+
+        const request = new sql.Request();
+        request.input('PatientID', sql.Int, patientId);
+        request.input('DoctorID', sql.Int, DoctorID);
+        // Lưu ý: AppointmentDate gửi lên phải đúng format 'YYYY-MM-DD HH:mm:ss'
+        request.input('AppointmentDate', sql.DateTime, new Date(AppointmentDate)); 
+        request.input('Reason', sql.NVarChar, Reason);
+
+        await request.query(query);
+
+        res.status(200).json({ message: "Đặt lịch thành công" });
+    } catch (err) {
+        console.error("Lỗi đặt lịch:", err);
+        res.status(500).json({ message: "Lỗi Server khi đặt lịch" });
+    }
+};
+
+// [MỚI] API: PUT /api/patient/appointments/:id/cancel
+// Hủy lịch khám
+exports.cancelAppointment = async (req, res) => {
+    const { id } = req.params; // AppointmentID
+    try {
+        const query = `
+            UPDATE Appointment 
+            SET Status = 'Cancelled' 
+            WHERE AppointmentID = @AppointmentID
+        `;
+        
+        const request = new sql.Request();
+        request.input('AppointmentID', sql.Int, id);
+        await request.query(query);
+
+        res.status(200).json({ message: "Đã hủy lịch hẹn" });
+    } catch (err) {
+        console.error("Lỗi hủy lịch:", err);
+        res.status(500).json({ message: "Lỗi Server" });
+    }
+};
