@@ -19,7 +19,6 @@ class PatientService {
     async getPrescriptions(patientId) {
         const result = await patientRepo.getPrescriptionsRaw(patientId);
         
-        // Logic GROUP BY phức tạp chuyển về Service
         const prescriptionsMap = {};
         result.recordset.forEach(row => {
             if (!prescriptionsMap[row.PrescriptionID]) {
@@ -32,13 +31,16 @@ class PatientService {
                     totalBill: 0
                 };
             }
-            prescriptionsMap[row.PrescriptionID].medicines.push({
-                name: row.MedicineName,
-                price: row.UnitPrice,
-                qty: row.Quantity,
-                total: row.TotalLine
-            });
-            prescriptionsMap[row.PrescriptionID].totalBill += row.TotalLine;
+            
+            if (row.MedicineName) {
+                prescriptionsMap[row.PrescriptionID].medicines.push({
+                    name: row.MedicineName,
+                    price: row.UnitPrice,
+                    qty: row.Quantity,
+                    total: row.TotalLine
+                });
+                prescriptionsMap[row.PrescriptionID].totalBill += row.TotalLine;
+            }
         });
 
         return Object.values(prescriptionsMap);

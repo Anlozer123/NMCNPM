@@ -14,15 +14,18 @@ class PatientRepository {
 
     // Lấy dữ liệu thô đơn thuốc (Flat data)
     async getPrescriptionsRaw(patientId) {
+        // [FIX]: Sử dụng LEFT JOIN để lấy cả đơn thuốc chưa có thuốc hoặc bị lỗi liên kết thuốc
         const query = `
             SELECT P.PrescriptionID, P.CreatedDate, S.FullName AS DoctorName,
-                   M.Name AS MedicineName, M.UnitPrice, PI.Quantity,
-                   (M.UnitPrice * PI.Quantity) AS TotalLine
+                   M.Name AS MedicineName, 
+                   ISNULL(M.UnitPrice, 0) AS UnitPrice, 
+                   ISNULL(PI.Quantity, 0) AS Quantity,
+                   ISNULL(M.UnitPrice * PI.Quantity, 0) AS TotalLine
             FROM Prescription P
             JOIN MedicalRecord MR ON P.RecordID = MR.RecordID
             JOIN Staff S ON MR.DoctorID = S.StaffID
-            JOIN PrescriptionItem PI ON P.PrescriptionID = PI.PrescriptionID
-            JOIN Medicine M ON PI.MedicineID = M.MedicineID
+            LEFT JOIN PrescriptionItem PI ON P.PrescriptionID = PI.PrescriptionID -- Sửa thành LEFT JOIN
+            LEFT JOIN Medicine M ON PI.MedicineID = M.MedicineID -- Sửa thành LEFT JOIN
             WHERE MR.PatientID = @PatientID
             ORDER BY P.CreatedDate DESC
         `;
@@ -30,7 +33,6 @@ class PatientRepository {
         request.input('PatientID', sql.Int, patientId);
         return await request.query(query);
     }
-
     // Insert Request (Hỗ trợ Transaction)
     async createConsultationRequest(transaction, { patientId, department, urgency, symptoms }) {
         const request = new sql.Request(transaction);
