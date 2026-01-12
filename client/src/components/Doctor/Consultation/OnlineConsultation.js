@@ -6,18 +6,19 @@ import './OnlineConsultation.css';
 const OnlineConsultation = ({ doctorId = 2 }) => { 
     const [requests, setRequests] = useState([]);
     const [selectedRequest, setSelectedRequest] = useState(null);
-    const [messages, setMessages] = useState([]); // State lưu lịch sử chat
+    const [messages, setMessages] = useState([]); 
     const [replyContent, setReplyContent] = useState('');
-    const chatEndRef = useRef(null); // Để tự động cuộn xuống tin mới nhất
+    const chatEndRef = useRef(null);
 
-    // 1. Tải danh sách yêu cầu bên trái
+    // 1. Tải danh sách yêu cầu
     const fetchRequests = useCallback(async () => {
         try {
             const res = await fetch('http://localhost:5000/api/doctor/consultations');
             const data = await res.json();
-            setRequests(data);
+            setRequests(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Lỗi tải danh sách:", error);
+            setRequests([]);
         }
     }, []);
 
@@ -25,21 +26,16 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
         fetchRequests();
     }, [fetchRequests]);
 
-    // 2. Khi chọn 1 yêu cầu -> Tải lịch sử tin nhắn
-    useEffect(() => {
-        if (selectedRequest) {
-            fetchMessages(selectedRequest.RequestID);
-        }
-    }, [selectedRequest]);
-
-    const fetchMessages = async (requestId) => {
+    // 2. Hàm tải tin nhắn được bao bọc bởi useCallback để tránh lỗi ESLint
+    const fetchMessages = useCallback(async (requestId) => {
         try {
             const res = await fetch(`http://localhost:5000/api/doctor/consultation/${requestId}/messages`);
             const data = await res.json();
             
-            // Nếu chưa có tin nhắn nào trong bảng Messages (do dữ liệu cũ), 
-            // ta hiển thị tin nhắn đầu tiên từ cột Symptoms
-            if (data.length === 0 && selectedRequest?.Symptoms) {
+            // Đảm bảo dữ liệu luôn là mảng để tránh lỗi .map()
+            const safeData = Array.isArray(data) ? data : [];
+
+            if (safeData.length === 0 && selectedRequest?.Symptoms) {
                  setMessages([{
                      MessageID: 'init',
                      SenderType: 'Patient',
@@ -47,24 +43,33 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
                      SentAt: selectedRequest.CreatedTime
                  }]);
             } else {
-                setMessages(data);
+                setMessages(safeData);
             }
         } catch (error) {
             console.error("Lỗi tải tin nhắn:", error);
+            setMessages([]);
         }
-    };
+    }, [selectedRequest]); // Phụ thuộc vào selectedRequest để lấy Symptoms nếu cần
 
-    // Auto scroll xuống cuối khi có tin nhắn mới
+    // Tải tin nhắn khi selectedRequest thay đổi
+    useEffect(() => {
+        if (selectedRequest) {
+            fetchMessages(selectedRequest.RequestID);
+        } else {
+            setMessages([]);
+        }
+    }, [selectedRequest, fetchMessages]); // Đã thêm fetchMessages vào đây để hết Warning
+
+    // Auto scroll
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // 3. Xử lý gửi tin nhắn (Nút Gửi)
+    // 3. Xử lý gửi tin nhắn
     const handleSendReply = async () => {
-        if (!replyContent.trim()) return;
+        if (!replyContent.trim() || !selectedRequest) return;
 
         try {
-            // [QUAN TRỌNG] Dùng method POST để gọi API mới
             const res = await fetch(`http://localhost:5000/api/doctor/consultation/reply/${selectedRequest.RequestID}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -77,17 +82,14 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
             const data = await res.json();
 
             if (res.ok) {
-                // Thêm tin nhắn vừa gửi vào giao diện ngay lập tức
                 const newMsg = {
-                    MessageID: data.messageId,
+                    MessageID: data.messageId || Date.now(),
                     SenderType: 'Doctor',
                     Content: replyContent,
                     SentAt: new Date().toISOString()
                 };
                 setMessages(prev => [...prev, newMsg]);
                 setReplyContent(''); 
-                
-                // Cập nhật lại danh sách bên trái (để làm mới trạng thái)
                 fetchRequests(); 
             } else {
                 alert("❌ Lỗi: " + (data.msg || "Không thể gửi tin nhắn"));
@@ -105,9 +107,11 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
 
     const formatDate = (dateString) => {
         if (!dateString) return '';
-        return new Date(dateString).toLocaleString('vi-VN', { 
-            hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit'
-        });
+        try {
+            return new Date(dateString).toLocaleString('vi-VN', { 
+                hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit'
+            });
+        } catch (e) { return dateString; }
     };
 
     return (
@@ -118,7 +122,7 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
             </div>
 
             <div className="oc-layout">
-                {/* CỘT TRÁI: DANH SÁCH */}
+                {/* CỘT TRÁI: DANH SÁCH YÊU CẦU */}
                 <div className="oc-list-panel">
                     <h4 style={{ marginBottom: '15px' }}>💬 Yêu cầu ({requests.length})</h4>
                     {requests.map(req => (
@@ -140,21 +144,20 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
                     ))}
                 </div>
 
-                {/* CỘT PHẢI: CHI TIẾT & CHAT ROOM */}
+                {/* CỘT PHẢI: KHUNG CHAT */}
                 <div className="oc-detail-panel">
                     {selectedRequest ? (
                         <>
-                            <div style={{ borderBottom: '1px solid #eee', paddingBottom: '15px', marginBottom: '15px' }}>
+                            <div className="oc-detail-header">
                                 <h3 style={{ margin: 0 }}>{selectedRequest.PatientName} - {selectedRequest.Specialty}</h3>
                                 <span style={{ fontSize: '13px', color: '#666' }}>Trạng thái: {selectedRequest.Status}</span>
                             </div>
 
-                            {/* KHUNG CHAT REAL-TIME */}
                             <div className="oc-chat-area">
-                                {messages.map((msg, index) => {
+                                {Array.isArray(messages) && messages.map((msg, index) => {
                                     const isDoctor = msg.SenderType === 'Doctor';
                                     return (
-                                        <div key={index} className={`oc-message-bubble ${isDoctor ? 'oc-msg-doctor' : 'oc-msg-patient'}`}>
+                                        <div key={msg.MessageID || index} className={`oc-message-bubble ${isDoctor ? 'oc-msg-doctor' : 'oc-msg-patient'}`}>
                                             <div style={{ 
                                                 fontWeight: 'bold', 
                                                 marginBottom: '5px', 
@@ -171,12 +174,11 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
                                                 {formatDate(msg.SentAt)}
                                             </div>
                                         </div>
-                                    )
+                                    );
                                 })}
                                 <div ref={chatEndRef} />
                             </div>
 
-                            {/* Ô NHẬP TIN NHẮN (LUÔN HIỆN ĐỂ CHAT TIẾP) */}
                             <div className="oc-input-area">
                                 <textarea 
                                     className="oc-textarea"

@@ -387,7 +387,8 @@ exports.getConsultationMessages = async (req, res) => {
 
 // --- [CẬP NHẬT] 12. Gửi phản hồi (Chat Real-time) ---
 exports.replyConsultation = async (req, res) => {
-    const { requestId } = req.params;
+    // Lấy requestId từ URL và ép kiểu về số nguyên
+    const requestId = parseInt(req.params.requestId); 
     const { doctorId, responseContent } = req.body;
 
     if (!responseContent || !responseContent.trim()) {
@@ -398,42 +399,45 @@ exports.replyConsultation = async (req, res) => {
     try {
         await transaction.begin();
 
-        // 1. Insert tin nhắn của Bác sĩ vào bảng ConsultationMessages
-        // Lưu ý: SenderType là 'Doctor'
+        // 1. Thêm tin nhắn mới vào bảng ConsultationMessages
         const msgRequest = new sql.Request(transaction);
-        const insertQuery = `
-            INSERT INTO ConsultationMessages (RequestID, SenderID, SenderType, Content)
-            OUTPUT INSERTED.MessageID
-            VALUES (@RequestID, @DoctorID, 'Doctor', @Content)
-        `;
         msgRequest.input('RequestID', sql.Int, requestId);
         msgRequest.input('DoctorID', sql.Int, doctorId);
         msgRequest.input('Content', sql.NVarChar, responseContent);
         
-        const msgResult = await msgRequest.query(insertQuery);
+        const msgResult = await msgRequest.query(`
+            INSERT INTO ConsultationMessages (RequestID, SenderID, SenderType, Content, SentAt)
+            OUTPUT INSERTED.MessageID
+            VALUES (@RequestID, @DoctorID, 'Doctor', @Content, GETDATE())
+        `);
         const newMessageId = msgResult.recordset[0].MessageID;
 
-        // 2. Cập nhật trạng thái phiên tư vấn (để biết bác sĩ đã tiếp nhận)
+        // 2. Cập nhật trạng thái yêu cầu chính
         const updateRequest = new sql.Request(transaction);
         updateRequest.input('RequestID', sql.Int, requestId);
         updateRequest.input('DoctorID', sql.Int, doctorId);
+        updateRequest.input('ResponseContent', sql.NVarChar, responseContent);
         
         await updateRequest.query(`
             UPDATE ConsultationRequests
-            SET Status = N'Đã phản hồi', DoctorID = @DoctorID, ResponseDate = GETDATE()
+            SET Status = N'Đã phản hồi', 
+                DoctorID = @DoctorID, 
+                ResponseContent = @ResponseContent,
+                ResponseDate = GETDATE()
             WHERE RequestID = @RequestID
         `);
 
         await transaction.commit();
 
         res.json({ 
+            success: true,
             msg: "Gửi thành công!", 
             messageId: newMessageId 
         });
 
     } catch (err) {
-        if (transaction._aborted === false) await transaction.rollback();
+        if (transaction) await transaction.rollback();
         console.error("Lỗi gửi phản hồi:", err);
-        res.status(500).json({ message: "Lỗi Server khi gửi tin nhắn" });
+        res.status(500).json({ msg: "Lỗi hệ thống: " + err.message });
     }
 };
