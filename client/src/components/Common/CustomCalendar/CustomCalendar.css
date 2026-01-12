@@ -1,0 +1,115 @@
+/* Container chính của Lịch */
+.calendar-dropdown {
+    position: absolute;
+    top: 105%; /* Nằm ngay dưới ô input */
+    left: 0;
+    width: 320px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    padding: 20px;
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+    border: 1px solid #f0f0f0;
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Header: Tháng/Năm và Nút điều hướng */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #f8f9fa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #333;
+    transition: all 0.2s;
+}
+
+.calendar-nav-btn:hover {
+    background-color: #e2e8f0;
+}
+
+.calendar-title {
+    display: flex;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 800; /* Chữ đậm như hình */
+    color: #111;
+}
+
+/* Hàng thứ trong tuần (Mo Tu We...) */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 10px;
+}
+
+.weekday-item {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    padding: 5px 0;
+}
+
+/* Lưới ngày */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 5px;
+}
+
+.calendar-day {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+/* Ngày không thuộc tháng hiện tại (mờ đi) */
+.calendar-day.empty {
+    pointer-events: none;
+}
+
+/* Hiệu ứng Hover */
+.calendar-day:hover {
+    background-color: #f1f5f9;
+}
+
+/* Ngày ĐANG CHỌN (Màu xanh đậm) */
+.calendar-day.selected {
+    background-color: #2563eb; /* Màu xanh giống hình */
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+/* Ngày hôm nay (viền nhẹ để nhận biết) */
+.calendar-day.today {
+    border: 1px solid #2563eb;
+    color: #2563eb;
+}
+
+/* Ghi đè class selected nếu trùng today */
+.calendar-day.selected.today {
+    color: white;
+    border: none;
+}

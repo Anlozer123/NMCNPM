@@ -1,0 +1,108 @@
+/* Container chính */
+.user-dropdown-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    position: relative; /* Quan trọng để neo menu con */
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.user-dropdown-container:hover {
+    background-color: #f3f4f6;
+}
+
+/* Avatar & Text */
+.ud-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #eee;
+}
+
+.ud-info {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.ud-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: #333;
+}
+
+.ud-role {
+    font-size: 12px;
+    color: #888;
+}
+
+/* Icon mũi tên */
+.ud-arrow {
+    font-size: 12px;
+    color: #888;
+    transition: transform 0.3s ease;
+}
+
+.ud-arrow.rotate {
+    transform: rotate(180deg);
+}
+
+/* Menu thả xuống */
+.ud-menu {
+    position: absolute;
+    top: 115%; /* Cách header một chút */
+    right: 0;
+    width: 220px;
+    background-color: white;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    border-radius: 10px;
+    border: 1px solid #f0f0f0;
+    padding: 8px 0;
+    z-index: 9999;
+    animation: udFadeIn 0.2s ease-in-out;
+}
+
+/* Item trong menu */
+.ud-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.ud-item:hover {
+    background-color: #f0f9ff;
+    color: #0089d0;
+}
+
+.ud-icon {
+    font-size: 16px;
+    opacity: 0.7;
+}
+
+/* Đường kẻ & Nút đăng xuất */
+.ud-divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 6px 0;
+}
+
+.ud-item.ud-logout:hover {
+    background-color: #fef2f2;
+    color: #ef4444;
+}
+
+/* Animation */
+@keyframes udFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
