@@ -586,3 +586,36 @@ body {
   font-weight: 600;
   color: #333;
 }
+
+/* --- CSS CHO TRANG CHỦ NURSE DASHBOARD (GIỐNG HÌNH) --- */
+.home-container { padding: 10px; }
+.welcome-section { margin-bottom: 30px; }
+.welcome-title { font-size: 24px; font-weight: 800; color: #111827; margin-bottom: 5px; }
+.welcome-sub { color: #6b7280; font-size: 15px; }
+
+/* Grid layout: Hàng trên 3 cột */
+.stats-grid-top { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 30px; }
+/* Grid layout: Hàng dưới 2 cột */
+.stats-grid-bottom { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+
+/* Style thẻ (Card) chung */
+.stat-card {
+  background: white; border-radius: 16px; padding: 25px 30px; height: 160px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f3f4f6;
+  display: flex; flex-direction: column; justify-content: space-between;
+  transition: transform 0.2s;
+}
+.stat-card:hover { transform: translateY(-5px); }
+
+/* Header của Card */
+.card-header-row { display: flex; align-items: center; gap: 15px; }
+.stat-icon-box { font-size: 24px; color: #111827; }
+.stat-title { font-size: 16px; font-weight: 600; color: #111827; }
+
+/* Số lượng */
+.stat-count { font-size: 42px; font-weight: 500; color: #374151; text-align: center; margin-top: 10px; }
+
+/* Thẻ đặc biệt (Có viền xanh như hình - Thiết bị chưa duyệt) */
+.stat-card-highlight {
+  border: 2px solid #0090e7; /* Viền xanh */
+}

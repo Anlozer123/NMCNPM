@@ -5,7 +5,7 @@ const nurseController = require('../Controller/NurseController');
 // Định nghĩa các đường dẫn
 
 // Trang chủ cho y tá
-router.get('/profile', nurseController.getNurseProfile);
+router.get('/stats', nurseController.getNurseStats);
 
 // UC010
 router.get('/doctor-instructions', nurseController.getDoctorInstructions);

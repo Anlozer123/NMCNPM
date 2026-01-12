@@ -131,27 +131,6 @@
   overflow-y: auto;
 }
 
-/* --- PROFILE CARD STYLE (Giữ lại style cũ nhưng chỉnh màu cho hợp nền sáng) --- */
-.profile-full-card {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  display: flex;
-  min-height: 400px;
-  border: 1px solid #e5e7eb;
-}
-/* ... Các class profile-left-col, profile-right-col giữ nguyên hoặc chỉnh nhẹ màu ... */
-.profile-left-col {
-  width: 320px;
-  background: linear-gradient(135deg, #0090e7 0%, #00d4ff 100%); /* Chỉnh về tông xanh dương cho khớp logo */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  padding: 30px;
-}
-
 /* --- WORK SCHEDULE (LỊCH LÀM VIỆC) --- */
 .schedule-container {
     padding: 10px;
@@ -514,4 +493,123 @@
     padding: 2px 8px;
     border-radius: 4px;
     margin-right: 8px;
+}
+
+/* --- NEW HOME DASHBOARD STYLE --- */
+
+.home-container {
+  padding: 10px;
+}
+
+.welcome-section {
+  margin-bottom: 30px;
+}
+
+.welcome-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 5px;
+}
+
+.welcome-sub {
+  color: #6b7280;
+  font-size: 15px;
+}
+
+/* GRID LAYOUT */
+.stats-grid-top {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 cột đều nhau */
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.stats-grid-bottom {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 cột đều nhau */
+  gap: 30px;
+}
+
+/* CARD STYLE */
+.stat-card {
+  background-color: white;
+  border-radius: 16px; /* Bo góc tròn hơn */
+  padding: 25px 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); /* Đổ bóng nhẹ mờ */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 160px; /* Chiều cao cố định cho đều */
+  border: 1px solid #f3f4f6;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+/* HEADER CỦA CARD (Icon + Title) */
+.card-header-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.stat-icon-box {
+  font-size: 24px;
+  color: #111827;
+}
+
+.stat-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* SỐ LƯỢNG (Count) */
+.stat-count {
+  font-size: 42px; /* Số to */
+  font-weight: 500;
+  color: #374151;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* LAYOUT RIÊNG CHO HÀNG DƯỚI (Icon nằm bên phải) */
+.stat-card-wide {
+  background-color: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 180px;
+  border: 1px solid #f3f4f6;
+}
+
+.wide-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wide-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 15px;
+}
+
+.wide-count {
+  font-size: 48px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.wide-icon {
+  font-size: 70px; /* Icon siêu to */
+  color: #111827;
+  opacity: 1;
 }

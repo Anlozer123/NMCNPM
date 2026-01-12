@@ -2,19 +2,26 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 /* ===== COMMON PAGES ===== */
-import Homepage from "./components/Pages/Homepage";
+// Lưu ý: Đảm bảo file Homepage.js nằm đúng trong ./components/Pages/
+import Homepage from "./components/Pages/Homepage"; 
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 
-/* ===== DASHBOARD ===== */
+/* ===== ADMIN & NURSE IMPORTS (MỚI) ===== */
+// Dựa trên ảnh: src/components/Admin/AdminDashboard.js
+import AdminDashboard from "./components/Admin/AdminDashboard"; 
+// Dựa trên ảnh: src/components/Nurse/NurseDashboard.js
+import NurseDashboard from "./components/Nurse/NurseDashboard"; 
+
+/* ===== DASHBOARD (General) ===== */
 import Dashboard from "./components/Dashboard/Dashboard";
 
 /* ===== DOCTOR ===== */
-import DoctorAppointments from "./components/Doctor/Appointments/DoctorAppointments";
+import DoctorAppointments from "./components/Doctor/Appointments/DoctorAppointments"; // Kiểm tra lại đường dẫn này nếu cần
 
 /* ===== PATIENT ===== */
 import Prescription from "./components/Patient/Prescription/Prescription";
-import PatientAppointment from "./components/Patient/Appointment/PatientAppointments";
+import PatientAppointment from "./components/Patient/Appointment/PatientAppointments"; // Kiểm tra tên file chính xác
 import RequestConsultation from "./components/Patient/RequestConsultation/RequestConsultation";
 import Billing from "./components/Patient/Billing/Billing";
 import BillingSuccess from "./components/Patient/Billing/BillingSuccess";
@@ -28,11 +35,16 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* ===== DASHBOARD ===== */}
+        {/* ===== ADMIN ROUTE (MỚI) ===== */}
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
+        {/* ===== NURSE ROUTE (MỚI) ===== */}
+        <Route path="/nurse-dashboard" element={<NurseDashboard />} />
+
+        {/* ===== GENERIC DASHBOARD ===== */}
         <Route path="/dashboard" element={<Dashboard />} />
 
         {/* ===== DOCTOR ===== */}
-        {/* Dùng Dashboard + activeView (theo tuan) */}
         <Route
           path="/doctor/appointments"
           element={<Dashboard activeView="appointments" />}
@@ -62,7 +74,7 @@ function App() {
         />
         <Route
           path="/online-consultation"
-          element={<Dashboard activeView="online-consultation" />}
+element={<Dashboard activeView="online-consultation" />}
         />
       </Routes>
     </Router>
