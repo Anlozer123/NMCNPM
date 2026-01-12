@@ -59,9 +59,8 @@ const PatientProfile = () => {
         }
     }, [activeTab, fetchInstructionHistory]);
 
-    // Hàm lưu thông tin - ĐÃ CẬP NHẬT KIỂM TRA KHÔNG ĐỂ TRỐNG
+    // Hàm lưu thông tin
     const handleSave = async () => {
-        // Danh sách các trường không được để trống
         const requiredFields = [
             { key: 'Phone', label: 'Số điện thoại' },
             { key: 'Address', label: 'Địa chỉ' },
@@ -131,27 +130,25 @@ const PatientProfile = () => {
 
             {/* TAB MENU */}
             <div className="profile-tabs">
-                <button className={`tab-item ${activeTab === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>
-                    Thông tin cá nhân
-                </button>
-                <button className={`tab-item ${activeTab === 'prescription' ? 'active' : ''}`} onClick={() => setActiveTab('prescription')}>
-                    Kê đơn thuốc
-                </button>
-                <button className={`tab-item ${activeTab === 'nursing' ? 'active' : ''}`} onClick={() => setActiveTab('nursing')}>
-                    Chỉ thị điều dưỡng
-                </button>
-                <button className={`tab-item ${activeTab === 'medical_record' ? 'active' : ''}`} onClick={() => setActiveTab('medical_record')}>
-                    Hồ sơ bệnh án
-                </button>
+                <button className={`tab-item ${activeTab === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>Thông tin cá nhân</button>
+                <button className={`tab-item ${activeTab === 'prescription' ? 'active' : ''}`} onClick={() => setActiveTab('prescription')}>Kê đơn thuốc</button>
+                <button className={`tab-item ${activeTab === 'nursing' ? 'active' : ''}`} onClick={() => setActiveTab('nursing')}>Chỉ thị điều dưỡng</button>
+                <button className={`tab-item ${activeTab === 'medical_record' ? 'active' : ''}`} onClick={() => setActiveTab('medical_record')}>Hồ sơ bệnh án</button>
             </div>
 
             {/* 1. TAB THÔNG TIN CÁ NHÂN */}
             {activeTab === 'info' && (
                 <div className="card detail-card">
-                    <div className="detail-header">
-                        <h3>👤 Thông tin hồ sơ chi tiết</h3>
-                        <button className={`btn-toggle-edit ${isEditing ? 'btn-cancel' : ''}`} onClick={() => setIsEditing(!isEditing)}>
-                            {isEditing ? "Hủy chỉnh sửa" : "Chỉnh sửa thông tin"}
+                    <div className="profile-detail-header">
+                        <div className="header-left-content">
+                            <div className="title-with-icon">
+                                <span className="blue-user-icon">👤</span> 
+                                <h3 className="header-title">Thông tin chi tiết</h3>
+                            </div>
+                            {/* ĐÃ LOẠI BỎ DÒNG UC005 TẠI ĐÂY */}
+                        </div>
+                        <button className={`btn-edit-modern ${isEditing ? 'btn-cancel' : ''}`} onClick={() => setIsEditing(!isEditing)}>
+                            {isEditing ? "✖ Hủy chỉnh sửa" : "Chỉnh sửa thông tin"}
                         </button>
                     </div>
 
@@ -160,29 +157,29 @@ const PatientProfile = () => {
                             <h4 style={{ color: '#0081c9', marginBottom: '15px', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
                                 I. Thông tin hành chính
                             </h4>
-                            <div className="input-group">
+                            <div className="input-group-vertical">
                                 <label>Họ và tên</label>
                                 <input value={formData.FullName || ''} disabled={true} style={{backgroundColor: '#f5f5f5'}} />
                             </div>
-                            <div className="input-row">
-                                <div className="input-group">
+                            <div className="input-row-grid">
+                                <div className="input-group-vertical">
                                     <label>Ngày sinh</label>
                                     <input value={formData.DoB ? formData.DoB.substring(0, 10) : ''} disabled={true} style={{backgroundColor: '#f5f5f5'}} />
                                 </div>
-                                <div className="input-group">
+                                <div className="input-group-vertical">
                                     <label>Giới tính</label>
                                     <input value={formData.Gender || ''} disabled={true} style={{backgroundColor: '#f5f5f5'}} />
                                 </div>
                             </div>
-                            <div className="input-group">
+                            <div className="input-group-vertical">
                                 <label>Số điện thoại *</label>
                                 <input name="Phone" value={formData.Phone || ''} onChange={(e) => setFormData({ ...formData, Phone: e.target.value })} disabled={!isEditing} />
                             </div>
-                            <div className="input-group">
+                            <div className="input-group-vertical">
                                 <label>Địa chỉ *</label>
                                 <input name="Address" value={formData.Address || ''} onChange={(e) => setFormData({ ...formData, Address: e.target.value })} disabled={!isEditing} />
                             </div>
-                            <div className="input-group">
+                            <div className="input-group-vertical">
                                 <label>Bảo hiểm y tế *</label>
                                 <input name="InsuranceID" value={formData.InsuranceID || ''} onChange={(e) => setFormData({ ...formData, InsuranceID: e.target.value })} disabled={!isEditing} />
                             </div>
@@ -192,35 +189,17 @@ const PatientProfile = () => {
                             <h4 style={{ color: '#0081c9', marginBottom: '15px', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
                                 II. Thông tin liên hệ người thân
                             </h4>
-                            <div className="input-group">
+                            <div className="input-group-vertical">
                                 <label>Họ và tên người thân</label>
-                                <input 
-                                    name="RelativeName" 
-                                    value={formData.RelativeName || ''} 
-                                    onChange={(e) => setFormData({ ...formData, RelativeName: e.target.value })} 
-                                    disabled={!isEditing} 
-                                    placeholder="Ví dụ: Nguyễn Văn A"
-                                />
+                                <input name="RelativeName" value={formData.RelativeName || ''} onChange={(e) => setFormData({ ...formData, RelativeName: e.target.value })} disabled={!isEditing} placeholder="Ví dụ: Nguyễn Văn A" />
                             </div>
-                            <div className="input-group">
+                            <div className="input-group-vertical">
                                 <label>Số điện thoại người thân</label>
-                                <input 
-                                    name="RelativePhone" 
-                                    value={formData.RelativePhone || ''} 
-                                    onChange={(e) => setFormData({ ...formData, RelativePhone: e.target.value })} 
-                                    disabled={!isEditing} 
-                                    placeholder="Nhập số điện thoại"
-                                />
+                                <input name="RelativePhone" value={formData.RelativePhone || ''} onChange={(e) => setFormData({ ...formData, RelativePhone: e.target.value })} disabled={!isEditing} placeholder="Nhập số điện thoại" />
                             </div>
-                            <div className="input-group">
+                            <div className="input-group-vertical">
                                 <label>Quan hệ với bệnh nhân</label>
-                                <select 
-                                    name="Relationship" 
-                                    value={formData.Relationship || ''} 
-                                    onChange={(e) => setFormData({ ...formData, Relationship: e.target.value })} 
-                                    disabled={!isEditing}
-                                    style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ddd', width: '100%', height: '42px' }}
-                                >
+                                <select name="Relationship" value={formData.Relationship || ''} onChange={(e) => setFormData({ ...formData, Relationship: e.target.value })} disabled={!isEditing} className="custom-select-box">
                                     <option value="">-- Chọn quan hệ --</option>
                                     <option value="Cha/Mẹ">Cha/Mẹ</option>
                                     <option value="Vợ/Chồng">Vợ/Chồng</option>
@@ -236,21 +215,19 @@ const PatientProfile = () => {
                     </div>
                     
                     {isEditing && (
-                        <div className="form-footer">
+                        <div className="form-footer-action">
                             <button className="btn-save-submit" onClick={handleSave}>Lưu tất cả thay đổi</button>
                         </div>
                     )}
                 </div>
             )}
 
-            {/* 2. TAB KÊ ĐƠN THUỐC */}
+            {/* TAB KÊ ĐƠN THUỐC */}
             {activeTab === 'prescription' && (
                 <div className="prescription-tab-wrapper">
                     <div style={{ display: 'grid', gridTemplateColumns: '65% 33%', gap: '2%' }}>
                         <div className="card">
-                            <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <FaPills color="#0081c9" /> Kê đơn thuốc
-                            </h3>
+                            <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}><FaPills color="#0081c9" /> Kê đơn thuốc</h3>
                             <PrescriptionForm patientId={id} doctorId={2} />
                         </div>
                         <div className="card">
@@ -261,16 +238,12 @@ const PatientProfile = () => {
                 </div>
             )}
 
-            {/* 3. TAB CHỈ THỊ ĐIỀU DƯỠNG */}
+            {/* TAB CHỈ THỊ ĐIỀU DƯỠNG */}
             {activeTab === 'nursing' && (
                 <div className="nursing-tab-wrapper" style={{ marginTop: '20px' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '60% 38%', gap: '2%' }}>
                         <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-                            <NursingInstructionForm 
-                                patientId={id} 
-                                doctorId={2} 
-                                onInstructionSent={fetchInstructionHistory} 
-                            />
+                            <NursingInstructionForm patientId={id} doctorId={2} onInstructionSent={fetchInstructionHistory} />
                         </div>
                         <div className="card" style={{ backgroundColor: '#f9f9f9', borderLeft: '1px solid #ddd' }}>
                             <NursingInstructionHistory history={instructionHistory} />
@@ -282,47 +255,25 @@ const PatientProfile = () => {
             {/* 4. TAB HỒ SƠ BỆNH ÁN */}
             {activeTab === 'medical_record' && (
                 <div className="card detail-card">
-                    <div className="detail-header">
-                        <h3>📂 Thông tin điều trị & Bệnh án</h3>
-                        <button className={`btn-toggle-edit ${isEditing ? 'btn-cancel' : ''}`} onClick={() => setIsEditing(!isEditing)}>
-                            {isEditing ? "Hủy" : "Chỉnh sửa bệnh án"}
+                    <div className="profile-detail-header">
+                        <div className="header-left-content"><h3 className="header-title">📂 Thông tin điều trị & Bệnh án</h3></div>
+                        <button className={`btn-edit-modern ${isEditing ? 'btn-cancel' : ''}`} onClick={() => setIsEditing(!isEditing)}>
+                            {isEditing ? "✖ Hủy" : "✏️ Chỉnh sửa bệnh án"}
                         </button>
                     </div>
                     <div className="form-container">
                         <div className="form-section" style={{ width: '100%' }}>
-                            <div className="input-row">
-                                <div className="input-group">
-                                    <label>Phòng bệnh *</label>
-                                    <input name="CurrentRoom" value={formData.CurrentRoom || ''} onChange={(e) => setFormData({ ...formData, CurrentRoom: e.target.value })} disabled={!isEditing} />
-                                </div>
-                                <div className="input-group">
-                                    <label>Nhóm máu *</label>
-                                    <input name="BloodGroup" value={formData.BloodGroup || ''} onChange={(e) => setFormData({ ...formData, BloodGroup: e.target.value })} disabled={!isEditing} />
-                                </div>
+                            <div className="input-row-grid">
+                                <div className="input-group-vertical"><label>Phòng bệnh *</label><input name="CurrentRoom" value={formData.CurrentRoom || ''} onChange={(e) => setFormData({ ...formData, CurrentRoom: e.target.value })} disabled={!isEditing} /></div>
+                                <div className="input-group-vertical"><label>Nhóm máu *</label><input name="BloodGroup" value={formData.BloodGroup || ''} onChange={(e) => setFormData({ ...formData, BloodGroup: e.target.value })} disabled={!isEditing} /></div>
                             </div>
-                            <div className="input-group">
-                                <label>Chẩn đoán nhập viện *</label>
-                                <input name="AdmissionDiagnosis" value={formData.AdmissionDiagnosis || ''} onChange={(e) => setFormData({ ...formData, AdmissionDiagnosis: e.target.value })} disabled={!isEditing} />
-                            </div>
-                            <div className="input-group">
-                                <label>Tình trạng hiện tại *</label>
-                                <input name="CurrentCondition" value={formData.CurrentCondition || ''} onChange={(e) => setFormData({ ...formData, CurrentCondition: e.target.value })} disabled={!isEditing} />
-                            </div>
-                            <div className="input-group">
-                                <label>Dị ứng thuốc *</label>
-                                <input name="Allergies" className="danger-text" value={formData.Allergies || ''} onChange={(e) => setFormData({ ...formData, Allergies: e.target.value })} disabled={!isEditing} />
-                            </div>
-                            <div className="input-group">
-                                <label>Tiền sử bệnh *</label>
-                                <textarea name="MedicalHistory" rows="5" value={formData.MedicalHistory || ''} onChange={(e) => setFormData({ ...formData, MedicalHistory: e.target.value })} disabled={!isEditing} />
-                            </div>
+                            <div className="input-group-vertical"><label>Chẩn đoán nhập viện *</label><input name="AdmissionDiagnosis" value={formData.AdmissionDiagnosis || ''} onChange={(e) => setFormData({ ...formData, AdmissionDiagnosis: e.target.value })} disabled={!isEditing} /></div>
+                            <div className="input-group-vertical"><label>Tình trạng hiện tại *</label><input name="CurrentCondition" value={formData.CurrentCondition || ''} onChange={(e) => setFormData({ ...formData, CurrentCondition: e.target.value })} disabled={!isEditing} /></div>
+                            <div className="input-group-vertical"><label>Dị ứng thuốc *</label><input name="Allergies" className="danger-text" value={formData.Allergies || ''} onChange={(e) => setFormData({ ...formData, Allergies: e.target.value })} disabled={!isEditing} /></div>
+                            <div className="input-group-vertical"><label>Tiền sử bệnh *</label><textarea name="MedicalHistory" rows="5" value={formData.MedicalHistory || ''} onChange={(e) => setFormData({ ...formData, MedicalHistory: e.target.value })} disabled={!isEditing} /></div>
                         </div>
                     </div>
-                    {isEditing && (
-                        <div className="form-footer">
-                            <button className="btn-save-submit" onClick={handleSave}>Cập nhật bệnh án</button>
-                        </div>
-                    )}
+                    {isEditing && (<div className="form-footer-action"><button className="btn-save-submit" onClick={handleSave}>Cập nhật bệnh án</button></div>)}
                 </div>
             )}
         </div>
