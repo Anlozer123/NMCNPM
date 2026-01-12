@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './PatientProfile.css';
 
@@ -17,6 +17,10 @@ const PatientProfile = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
+    // [FIX] 1. Lấy thông tin User đang đăng nhập để lấy đúng DoctorID
+    const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
+    const currentDoctorId = user?.StaffID; 
+
     const [patient, setPatient] = useState(null);
     const [formData, setFormData] = useState({});
     const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +34,8 @@ const PatientProfile = () => {
             .then(data => {
                 setPatient(data);
                 setFormData(data);
-            });
+            })
+            .catch(err => console.error("Lỗi lấy thông tin bệnh nhân:", err));
     }, [id]);
 
     // Logic tự động mở tab và chế độ sửa nếu đi từ nút "Cập nhật" ở trang ngoài
@@ -83,22 +88,27 @@ const PatientProfile = () => {
             return;
         }
 
-        const response = await fetch(`http://localhost:5000/api/doctor/update-patient/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
-        });
+        try {
+            const response = await fetch(`http://localhost:5000/api/doctor/update-patient/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
 
-        if (response.ok) {
-            setPatient(formData);
-            setIsEditing(false);
-            alert("Cập nhật thông tin thành công!");
-        } else {
-            alert("Có lỗi xảy ra khi cập nhật dữ liệu.");
+            if (response.ok) {
+                setPatient(formData);
+                setIsEditing(false);
+                alert("Cập nhật thông tin thành công!");
+            } else {
+                alert("Có lỗi xảy ra khi cập nhật dữ liệu.");
+            }
+        } catch (error) {
+            console.error("Lỗi khi lưu:", error);
+            alert("Lỗi kết nối đến server.");
         }
     };
 
-    if (!patient) return null;
+    if (!patient) return <div style={{ padding: "20px", textAlign: "center" }}>Đang tải thông tin...</div>;
 
     return (
         <div className="patient-profile-container">
@@ -122,7 +132,15 @@ const PatientProfile = () => {
                     <div className="grid-item"><label>Nhóm máu</label><span className="val">{patient.BloodGroup || 'O+'}</span></div>
                     <div className="grid-item"><label>Chẩn đoán</label><span className="val">{patient.AdmissionDiagnosis}</span></div>
                     <div className="grid-item"><label>Tình trạng</label><span className="status-tag stable">Ổn định</span></div>
-                    <div className="grid-item"><label>Ngày nhập viện</label><span className="val">2025-01-15</span></div>
+                    
+                    {/* [FIX] 2. Hiển thị ngày nhập viện đúng định dạng */}
+                    <div className="grid-item">
+                        <label>Ngày nhập viện</label>
+                        <span className="val">
+                            {patient.AdmissionDate ? new Date(patient.AdmissionDate).toLocaleDateString('vi-VN') : 'N/A'}
+                        </span>
+                    </div>
+
                     <div className="grid-item"><label>Dị ứng</label><span className="val text-danger">{patient.Allergies || 'Không có'}</span></div>
                     <div className="grid-item"><label>Tiền sử</label><span className="val">{patient.MedicalHistory}</span></div>
                 </div>
@@ -145,7 +163,6 @@ const PatientProfile = () => {
                                 <span className="blue-user-icon">👤</span> 
                                 <h3 className="header-title">Thông tin chi tiết</h3>
                             </div>
-                            {/* ĐÃ LOẠI BỎ DÒNG UC005 TẠI ĐÂY */}
                         </div>
                         <button className={`btn-edit-modern ${isEditing ? 'btn-cancel' : ''}`} onClick={() => setIsEditing(!isEditing)}>
                             {isEditing ? "✖ Hủy chỉnh sửa" : "Chỉnh sửa thông tin"}
@@ -227,8 +244,11 @@ const PatientProfile = () => {
                 <div className="prescription-tab-wrapper">
                     <div style={{ display: 'grid', gridTemplateColumns: '65% 33%', gap: '2%' }}>
                         <div className="card">
-                            <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}><FaPills color="#0081c9" /> Kê đơn thuốc</h3>
-                            <PrescriptionForm patientId={id} doctorId={2} />
+                            <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <FaPills color="#0081c9" /> Kê đơn thuốc
+                            </h3>
+                            {/* [FIX] 3. Truyền currentDoctorId thay vì số 2 */}
+                            <PrescriptionForm patientId={id} doctorId={currentDoctorId} />
                         </div>
                         <div className="card">
                             <h3 style={{ marginBottom: '20px' }}>⏳ Lịch sử dùng thuốc</h3>
@@ -243,7 +263,12 @@ const PatientProfile = () => {
                 <div className="nursing-tab-wrapper" style={{ marginTop: '20px' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '60% 38%', gap: '2%' }}>
                         <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-                            <NursingInstructionForm patientId={id} doctorId={2} onInstructionSent={fetchInstructionHistory} />
+                            {/* [FIX] 4. Truyền currentDoctorId thay vì số 2 */}
+                            <NursingInstructionForm 
+                                patientId={id} 
+                                doctorId={currentDoctorId} 
+                                onInstructionSent={fetchInstructionHistory} 
+                            />
                         </div>
                         <div className="card" style={{ backgroundColor: '#f9f9f9', borderLeft: '1px solid #ddd' }}>
                             <NursingInstructionHistory history={instructionHistory} />
