@@ -78,6 +78,11 @@ const PrescriptionForm = ({ patientId, doctorId }) => {
                 alert(`Lỗi ở Thuốc #${drugNum}: Vui lòng nhập số lượng hợp lệ (> 0).`);
                 return;
             }
+            const drugInStock = drugList.find(d => d.MedicineID.toString() === m.medicineId.toString());
+    if (drugInStock && parseInt(m.quantity) > drugInStock.StockQuantity) {
+        alert(`Lỗi ở Thuốc #${drugNum}: Số lượng yêu cầu (${m.quantity}) vượt quá tồn kho hiện tại (${drugInStock.StockQuantity}).`);
+        return;
+    }
             // Kiểm tra Liều dùng không được để trống
             if (!m.dosage || !m.dosage.trim()) {
                 alert(`Lỗi ở Thuốc #${drugNum}: Vui lòng nhập liều dùng.`);

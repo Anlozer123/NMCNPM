@@ -102,10 +102,18 @@ exports.sendInstruction = async (req, res) => {
 
 exports.getConsultationRequests = async (req, res) => {
     try {
-        const data = await doctorService.getConsultationRequests();
+        // [SỬA]: Lấy doctorId từ query string của URL
+        const { doctorId } = req.query; 
+
+        if (!doctorId) {
+            return res.status(400).json({ message: "Thiếu mã bác sĩ (doctorId)" });
+        }
+
+        const data = await doctorService.getConsultationRequests(doctorId);
         res.json(data);
     } catch (err) {
-        res.status(500).json({ message: "Lỗi Server" });
+        console.error(err);
+        res.status(500).json({ message: "Lỗi Server khi lấy danh sách tư vấn" });
     }
 };
 

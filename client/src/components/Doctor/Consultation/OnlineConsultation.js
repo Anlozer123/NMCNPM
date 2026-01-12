@@ -1,38 +1,45 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { LuClock3, LuMessageSquare, LuSend } from "react-icons/lu";
 import { FaUserCircle, FaUserMd } from "react-icons/fa";
 import './OnlineConsultation.css';
 
-const OnlineConsultation = ({ doctorId = 2 }) => { 
+// Loại bỏ mặc định "= 2" để tránh việc gán nhầm ID
+const OnlineConsultation = ({ doctorId: propDoctorId }) => { 
     const [requests, setRequests] = useState([]);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [messages, setMessages] = useState([]); 
     const [replyContent, setReplyContent] = useState('');
     const chatEndRef = useRef(null);
 
-    // 1. Tải danh sách yêu cầu
+    // [SỬA QUAN TRỌNG] Lấy thông tin bác sĩ thực tế từ localStorage
+    const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
+    const currentDoctorId = propDoctorId || user?.StaffID || user?.ID;
+
+    // 1. Tải danh sách yêu cầu (Đã thêm tham số doctorId vào URL)
     const fetchRequests = useCallback(async () => {
+        if (!currentDoctorId) return; // Nếu chưa có ID thì không gọi API
+        
         try {
-            const res = await fetch('http://localhost:5000/api/doctor/consultations');
+            // [SỬA] Gửi kèm doctorId qua query string để Backend lọc danh sách
+            const res = await fetch(`http://localhost:5000/api/doctor/consultations?doctorId=${currentDoctorId}`);
             const data = await res.json();
             setRequests(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Lỗi tải danh sách:", error);
             setRequests([]);
         }
-    }, []);
+    }, [currentDoctorId]);
 
     useEffect(() => {
         fetchRequests();
     }, [fetchRequests]);
 
-    // 2. Hàm tải tin nhắn được bao bọc bởi useCallback để tránh lỗi ESLint
+    // 2. Hàm tải tin nhắn
     const fetchMessages = useCallback(async (requestId) => {
         try {
             const res = await fetch(`http://localhost:5000/api/doctor/consultation/${requestId}/messages`);
             const data = await res.json();
             
-            // Đảm bảo dữ liệu luôn là mảng để tránh lỗi .map()
             const safeData = Array.isArray(data) ? data : [];
 
             if (safeData.length === 0 && selectedRequest?.Symptoms) {
@@ -49,16 +56,15 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
             console.error("Lỗi tải tin nhắn:", error);
             setMessages([]);
         }
-    }, [selectedRequest]); // Phụ thuộc vào selectedRequest để lấy Symptoms nếu cần
+    }, [selectedRequest]);
 
-    // Tải tin nhắn khi selectedRequest thay đổi
     useEffect(() => {
         if (selectedRequest) {
             fetchMessages(selectedRequest.RequestID);
         } else {
             setMessages([]);
         }
-    }, [selectedRequest, fetchMessages]); // Đã thêm fetchMessages vào đây để hết Warning
+    }, [selectedRequest, fetchMessages]);
 
     // Auto scroll
     useEffect(() => {
@@ -67,14 +73,14 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
 
     // 3. Xử lý gửi tin nhắn
     const handleSendReply = async () => {
-        if (!replyContent.trim() || !selectedRequest) return;
+        if (!replyContent.trim() || !selectedRequest || !currentDoctorId) return;
 
         try {
             const res = await fetch(`http://localhost:5000/api/doctor/consultation/reply/${selectedRequest.RequestID}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    doctorId: doctorId,
+                    doctorId: currentDoctorId, // [SỬA] Sử dụng ID động thay vì số 2
                     responseContent: replyContent
                 })
             });
@@ -124,24 +130,28 @@ const OnlineConsultation = ({ doctorId = 2 }) => {
             <div className="oc-layout">
                 {/* CỘT TRÁI: DANH SÁCH YÊU CẦU */}
                 <div className="oc-list-panel">
-                    <h4 style={{ marginBottom: '15px' }}>💬 Yêu cầu ({requests.length})</h4>
-                    {requests.map(req => (
-                        <div 
-                            key={req.RequestID} 
-                            className={`oc-card ${selectedRequest?.RequestID === req.RequestID ? 'active' : ''}`}
-                            onClick={() => setSelectedRequest(req)}
-                        >
-                            <div className="oc-card-header">
-                                <span className="oc-patient-name">{req.PatientName}</span>
-                                <span className={`oc-tag ${getPriorityClass(req.Priority)}`}>{req.Priority}</span>
+                    <h4 style={{ marginBottom: '15px' }}>💬 Yêu cầu tư vấn ({requests.length})</h4>
+                    {requests.length === 0 ? (
+                        <p style={{textAlign: 'center', color: '#888', marginTop: '20px'}}>Không có yêu cầu phù hợp</p>
+                    ) : (
+                        requests.map(req => (
+                            <div 
+                                key={req.RequestID} 
+                                className={`oc-card ${selectedRequest?.RequestID === req.RequestID ? 'active' : ''}`}
+                                onClick={() => setSelectedRequest(req)}
+                            >
+                                <div className="oc-card-header">
+                                    <span className="oc-patient-name">{req.PatientName}</span>
+                                    <span className={`oc-tag ${getPriorityClass(req.Priority)}`}>{req.Priority}</span>
+                                </div>
+                                <div className="oc-specialty">{req.Specialty}</div>
+                                <div className="oc-time">
+                                    <LuClock3 /> {req.CreatedTime}
+                                </div>
+                                <p className="oc-symptoms">{req.Symptoms}</p>
                             </div>
-                            <div className="oc-specialty">{req.Specialty}</div>
-                            <div className="oc-time">
-                                <LuClock3 /> {req.CreatedTime}
-                            </div>
-                            <p className="oc-symptoms">{req.Symptoms}</p>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
 
                 {/* CỘT PHẢI: KHUNG CHAT */}

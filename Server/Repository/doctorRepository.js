@@ -43,12 +43,19 @@ class DoctorRepository {
         `;
     }
 
+    // [SỬA]: Thêm điều kiện StockQuantity >= quantity để không bị trừ âm kho
     async decreaseMedicineStock(transaction, { medicineId, quantity }) {
         const request = new sql.Request(transaction);
-        await request.query`
-            UPDATE Medicine SET StockQuantity = StockQuantity - ${quantity} 
-            WHERE MedicineID = ${medicineId}
+        const result = await request.query`
+            UPDATE Medicine 
+            SET StockQuantity = StockQuantity - ${quantity} 
+            WHERE MedicineID = ${medicineId} AND StockQuantity >= ${quantity}
         `;
+        
+        // Nếu không có dòng nào được cập nhật nghĩa là hết hàng hoặc sai ID
+        if (result.rowsAffected[0] === 0) {
+            throw new Error("Số lượng thuốc trong kho không đủ để thực hiện kê đơn!");
+        }
     }
     // ---------------------------------------------
 
@@ -98,8 +105,6 @@ class DoctorRepository {
     }
 
     async updatePatientProfile(patientId, data) {
-        // Lưu ý: Cần xử lý parameter cẩn thận hoặc dùng request.input để an toàn hơn
-        // Ở đây giữ nguyên logic query string literal của bạn
         const result = await sql.query`
             UPDATE Patient
             SET FullName = ${data.FullName}, Gender = ${data.Gender}, DoB = ${data.DoB},
@@ -141,13 +146,15 @@ class DoctorRepository {
         `;
     }
 
-    async getConsultationRequests() {
+    // [SỬA]: Thêm tham số doctorId để lọc yêu cầu tư vấn theo chuyên khoa của bác sĩ đó
+    async getConsultationRequests(doctorId) {
         const result = await sql.query`
             SELECT cr.RequestID, cr.PatientID, p.FullName AS PatientName,
                    cr.Specialty, cr.Priority, cr.Symptoms, cr.Status,
                    FORMAT(cr.CreatedDate, 'dd/MM/yyyy HH:mm') AS CreatedTime
             FROM ConsultationRequests cr
             JOIN Patient p ON cr.PatientID = p.PatientID
+            WHERE cr.Specialty = (SELECT Specialization FROM Staff WHERE StaffID = ${doctorId})
             ORDER BY CASE WHEN cr.Status = N'Chờ phản hồi' THEN 0 ELSE 1 END, cr.CreatedDate DESC
         `;
         return result.recordset;

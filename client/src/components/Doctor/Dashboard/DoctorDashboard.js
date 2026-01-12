@@ -14,12 +14,15 @@ import OnlineConsultation from "../Consultation/OnlineConsultation";
 const DoctorDashboard = ({ user, activeView }) => {
     const navigate = useNavigate();
 
+    // Lấy ID thực tế từ user (StaffID hoặc ID tùy theo DB của bạn)
+    const currentDoctorId = user?.StaffID || user?.ID;
+
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/');
     };
 
-    // Dữ liệu giả lập cho phần thống kê (Stats)
+    // Dữ liệu giả lập cho phần thống kê (Stats) - GIỮ NGUYÊN
     const appointmentsData = [
         { id: 1, patientId: 1, name: 'Phạm Bệnh Nhân A', type: 'Khám định kỳ', time: '09:00', avatar: 'A' },
         { id: 2, patientId: 2, name: 'Hoàng Bệnh Nhân B', type: 'Tư vấn', time: '10:30', avatar: 'B' },
@@ -28,7 +31,7 @@ const DoctorDashboard = ({ user, activeView }) => {
 
     return (
         <div className="doctor-layout">
-            {/* --- SIDEBAR --- */}
+            {/* --- SIDEBAR --- GIỮ NGUYÊN */}
             <aside className="doc-sidebar">
                 <div className="brand">
                     <div className="logo-icon">⚡</div> 
@@ -39,14 +42,12 @@ const DoctorDashboard = ({ user, activeView }) => {
                     <li className={!activeView ? "active" : ""} onClick={() => navigate('/dashboard')}>
                         <FaHome /> Trang chủ
                     </li>
-                    {/* Mục Lịch khám: Trỏ về view appointments */}
                     <li className={activeView === 'appointments' ? "active" : ""} onClick={() => navigate('/doctor/appointments')}>
                         <FaCalendarCheck /> Lịch khám
                     </li>
                     <li className={activeView === 'online-consultation' ? "active" : ""} onClick={() => navigate('/online-consultation')}>
                         <FaComments /> Tư vấn
                     </li>
-                    {/* Mục Bệnh nhân: Trỏ về view patients */}
                     <li className={activeView === 'patients' ? "active" : ""} onClick={() => navigate('/doctor/patients')}>
                         <FaUserInjured /> Bệnh nhân
                     </li>
@@ -69,27 +70,26 @@ const DoctorDashboard = ({ user, activeView }) => {
                 <div className="content-wrapper">
                     {/* RENDER NỘI DUNG DỰA TRÊN ACTIVE VIEW */}
                     
-                    {/* TRƯỜNG HỢP: XEM LỊCH HẸN */}
+                    {/* [SỬA] Truyền doctorId động vào DoctorAppointments */}
                     {activeView === 'appointments' ? (
-                        <DoctorAppointments initialTab="appointments" />
+                        <DoctorAppointments initialTab="appointments" doctorId={currentDoctorId} />
                     ) : 
                     
-                    /* TRƯỜNG HỢP: XEM DANH SÁCH BỆNH NHÂN ĐANG ĐIỀU TRỊ */
+                    /* [SỬA] Truyền doctorId động vào DoctorAppointments */
                     activeView === 'patients' ? (
-                        <DoctorAppointments initialTab="patients" />
+                        <DoctorAppointments initialTab="patients" doctorId={currentDoctorId} />
                     ) : 
                     
-                    /* TRƯỜNG HỢP: CHI TIẾT HỒ SƠ BỆNH NHÂN */
                     activeView === 'patient-detail' ? (
                         <PatientProfile />
                     ) : 
                     
-                    /* TRƯỜNG HỢP: TƯ VẤN ONLINE */
+                    /* [SỬA] Bỏ "|| 2", dùng ID thực tế từ props user */
                     activeView === 'online-consultation' ? (
-                        <OnlineConsultation doctorId={user?.ID || 2} />
+                        <OnlineConsultation doctorId={currentDoctorId} />
                     ) : 
                     
-                    /* TRƯỜNG HỢP MẶC ĐỊNH: TRANG CHỦ DASHBOARD */
+                    /* PHẦN MẶC ĐỊNH - GIỮ NGUYÊN HOÀN TOÀN */
                     (
                         <>
                             <h1 className="page-title">Bảng điều khiển</h1>
@@ -137,7 +137,7 @@ const DoctorDashboard = ({ user, activeView }) => {
                                 </div>
                             </div>
 
-                            {/* APPOINTMENT LIST RÚT GỌN Ở TRANG CHỦ */}
+                            {/* APPOINTMENT LIST RÚT GỌN */}
                             <div className="appointments-section">
                                 <h2 className="section-header">Lịch hẹn hôm nay</h2>
                                 <div className="appointment-list">

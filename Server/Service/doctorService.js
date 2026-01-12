@@ -96,8 +96,8 @@ class DoctorService {
         return await doctorRepo.createInstruction(data);
     }
 
-    async getConsultationRequests() {
-        return await doctorRepo.getConsultationRequests();
+    async getConsultationRequests(doctorId) {
+        return await doctorRepo.getConsultationRequests(doctorId);
     }
 
     async getConsultationMessages(requestId) {
