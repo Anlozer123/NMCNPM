@@ -57,6 +57,13 @@ function App() {
           path="/doctor/appointments"
           element={<Dashboard activeView="appointments" />}
         />
+        
+        {/* THÊM DÒNG NÀY ĐỂ XỬ LÝ KHI NHẤN VÀO MỤC BỆNH NHÂN */}
+        <Route
+          path="/doctor/patients"
+          element={<Dashboard activeView="patients" />}
+        />
+
 
         {/* ===== PATIENT ===== */}
         {/* UC001 – Online Prescription Ordering */}

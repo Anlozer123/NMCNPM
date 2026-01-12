@@ -233,14 +233,13 @@
 
 .qr-amount-display span {
     font-weight: 700;
-    color: #d63031; /* Màu đỏ cho số tiền nổi bật */
+    color: #d63031;
     font-size: 18px;
     margin-left: 5px;
 }
 
 .btn-qr-paid {
-    background-color: #00b894; /* Nút màu xanh lá */
-    color: white;
+    background-color: #00b894; 
     border: none;
     padding: 15px;
     font-size: 15px;

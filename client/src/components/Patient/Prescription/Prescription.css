@@ -69,44 +69,93 @@
 }
 .btn-checkout:hover { background-color: #1d4ed8; }
 
-/* CỘT PHẢI: BILL CARD */
+/* =========================================
+   CỘT PHẢI: BILL CARD (Đã cập nhật Layout)
+   ========================================= */
 .bill-card {
-    background-color: #aab7c4; /* Màu nền xám xanh */
+    background-color: #aab7c4; /* Màu nền xám xanh như cũ */
     border-radius: 20px;
     padding: 0;
     overflow: hidden;
     color: #333;
+    display: flex;
+    flex-direction: column;
 }
 
 .bill-header {
-    padding: 30px 30px 10px 30px; margin: 0;
-    font-size: 18px; font-weight: 700; color: #2c3e50; text-transform: uppercase;
+    padding: 30px 30px 5px 30px; /* Giảm padding bottom */
+    margin: 0;
+    font-size: 18px; 
+    font-weight: 700; 
+    color: #2c3e50; 
+    text-transform: uppercase;
+}
+
+/* Class mới để chỉnh dòng Bác sĩ cho thẳng hàng */
+.bill-sub-header {
+    padding: 0 30px 20px 30px;
+    font-size: 14px;
+    color: #4b6584;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+
+/* --- GRID SYSTEM CHO BẢNG --- */
+/* Định nghĩa tỉ lệ cột: Tên(4 phần) - Giá(2 phần) - SL(1 phần) - Tổng(2.5 phần) */
+.bill-grid {
+    display: grid;
+    grid-template-columns: 4fr 2fr 1fr 2.5fr; 
+    gap: 10px;
+    align-items: center;
 }
 
 .bill-table-header {
-    padding: 0 30px 20px 30px; font-size: 14px; font-weight: 600; color: #555;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 15px 30px;
+    font-size: 13px; 
+    font-weight: 700; 
+    color: #2c3e50;
+    background-color: rgba(255,255,255,0.1); /* Nền nhẹ cho header bảng */
 }
 
 .bill-items-list {
-    background-color: #dbe4eb; /* Màu nền list sáng hơn */
+    background-color: #dbe4eb; 
     padding: 20px 30px;
-    min-height: 150px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách giữa các dòng thuốc */
 }
 
 .bill-item {
-    display: flex; justify-content: space-between; margin-bottom: 25px;
-    font-size: 14px; color: #2c3e50; font-weight: 500;
+    font-size: 14px; 
+    color: #2c3e50; 
+    font-weight: 500;
+    border-bottom: 1px dashed rgba(0,0,0,0.05);
+    padding-bottom: 8px;
 }
+.bill-item:last-child { border-bottom: none; }
 
-.item-details { display: flex; gap: 40px; text-align: right; }
-.item-details span { min-width: 60px; }
+/* Các class căn chỉnh text tiện ích */
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
 
+/* Phần tổng tiền cuối cùng */
 .bill-footer {
-    padding: 30px; font-size: 18px; font-weight: 700; color: #2c3e50;
-    display: flex; gap: 10px; align-items: center;
+    background-color: #aab7c4;
+    padding: 20px 30px; 
+    font-size: 18px; 
+    font-weight: 700; 
+    color: #2c3e50;
+    display: flex; 
+    justify-content: space-between; /* Đẩy sang 2 bên */
+    align-items: center;
+    border-top: 2px solid white;
 }
-
+.total-amount {
+    color: #c0392b; /* Màu đỏ nổi bật cho tiền */
+    font-size: 20px;
+}
 /* --- ERROR MODAL STYLES --- */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;

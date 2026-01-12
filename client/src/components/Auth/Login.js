@@ -29,9 +29,9 @@ const Login = () => {
 
                 setTimeout(() => {
                     if (userRole === 'Nurse') navigate('/nurse-dashboard'); 
-                    else if (userRole === 'Doctor') navigate('/doctor/appointments');
+                    else if (userRole === 'Doctor') navigate('/dashboard');
                     else if (userRole === 'Admin') navigate('/admin-dashboard'); 
-                    else navigate('/'); 
+                    else navigate('/dashboard'); 
                 }, 500);
             }
         } catch (err) {

@@ -57,8 +57,7 @@ const Prescription = () => {
         // Mặc định chọn đơn thuốc mới nhất nếu có dữ liệu
         if (data.length > 0) {
             setSelectedPrescriptionId(data[0].id);
-            
-            // Tự động điền số điện thoại từ thông tin user (nếu muốn tiện cho user)
+            // Tự động điền số điện thoại từ thông tin user (nếu muốn)
             // setFormData(prev => ({ ...prev, phone: user.Phone || "" }));
         }
 
@@ -74,10 +73,10 @@ const Prescription = () => {
   }, [navigate]);
 
   // --- Helper: Tìm đơn thuốc đang chọn ---
-  // Lưu ý: data trả về ID là số (Int), value thẻ select là string -> dùng '==' thay vì '===' hoặc convert
+  // Lưu ý: data trả về ID có thể là Int, value thẻ select là string -> dùng '=='
   const currentPrescription = prescriptions.find(p => p.id == selectedPrescriptionId) || null;
 
-  // --- CÁC HÀM XỬ LÝ SỰ KIỆN (GIỮ NGUYÊN) ---
+  // --- CÁC HÀM XỬ LÝ SỰ KIỆN ---
   useEffect(() => {
     function handleClickOutside(event) {
       if (calendarRef.current && !calendarRef.current.contains(event.target)) {
@@ -261,26 +260,50 @@ const Prescription = () => {
                         <button className="btn-checkout" onClick={handleSubmit}>Tiến hành thanh toán</button>
                     </div>
 
-                    {/* Right: Bill Preview */}
+                    {/* Right: Bill Preview (Đã cập nhật Layout Grid) */}
                     <div className="right-bill-column">
                         {currentPrescription && (
                             <div className="bill-card">
+                                {/* Header Title */}
                                 <h3 className="bill-header">CHI TIẾT: {currentPrescription.id}</h3>
-                                <div className="bill-sub-header">Bác sĩ kê đơn: {currentPrescription.doctor}</div>
                                 
-                                <div className="bill-table-header"><span>Tên thuốc / Đơn giá / SL / Thành tiền</span></div>
+                                {/* Sub Header: Bác sĩ (Căn lề chuẩn) */}
+                                <div className="bill-sub-header">
+                                    Bác sĩ kê đơn: {currentPrescription.doctor}
+                                </div>
+                                
+                                {/* Table Header (Dùng Grid để chia cột) */}
+                                <div className="bill-grid bill-table-header">
+                                    <span className="text-left">Tên thuốc</span>
+                                    <span className="text-right">Đơn giá</span>
+                                    <span className="text-center">SL</span>
+                                    <span className="text-right">Thành tiền</span>
+                                </div>
+
+                                {/* List Items (Dùng Grid) */}
                                 <div className="bill-items-list">
                                     {currentPrescription.medicines.map((med, idx) => (
-                                        <div key={idx} className="bill-item">
-                                            <div className="item-name">{med.name}</div>
-                                            <div className="item-details">
-                                                <span>{med.price ? med.price.toLocaleString() : 0}</span>
-                                                <span className="qty">x{med.qty}</span>
-                                                <span className="subtotal">{med.total ? med.total.toLocaleString() : 0}</span>
-                                            </div>
+                                        <div key={idx} className="bill-grid bill-item">
+                                            {/* Cột 1: Tên */}
+                                            <span className="text-left" style={{fontWeight: '600'}}>{med.name}</span>
+                                            
+                                            {/* Cột 2: Đơn giá */}
+                                            <span className="text-right text-muted">
+                                                {med.price ? med.price.toLocaleString() : 0}
+                                            </span>
+                                            
+                                            {/* Cột 3: Số lượng */}
+                                            <span className="text-center">x{med.qty}</span>
+                                            
+                                            {/* Cột 4: Thành tiền */}
+                                            <span className="text-right" style={{fontWeight: '700'}}>
+                                                {med.total ? med.total.toLocaleString() : 0}
+                                            </span>
                                         </div>
                                     ))}
                                 </div>
+
+                                {/* Footer Total */}
                                 <div className="bill-footer">
                                     <span>Tạm tính:</span>
                                     <span className="total-amount">{currentPrescription.totalBill.toLocaleString()} VNĐ</span>

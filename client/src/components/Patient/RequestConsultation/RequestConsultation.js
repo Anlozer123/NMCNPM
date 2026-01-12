@@ -11,7 +11,8 @@ import {
   FaPencilAlt,
   FaTimes,
   FaTrash,
-  FaArrowRight // Import thêm icon mũi tên
+  FaArrowRight,
+  FaTimesCircle // <--- Import thêm icon dấu X tròn
 } from "react-icons/fa";
 import PatientSidebar from "../Sidebar/PatientSidebar"; 
 import UserDropdown from "../UserDropdown/UserDropdown"; 
@@ -55,13 +56,12 @@ const RequestConsultation = () => {
         const response = await fetch(`http://localhost:5000/api/patient/${user.PatientID}/latest-consultation-full`);
         const data = await response.json();
 
-        // --- [LOGIC MỚI ĐƯỢC CẬP NHẬT TẠI ĐÂY] ---
+        // --- [LOGIC ĐÃ CẬP NHẬT] ---
         const hasRequest = data && data.requestInfo && data.requestInfo.RequestID;
         
         // Điều kiện để vào thẳng Chat:
         // 1. Phải có Request
         // 2. VÀ (Trạng thái là 'Active' HOẶC Đã có tin nhắn trao đổi)
-        // Nếu chỉ là 'Pending' (Chờ bác sĩ) và chưa có tin nhắn -> Vẫn hiện Form (theo yêu cầu của bạn)
         const isChatting = data.messages && data.messages.length > 0;
         const isActive = data.requestInfo && data.requestInfo.Status === 'Active';
 
@@ -109,10 +109,8 @@ const RequestConsultation = () => {
     setViewMode("form");
   };
   
-  // Chuyển từ Form sang xem trạng thái chờ (nếu user muốn)
   const handleViewPendingRequest = () => {
       if (requestInfo) {
-          // Cần fetch lại tin nhắn nếu muốn chắc chắn, nhưng ở đây ta dùng state có sẵn tạm thời
           setViewMode("chat");
       }
   };
@@ -203,7 +201,7 @@ const RequestConsultation = () => {
 
   const handleSubmitNewRequest = async () => {
     if (!formData.department || !formData.urgency || !formData.symptoms) {
-      setErrorModal({ show: true, title: "LỖI", message: "Vui lòng điền đủ thông tin (*)" });
+      setErrorModal({ show: true, title: "THIẾU THÔNG TIN", message: "Vui lòng điền đầy đủ các trường bắt buộc (*) để tiếp tục." });
       return;
     }
     setLoading(true);
@@ -216,12 +214,10 @@ const RequestConsultation = () => {
       if (!response.ok) throw new Error("Lỗi server");
       localStorage.removeItem("consultation_draft");
       
-      // Sau khi gửi thành công -> Hiện modal -> User bấm OK sẽ reload lại trang
-      // Lúc này logic useEffect sẽ chạy lại: Status là Pending -> Hiện Form + Thông báo Pending
       setShowSuccessModal(true); 
     } catch (error) {
       localStorage.setItem("consultation_draft", JSON.stringify(formData));
-      setErrorModal({ show: true, title: "LỖI", message: "Gửi thất bại. Dữ liệu đã lưu nháp." });
+      setErrorModal({ show: true, title: "LỖI KẾT NỐI", message: "Gửi yêu cầu thất bại. Dữ liệu của bạn đã được lưu nháp." });
     } finally {
       setLoading(false);
     }
@@ -237,17 +233,24 @@ const RequestConsultation = () => {
   // --- RENDER ---
   return (
     <div className="pd-layout">
-      {/* Modals */}
+      {/* MODAL ERROR - GIAO DIỆN MỚI */}
       {errorModal.show && (
         <div className="modal-overlay">
           <div className="error-modal">
+            <FaTimesCircle className="error-icon-large" />
             <h3>{errorModal.title}</h3>
-            <p>{errorModal.message}</p>
-            <button onClick={() => setErrorModal({ ...errorModal, show: false })}>ĐÓNG</button>
+            <p className="error-message">{errorModal.message}</p>
+            <button 
+                className="btn-error-modal" 
+                onClick={() => setErrorModal({ ...errorModal, show: false })}
+            >
+                ĐÓNG
+            </button>
           </div>
         </div>
       )}
       
+      {/* MODAL SUCCESS */}
       {showSuccessModal && (
         <div className="modal-overlay">
           <div className="success-modal">
@@ -291,7 +294,6 @@ const RequestConsultation = () => {
                     {messages.map((msg, index) => {
                         const isPatient = msg.SenderType === 'Patient';
                         
-                        // Logic: Cho phép sửa/xóa nếu là Patient VÀ Bác sĩ chưa trả lời ngay sau đó
                         let canModify = isPatient && requestInfo.Status !== 'Completed';
                         if (canModify && index < messages.length - 1) {
                             if (messages[index + 1].SenderType === 'Doctor') canModify = false;
@@ -302,7 +304,6 @@ const RequestConsultation = () => {
                                 <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
                                     <span className="msg-role">{isPatient ? <FaUserMd /> : <FaStethoscope />} {isPatient ? "Bạn" : "Bác sĩ"}</span>
                                     
-                                    {/* NHÓM NÚT SỬA/XÓA */}
                                     {canModify && (
                                         <div className="msg-actions">
                                             <button 
@@ -358,7 +359,7 @@ const RequestConsultation = () => {
           {/* CHẾ ĐỘ FORM (MẶC ĐỊNH NẾU CHƯA CHAT) */}
           {viewMode === "form" && (
              <div className="form-card">
-                {/* [THÊM MỚI] Thông báo nếu đang có Pending Request nhưng vẫn hiện Form */}
+                {/* Thông báo nếu đang có Pending Request */}
                 {requestInfo && requestInfo.Status === 'Pending' && (
                     <div className="alert-pending-request" style={{
                         background: '#fff3cd', 
@@ -399,7 +400,6 @@ const RequestConsultation = () => {
                 <div className="form-section-header">
                     <FaComments className="section-icon" />
                     <h3>Gửi yêu cầu tư vấn mới</h3>
-                    {/* Nút quay lại chat chỉ hiện nếu request đang Active (chứ Pending thì đã có alert ở trên rồi) */}
                     {requestInfo && requestInfo.Status === 'Active' && (
                         <button className="btn-secondary" style={{marginLeft:'auto'}} onClick={() => setViewMode("chat")}>
                             Quay lại cuộc trò chuyện

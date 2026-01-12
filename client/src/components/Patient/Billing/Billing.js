@@ -67,7 +67,7 @@ const Billing = () => {
                 </div>
             </div>
             <button className="btn-qr-paid" onClick={handleFinishQR}>
-                <FaCheckCircle /> TÔI ĐÃ THANH TOÁN
+                <FaCheckCircle /> ĐÃ THANH TOÁN
             </button>
           </div>
         </div>
@@ -78,7 +78,7 @@ const Billing = () => {
         <div className="modal-overlay">
           <div className="success-modal">
             <FaCheckCircle className="success-icon-large" />
-            <h3 className="success-title">THANH TOÁN THÀNH CÔNG!</h3>
+            <h3 className="success-title"> ĐẶT HÀNG THÀNH CÔNG!</h3>
             <p className="success-message">
                 Đơn hàng của bạn đã được xác nhận.<br/>
                 Cảm ơn bạn đã sử dụng dịch vụ của MediCare.

@@ -6,16 +6,10 @@ import {
 } from 'react-icons/fa';
 import './DoctorDashboard.css'; 
 
-/* ===== SỬA ĐƯỜNG DẪN IMPORT TẠI ĐÂY ===== */
-// 1. Vào thư mục Appointments (Đúng như cũ)
+/* ===== IMPORT COMPONENTS ===== */
 import DoctorAppointments from "../Appointments/DoctorAppointments";
-
-// 2. Lùi 1 cấp ra ngoài Dashboard -> Vào PatientCare -> PatientProfile
 import PatientProfile from "../PatientCare/PatientProfile";
-
-// 3. Lùi 1 cấp ra ngoài Dashboard -> Vào Consultation -> OnlineConsultation
 import OnlineConsultation from "../Consultation/OnlineConsultation";
-/* ========================================= */
 
 const DoctorDashboard = ({ user, activeView }) => {
     const navigate = useNavigate();
@@ -25,8 +19,8 @@ const DoctorDashboard = ({ user, activeView }) => {
         navigate('/');
     };
 
-    // Dữ liệu giả lập
-    const appointments = [
+    // Dữ liệu giả lập cho phần thống kê (Stats)
+    const appointmentsData = [
         { id: 1, patientId: 1, name: 'Phạm Bệnh Nhân A', type: 'Khám định kỳ', time: '09:00', avatar: 'A' },
         { id: 2, patientId: 2, name: 'Hoàng Bệnh Nhân B', type: 'Tư vấn', time: '10:30', avatar: 'B' },
         { id: 3, patientId: 1, name: 'Phạm Bệnh Nhân A', type: 'Tái khám', time: '14:00', avatar: 'A' },
@@ -45,13 +39,17 @@ const DoctorDashboard = ({ user, activeView }) => {
                     <li className={!activeView ? "active" : ""} onClick={() => navigate('/dashboard')}>
                         <FaHome /> Trang chủ
                     </li>
+                    {/* Mục Lịch khám: Trỏ về view appointments */}
                     <li className={activeView === 'appointments' ? "active" : ""} onClick={() => navigate('/doctor/appointments')}>
                         <FaCalendarCheck /> Lịch khám
                     </li>
                     <li className={activeView === 'online-consultation' ? "active" : ""} onClick={() => navigate('/online-consultation')}>
                         <FaComments /> Tư vấn
                     </li>
-                    <li><FaUserInjured /> Bệnh nhân</li>
+                    {/* Mục Bệnh nhân: Trỏ về view patients */}
+                    <li className={activeView === 'patients' ? "active" : ""} onClick={() => navigate('/doctor/patients')}>
+                        <FaUserInjured /> Bệnh nhân
+                    </li>
                     <li><FaMagic /> AI Tóm tắt</li>
                 </ul>
             </aside>
@@ -70,13 +68,29 @@ const DoctorDashboard = ({ user, activeView }) => {
 
                 <div className="content-wrapper">
                     {/* RENDER NỘI DUNG DỰA TRÊN ACTIVE VIEW */}
+                    
+                    {/* TRƯỜNG HỢP: XEM LỊCH HẸN */}
                     {activeView === 'appointments' ? (
-                        <DoctorAppointments />
-                    ) : activeView === 'patient-detail' ? (
+                        <DoctorAppointments initialTab="appointments" />
+                    ) : 
+                    
+                    /* TRƯỜNG HỢP: XEM DANH SÁCH BỆNH NHÂN ĐANG ĐIỀU TRỊ */
+                    activeView === 'patients' ? (
+                        <DoctorAppointments initialTab="patients" />
+                    ) : 
+                    
+                    /* TRƯỜNG HỢP: CHI TIẾT HỒ SƠ BỆNH NHÂN */
+                    activeView === 'patient-detail' ? (
                         <PatientProfile />
-                    ) : activeView === 'online-consultation' ? (
+                    ) : 
+                    
+                    /* TRƯỜNG HỢP: TƯ VẤN ONLINE */
+                    activeView === 'online-consultation' ? (
                         <OnlineConsultation doctorId={user?.ID || 2} />
-                    ) : (
+                    ) : 
+                    
+                    /* TRƯỜNG HỢP MẶC ĐỊNH: TRANG CHỦ DASHBOARD */
+                    (
                         <>
                             <h1 className="page-title">Bảng điều khiển</h1>
                             <p className="page-subtitle">Quản lý lịch khám và bệnh nhân của bạn</p>
@@ -84,7 +98,7 @@ const DoctorDashboard = ({ user, activeView }) => {
                             {/* STATS CARDS */}
                             <div className="stats-grid">
                                 <div className="stat-card">
-                                    <div className="stat-info"><p>Lịch hẹn hôm nay</p><h3>{appointments.length}</h3></div>
+                                    <div className="stat-info"><p>Lịch hẹn hôm nay</p><h3>{appointmentsData.length}</h3></div>
                                     <div className="stat-icon blue"><FaCalendarCheck /></div>
                                 </div>
                                 <div className="stat-card">
@@ -113,7 +127,7 @@ const DoctorDashboard = ({ user, activeView }) => {
                                     <FaComments className="action-icon teal" />
                                     <h4>Tư vấn trực tuyến</h4><p>UC008</p>
                                 </div>
-                                <div className="action-card">
+                                <div className="action-card" onClick={() => navigate('/doctor/patients')}>
                                     <FaUserInjured className="action-icon green" />
                                     <h4>Quản lý bệnh nhân</h4><p>UC012</p>
                                 </div>
@@ -123,11 +137,11 @@ const DoctorDashboard = ({ user, activeView }) => {
                                 </div>
                             </div>
 
-                            {/* APPOINTMENT LIST */}
+                            {/* APPOINTMENT LIST RÚT GỌN Ở TRANG CHỦ */}
                             <div className="appointments-section">
                                 <h2 className="section-header">Lịch hẹn hôm nay</h2>
                                 <div className="appointment-list">
-                                    {appointments.map((app) => (
+                                    {appointmentsData.map((app) => (
                                         <div key={app.id} className="appointment-item">
                                             <div className="app-left">
                                                 <div className="avatar-circle">{app.avatar}</div>

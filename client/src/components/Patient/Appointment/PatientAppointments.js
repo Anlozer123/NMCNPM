@@ -233,7 +233,7 @@ const PatientAppointments = () => {
                         <label>Khoa <span className="req">(*)</span></label>
                         <div className="input-box">
                              <select name="specialty" value={formData.specialty} className="inp-dark" onChange={handleInputChange}>
-                                <option value="">Chọn khoa</option>
+                                <option value="">-- Chọn khoa --</option>
                                 {specialties.map((s, i) => <option key={i} value={s}>{s}</option>)}
                              </select>
                              <FaChevronDown className="icon-arrow"/>
@@ -243,7 +243,7 @@ const PatientAppointments = () => {
                         <label>Bác sĩ <span className="req">(*)</span></label>
                         <div className="input-box">
                              <select name="doctorID" value={formData.doctorID} className="inp-dark" onChange={handleInputChange}>
-                                <option value="">Chọn bác sĩ</option>
+                                <option value="">-- Chọn bác sĩ -- </option>
                                 {doctors.filter(d => !formData.specialty || d.Specialization === formData.specialty).map((doc) => (
                                     <option key={doc.StaffID} value={doc.StaffID}>{doc.FullName}</option>
                                 ))}
@@ -255,7 +255,7 @@ const PatientAppointments = () => {
                         <label>Khung giờ <span className="req">(*)</span></label>
                         <div className="input-box">
                              <select name="timeSlot" value={formData.timeSlot} className="inp-dark" onChange={handleInputChange}>
-                                <option value="">Chọn giờ</option>
+                                <option value="">-- Chọn giờ --</option>
                                 {timeSlots.map((t, i) => <option key={i} value={t}>{t}</option>)}
                              </select>
                              <FaChevronDown className="icon-arrow"/>
