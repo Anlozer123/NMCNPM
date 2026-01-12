@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaLock } from 'react-icons/fa'; // Đã xóa FaHospitalSymbol vì không dùng nữa
+import { FaUser, FaLock } from 'react-icons/fa';
 import './Login.css'; 
 
 const Login = () => {
@@ -17,50 +17,68 @@ const Login = () => {
         setIsLoading(true);
 
         try {
+            // Gửi request (Server mới yêu cầu 'username')
             const response = await axios.post('http://localhost:5000/api/auth/login', {
-                email,
-                password
+                username: email, 
+                password: password
             });
 
-            if (response.data.user) {
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                const userRole = response.data.user.Role || response.data.user.role; 
+            console.log("Server Response:", response.data); // Để debug
+
+            const responseData = response.data;
+            const userAccount = responseData.data?.account || responseData.user;
+
+            if (userAccount) {
+                // Lưu vào localStorage
+                localStorage.setItem('user', JSON.stringify(userAccount));
+                
+                // Lấy Role (Server mới trả về Role viết hoa chữ cái đầu)
+                const userRole = userAccount.Role || userAccount.role; 
                 localStorage.setItem('role', userRole);
 
+                // --- [SỬA LỖI ĐIỀU HƯỚNG] ---
+                // Chỉ chuyển hướng đến các trang CÓ TỒN TẠI trong App.js cũ
                 setTimeout(() => {
-                    if (userRole === 'Nurse') navigate('/nurse-dashboard'); 
-                    else if (userRole === 'Doctor') navigate('/doctor/appointments');
-                    else if (userRole === 'Admin') navigate('/admin-dashboard'); 
-                    else navigate('/'); 
+                    if (userRole === 'Doctor') {
+                        // Route này có trong App.js cũ
+                        navigate('/doctor/appointments'); 
+                    } 
+                    else {
+                        // Admin, Nurse, Patient tạm thời về Dashboard chung
+                        // Vì App.js cũ chưa có /admin-dashboard hay /nurse-dashboard
+                        navigate('/dashboard'); 
+                    }
                 }, 500);
+            } else {
+                setError('Đăng nhập thành công nhưng không lấy được thông tin tài khoản.');
             }
+
         } catch (err) {
             setIsLoading(false);
             console.error("Lỗi đăng nhập:", err); 
-            if (err.response && err.response.data) {
+            // Hiển thị lỗi từ backend nếu có
+            if (err.response && err.response.data && err.response.data.message) {
                 setError(err.response.data.message);
             } else {
                 setError('Không thể kết nối đến Server. Vui lòng thử lại!');
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
         <div className="login-container">
-            {/* CỘT TRÁI: ẢNH & BANNER */}
             <div className="login-banner">
                 <div className="banner-content">
                     <h1>Hospital Management System</h1>
                     <p>Hệ thống quản lý bệnh viện hiện đại, an toàn và tin cậy.</p>
-                    {/* Đã xóa dòng Sprint 3 */}
                 </div>
             </div>
 
-            {/* CỘT PHẢI: FORM ĐĂNG NHẬP */}
             <div className="login-form-section">
                 <div className="login-box">
                     <div className="login-header">
-                        {/* Đã xóa dòng HMS Project */}
                         <h2>Xin Chào!</h2>
                         <p>Vui lòng đăng nhập để tiếp tục</p>
                     </div>
@@ -69,13 +87,13 @@ const Login = () => {
 
                     <form onSubmit={handleLogin}>
                         <div className="input-group">
-                            <label>Email hoặc Số điện thoại</label>
+                            <label>Tên đăng nhập (Username)</label>
                             <div className="input-wrapper">
                                 <FaUser className="input-icon" />
                                 <input 
                                     type="text" 
                                     className="input-field"
-                                    placeholder="Nhập tài khoản..."
+                                    placeholder="Nhập username (ví dụ: doc_01)"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
