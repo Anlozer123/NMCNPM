@@ -1,125 +1,149 @@
+/* Layout chính: Chia đôi màn hình */
 .register-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f8f9fa; /* Màu nền xám nhạt tổng thể */
-    padding: 40px 20px;
+    height: 100vh;
+    width: 100vw;
+    background-color: #ffffff;
+    overflow: hidden; /* Tránh thanh cuộn nếu không cần thiết */
 }
 
-.register-card {
-    background: white;
+/* --- CỘT TRÁI: BANNER --- */
+.register-banner {
+    flex: 1; /* Chiếm khoảng 40-50% */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Màu tím xanh giống login */
+    /* Hoặc dùng hình ảnh: background: url('...') center/cover; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 40px;
+    flex-direction: column;
+}
+
+.banner-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.banner-content p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* --- CỘT PHẢI: FORM --- */
+.register-form-section {
+    flex: 1.2; /* Form rộng hơn banner một chút */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    padding: 20px;
+    overflow-y: auto; /* Cho phép cuộn nếu form dài quá màn hình */
+}
+
+.register-box {
     width: 100%;
-    max-width: 600px; /* Độ rộng form */
+    max-width: 500px; /* Giới hạn chiều rộng form */
+    background: white;
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
 }
 
 .register-header {
     text-align: center;
-    margin-bottom: 30px;
-}
-
-.icon-circle {
-    width: 60px;
-    height: 60px;
-    background-color: #e0f2fe;
-    color: #0284c7;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    margin: 0 auto 15px;
+    margin-bottom: 25px;
 }
 
 .register-header h2 {
-    font-size: 1.8rem;
     color: #333;
+    font-size: 1.8rem;
     margin-bottom: 5px;
 }
 
 .register-header p {
     color: #666;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
-/* Form Layout */
-.form-group {
+/* Các trường nhập liệu */
+.form-row {
+    display: flex;
+    gap: 15px;
     margin-bottom: 15px;
 }
 
-.form-row {
+.form-group {
     display: flex;
-    gap: 20px;
+    flex-direction: column;
+    margin-bottom: 15px;
 }
 
-.half {
-    flex: 1;
+.form-group.half {
+    flex: 1; /* Chia đều 50-50 */
+    margin-bottom: 0;
 }
 
-label {
-    display: block;
-    margin-bottom: 8px;
+.form-group label {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 5px;
     font-weight: 600;
-    font-size: 0.9rem;
-    color: #333;
 }
 
-input, select {
-    width: 100%;
-    padding: 12px;
+.reg-input {
+    padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    transition: 0.3s;
     outline: none;
-    background-color: #fff;
 }
 
-input:focus, select:focus {
-    border-color: #0ea5e9;
-    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+.reg-input:focus {
+    border-color: #764ba2;
+    box-shadow: 0 0 5px rgba(118, 75, 162, 0.2);
 }
 
-/* Checkbox */
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 20px 0;
-    font-size: 0.9rem;
-}
-
-.checkbox-group input {
-    width: auto;
-}
-
-.checkbox-group span {
-    color: #0ea5e9;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-/* Button */
+/* Nút đăng ký */
 .btn-register {
     width: 100%;
-    padding: 14px;
-    background-color: #0284c7; /* Màu xanh nút bấm */
+    padding: 12px;
+    background: #2575fc;
     color: white;
     border: none;
     border-radius: 6px;
     font-size: 1rem;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: 0.3s;
+    margin-top: 10px;
 }
 
 .btn-register:hover {
-    background-color: #026aa7;
+    background: #1a5bca;
 }
 
-/* Footer Link */
+/* Checkbox & Link */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.checkbox-group input {
+    margin-right: 8px;
+}
+
+.checkbox-group span {
+    color: #2575fc;
+    cursor: pointer;
+    font-weight: 600;
+}
+
 .login-link {
     text-align: center;
     margin-top: 20px;
@@ -127,8 +151,8 @@ input:focus, select:focus {
 }
 
 .login-link span {
-    color: #0284c7;
-    font-weight: 700;
+    color: #2575fc;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -139,4 +163,23 @@ input:focus, select:focus {
     border-radius: 6px;
     margin-bottom: 20px;
     text-align: center;
+    font-size: 0.9rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .register-banner {
+        display: none; /* Ẩn banner trên mobile */
+    }
+    .register-form-section {
+        padding: 15px;
+    }
+    .register-box {
+        padding: 20px;
+        box-shadow: none;
+    }
+    .form-row {
+        flex-direction: column; /* Chuyển thành 1 cột trên mobile */
+        gap: 15px;
+    }
 }

@@ -1,189 +1,151 @@
-/* Reset mặc định */
+/* Reset cơ bản */
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .login-container {
     display: flex;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     background-color: #f4f7f6;
+    overflow: hidden;
 }
 
-/* --- Cột Trái: Hình ảnh Branding --- */
+/* --- Cột Trái: Banner (Màu Gradient) --- */
 .login-banner {
-    width: 50%;
-    background-image: url('D: /HSM_Project/public/assest/hospital_test1.webp;'); /* Ảnh bệnh viện mẫu */
-    background-size: cover;
-    background-position: center;
-    position: relative;
+    flex: 1;
+    background: linear-gradient(135deg, #0ea5e9 0%, #1e3a8a 100%);
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
     padding: 40px;
     color: white;
-}
-
-/* Lớp phủ màu xanh để chữ dễ đọc hơn */
-.login-banner::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(0, 123, 255, 0.2), rgba(0, 86, 179, 0.9));
-}
-
-.banner-content {
-    position: relative;
-    z-index: 1;
+    text-align: center;
 }
 
 .banner-content h1 {
     font-size: 2.5rem;
-    margin-bottom: 10px;
-    font-weight: 700;
+    margin-bottom: 20px;
+    font-weight: 800;
 }
 
-.banner-content p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-/* --- Cột Phải: Form Đăng nhập --- */
+/* --- Cột Phải: Form --- */
 .login-form-section {
-    width: 50%;
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: white;
+    padding: 20px;
 }
 
 .login-box {
     width: 100%;
-    max-width: 400px;
-    padding: 40px;
+    max-width: 450px;
+    padding: 20px;
 }
 
 .login-header {
     text-align: center;
-    margin-bottom: 30px;
-}
-
-.logo-text {
-    color: #007bff; /* Màu xanh y tế */
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    display: block;
+    margin-bottom: 40px;
 }
 
 .login-header h2 {
     color: #333;
-    font-size: 28px;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
 }
 
-.login-header p {
-    color: #666;
-    margin-top: 5px;
-}
+/* ========================================= */
+/* PHẦN QUAN TRỌNG ĐỂ SỬA LỖI CỦA BẠN TẠI ĐÂY */
+/* ========================================= */
 
-/* Input Group */
 .input-group {
+    /* Bắt buộc dùng block để Label nằm TRÊN, Input nằm DƯỚI */
+    display: block !important; 
+    width: 100%;
     margin-bottom: 20px;
-    position: relative;
-    text-align: left; /* Đảm bảo label luôn căn trái */
+}
+
+.input-group label {
+    /* Đảm bảo label chiếm trọn 1 dòng */
+    display: block !important;
+    width: 100%;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #334155;
+    text-align: left; /* Căn trái chữ */
 }
 
 .input-wrapper {
     position: relative;
-    /* Loại bỏ display: flex nếu có để tránh làm xáo trộn absolute positioning */
-    display: block !important; 
     width: 100%;
+    display: flex; /* Để căn giữa icon và input */
+    align-items: center;
 }
 
 .input-icon {
-    position: absolute !important;
-    left: 15px !important; /* Vị trí cố định của icon */
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    color: #888;
-    font-size: 18px;
-    z-index: 10; /* Đảm bảo icon luôn nằm trên cùng */
-    pointer-events: none; /* Click xuyên qua icon vào input */
+    position: absolute;
+    left: 15px; /* Cách lề trái 15px */
+    top: 50%;
+    transform: translateY(-50%); /* Căn giữa theo chiều dọc */
+    color: #0ea5e9;
+    font-size: 1.2rem;
+    z-index: 10;
+    pointer-events: none;
 }
 
 .input-field {
-    width: 100% !important;
-    /* Tăng padding-left mạnh hơn để ép văn bản phải lùi lại */
-    padding: 14px 15px 14px 50px !important; 
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: all 0.3s;
-    display: block;
-    background-color: #fff !important;
-    box-sizing: border-box !important; /* Quan trọng: tính padding vào bên trong width */
-}
-
-/* Hiệu ứng khi focus vào ô nhập */
-.input-field:focus {
-    border-color: #007bff;
+    width: 100% !important; /* Bắt buộc chiếm hết chiều rộng */
+    padding: 14px 14px 14px 45px !important; /* Padding trái 45px để né Icon */
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-    background-color: #fff !important;
+    background-color: #fff;
+    height: 50px;
 }
 
-/* Sửa lại lỗi hiển thị placeholder nếu trình duyệt tự động điền (autofill) */
-.input-field:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 30px white inset !important;
-    padding-left: 50px !important;
+.input-field:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
 }
+
+/* ========================================= */
 
 /* Nút Bấm */
 .btn-login {
     width: 100%;
     padding: 14px;
-    background-color: #007bff;
+    background-color: #2563eb; /* Màu xanh đậm hơn chút cho nút */
     color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 10px;
+    margin-top: 20px;
+    height: 50px;
+    transition: background 0.3s;
 }
 
 .btn-login:hover {
-    background-color: #0056b3;
+    background-color: #1d4ed8;
 }
 
-.btn-login:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-.error-message {
-    background-color: #fee2e2;
-    color: #ef4444;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    text-align: center;
-    font-size: 14px;
-}
-
-/* Responsive cho màn hình nhỏ (Mobile) */
+/* Mobile */
 @media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
     .login-banner {
-        display: none; /* Ẩn ảnh trên điện thoại */
+        display: none;
     }
     .login-form-section {
-        width: 100%;
+        padding: 40px 20px;
     }
 }

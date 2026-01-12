@@ -3,7 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 /* ===== COMMON PAGES ===== */
 // Lưu ý: Đảm bảo file Homepage.js nằm đúng trong ./components/Pages/
-import Homepage from "./components/Pages/Homepage"; 
+import MainLayout from './layouts/MainLayout';
+import Homepage from "./components/Pages/Homepage";
+import DoctorsPage from "./components/Pages/DoctorsPage";
+import ServicesPage from "./components/Pages/ServicesPage";
+
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 
@@ -31,9 +35,13 @@ function App() {
     <Router>
       <Routes>
         {/* ===== PUBLIC ===== */}
-        <Route path="/" element={<Homepage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/doctors" element={<DoctorsPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
 
         {/* ===== ADMIN ROUTE (MỚI) ===== */}
         <Route path="/admin-dashboard" element={<AdminDashboard />} />

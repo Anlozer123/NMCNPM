@@ -7,9 +7,8 @@ import './Register.css';
 const Register = () => {
     const navigate = useNavigate();
     
-    // State lưu trữ dữ liệu form
     const [formData, setFormData] = useState({
-        role: 'Bệnh nhân', // Mặc định
+        role: 'Bệnh nhân',
         fullName: '',
         email: '',
         phone: '',
@@ -22,29 +21,23 @@ const Register = () => {
 
     const [error, setError] = useState('');
 
-    // Xử lý khi nhập liệu
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Xử lý khi bấm Đăng ký
     const handleRegister = async (e) => {
         e.preventDefault();
         setError('');
 
-        // Validate mật khẩu
         if (formData.password !== formData.confirmPassword) {
             setError("Mật khẩu xác nhận không khớp!");
             return;
         }
 
         try {
-            // Gọi API Backend
             await axios.post('http://localhost:5000/api/auth/register', formData);
-            
             alert("Đăng ký thành công! Bạn sẽ được chuyển đến trang đăng nhập.");
             navigate('/login');
-
         } catch (err) {
             if (err.response && err.response.data) {
                 setError(err.response.data.message);
@@ -56,91 +49,97 @@ const Register = () => {
 
     return (
         <div className="register-container">
-            <div className="register-card">
-                <div className="register-header">
-                    <div className="icon-circle">
-                        <FaHeartbeat />
-                    </div>
-                    <h2>Đăng ký tài khoản</h2>
-                    <p>Tạo tài khoản mới để sử dụng hệ thống</p>
+            {/* CỘT TRÁI: BANNER (Giống Login) */}
+            <div className="register-banner">
+                <div className="banner-content">
+                    <h1>Hospital Management System</h1>
+                    <p>Đăng ký tài khoản để trải nghiệm dịch vụ y tế tốt nhất.</p>
                 </div>
+            </div>
 
-                {error && <div className="error-msg">{error}</div>}
-
-                <form onSubmit={handleRegister}>
-                    {/* Hàng 1: Vai trò */}
-                    <div className="form-group">
-                        <label>Vai trò đăng ký</label>
-                        <select name="role" value={formData.role} onChange={handleChange} disabled>
-                            <option value="Bệnh nhân">Bệnh nhân</option>
-                        </select>
+            {/* CỘT PHẢI: FORM ĐĂNG KÝ */}
+            <div className="register-form-section">
+                <div className="register-box">
+                    <div className="register-header">
+                        <h2>Đăng ký tài khoản</h2>
+                        <p>Tạo tài khoản mới để sử dụng hệ thống</p>
                     </div>
 
-                    {/* Hàng 2: Họ tên & Email */}
-                    <div className="form-row">
-                        <div className="form-group half">
-                            <label>Họ và tên</label>
-                            <input type="text" name="fullName" placeholder="Nguyễn Văn A" onChange={handleChange} required />
+                    {error && <div className="error-msg">{error}</div>}
+
+                    <form onSubmit={handleRegister}>
+                        {/* Hàng 1: Vai trò (Ẩn hoặc Disable vì mặc định Bệnh nhân) */}
+                        <div className="form-group" style={{display:'none'}}>
+                            <select name="role" value={formData.role} onChange={handleChange} disabled>
+                                <option value="Bệnh nhân">Bệnh nhân</option>
+                            </select>
                         </div>
-                        <div className="form-group half">
-                            <label>Email</label>
-                            <input type="email" name="email" placeholder="your@email.com" onChange={handleChange} />
+
+                        {/* Hàng: Họ tên & Email */}
+                        <div className="form-row">
+                            <div className="form-group half">
+                                <label>Họ và tên</label>
+                                <input type="text" className="reg-input" name="fullName" placeholder="Nguyễn Văn A" onChange={handleChange} required />
+                            </div>
+                            <div className="form-group half">
+                                <label>Email</label>
+                                <input type="email" className="reg-input" name="email" placeholder="email@domain.com" onChange={handleChange} />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Hàng 3: SĐT & Ngày sinh */}
-                    <div className="form-row">
-                        <div className="form-group half">
-                            <label>Số điện thoại</label>
-                            <input type="text" name="phone" placeholder="0912345678" onChange={handleChange} required />
+                        {/* Hàng: SĐT & Ngày sinh */}
+                        <div className="form-row">
+                            <div className="form-group half">
+                                <label>Số điện thoại</label>
+                                <input type="text" className="reg-input" name="phone" placeholder="0912..." onChange={handleChange} required />
+                            </div>
+                            <div className="form-group half">
+                                <label>Ngày sinh</label>
+                                <input type="date" className="reg-input" name="dob" onChange={handleChange} required />
+                            </div>
                         </div>
-                        <div className="form-group half">
-                            <label>Ngày sinh</label>
-                            <input type="date" name="dob" onChange={handleChange} required />
+
+                        {/* Hàng: Giới tính & Địa chỉ */}
+                        <div className="form-row">
+                            <div className="form-group half">
+                                <label>Giới tính</label>
+                                <select className="reg-input" name="gender" onChange={handleChange} required>
+                                    <option value="">Chọn</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+                            <div className="form-group half">
+                                <label>Địa chỉ</label>
+                                <input type="text" className="reg-input" name="address" placeholder="Địa chỉ..." onChange={handleChange} />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Hàng 4: Giới tính */}
-                    <div className="form-group">
-                        <label>Giới tính</label>
-                        <select name="gender" onChange={handleChange} required>
-                            <option value="">Chọn giới tính</option>
-                            <option value="Nam">Nam</option>
-                            <option value="Nữ">Nữ</option>
-                            <option value="Khác">Khác</option>
-                        </select>
-                    </div>
-
-                    {/* Hàng 5: Địa chỉ */}
-                    <div className="form-group">
-                        <label>Địa chỉ</label>
-                        <input type="text" name="address" placeholder="123 Đường ABC..." onChange={handleChange} />
-                    </div>
-
-                    {/* Hàng 6: Mật khẩu & Xác nhận */}
-                    <div className="form-row">
-                        <div className="form-group half">
-                            <label>Mật khẩu</label>
-                            <input type="password" name="password" placeholder="********" onChange={handleChange} required />
+                        {/* Hàng: Mật khẩu */}
+                        <div className="form-row">
+                            <div className="form-group half">
+                                <label>Mật khẩu</label>
+                                <input type="password" className="reg-input" name="password" placeholder="******" onChange={handleChange} required />
+                            </div>
+                            <div className="form-group half">
+                                <label>Nhập lại MK</label>
+                                <input type="password" className="reg-input" name="confirmPassword" placeholder="******" onChange={handleChange} required />
+                            </div>
                         </div>
-                        <div className="form-group half">
-                            <label>Xác nhận mật khẩu</label>
-                            <input type="password" name="confirmPassword" placeholder="********" onChange={handleChange} required />
+
+                        <div className="checkbox-group">
+                            <input type="checkbox" required id="terms" />
+                            <label htmlFor="terms">Tôi đồng ý với <span>Điều khoản sử dụng</span></label>
                         </div>
-                    </div>
 
-                    {/* Checkbox điều khoản */}
-                    <div className="checkbox-group">
-                        <input type="checkbox" required />
-                        <label>Tôi đồng ý với <span>Điều khoản sử dụng</span> và <span>Chính sách bảo mật</span></label>
-                    </div>
+                        <button type="submit" className="btn-register">Đăng ký</button>
+                    </form>
 
-                    <button type="submit" className="btn-register">Đăng ký</button>
-                </form>
-
-                <p className="login-link">
-                    Đã có tài khoản? <span onClick={() => navigate('/login')}>Đăng nhập ngay</span>
-                </p>
+                    <p className="login-link">
+                        Đã có tài khoản? <span onClick={() => navigate('/login')}>Đăng nhập ngay</span>
+                    </p>
+                </div>
             </div>
         </div>
     );
