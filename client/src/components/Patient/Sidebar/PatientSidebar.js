@@ -1,22 +1,21 @@
 import React from "react";
-import { NavLink } from "react-router-dom"; // Dùng NavLink để tự động thêm class 'active' khi ở trang đó
+import { NavLink } from "react-router-dom"; 
 import {
   FaHome,
   FaCalendarPlus,
-  FaCalendarCheck,
   FaComments,
   FaPrescriptionBottleAlt,
-  FaStethoscope
+  // FaStethoscope, <--- XÓA hoặc Comment dòng này vì không dùng nữa
 } from "react-icons/fa";
 import "./PatientSidebar.css";
 
 const PatientSidebar = () => {
   return (
     <aside className="ps-sidebar">
-      {/* 1. Logo & Tên bệnh viện */}
+      {/* 1. Logo & Tên bệnh viện (Style mới) */}
       <div className="ps-logo-section">
-        <FaStethoscope className="ps-logo-icon" />
-        <span className="ps-brand-name">MediCare</span>
+        {/* Đã xóa FaStethoscope */}
+        <span className="ps-brand-name">Tâm Anh</span>
       </div>
 
       {/* 2. Danh sách Menu điều hướng */}

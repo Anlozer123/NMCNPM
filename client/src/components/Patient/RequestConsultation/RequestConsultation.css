@@ -5,14 +5,19 @@
 /* 1. Thiết lập Layout chính */
 .consultation-page-container.pd-layout {
     display: flex;
-    height: 100vh; /* Full màn hình */
+    height: 100vh;
     overflow: hidden;
     background-color: #f4f7f9;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* --- ĐÃ SỬA: Loại bỏ màu nền và border để dùng style của component Sidebar --- */
 .consultation-page-container .pd-sidebar-container {
-    width: 250px; flex-shrink: 0; background: #f8f9fa; border-right: 1px solid #eee; height: 100%;
+    width: 250px; 
+    flex-shrink: 0; 
+    height: 100%;
+    /* Đã xóa background: #f8f9fa */
+    /* Đã xóa border-right: 1px solid #eee */
 }
 
 .consultation-page-container .pd-main-content {
@@ -33,7 +38,7 @@
 /* Khu vực nội dung chính có thể cuộn */
 .consultation-page-container .pd-body-scroll {
     flex: 1;
-    overflow: hidden; /* Ngăn cuộn ở cấp body, đẩy việc cuộn xuống con */
+    overflow: hidden;
     padding: 20px;
     display: flex;
     flex-direction: column;
