@@ -4,7 +4,7 @@
     align-items: center;
     gap: 12px;
     cursor: pointer;
-    position: relative; /* Quan trọng để neo menu con */
+    position: relative;
     padding: 6px 12px;
     border-radius: 8px;
     transition: background-color 0.2s;
@@ -15,7 +15,7 @@
     background-color: #f3f4f6;
 }
 
-/* Avatar & Text */
+/* Avatar ảnh thật */
 .ud-avatar {
     width: 40px;
     height: 40px;
@@ -23,6 +23,24 @@
     object-fit: cover;
     border: 1px solid #eee;
 }
+
+/* --- MỚI: Avatar tự tạo (Placeholder) --- */
+.ud-avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); /* Màu gradient giống Dashboard */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    border: 1px solid #eee;
+    text-transform: uppercase;
+    flex-shrink: 0; /* Đảm bảo không bị méo */
+}
+/* ---------------------------------------- */
 
 .ud-info {
     display: flex;
@@ -55,7 +73,7 @@
 /* Menu thả xuống */
 .ud-menu {
     position: absolute;
-    top: 115%; /* Cách header một chút */
+    top: 115%;
     right: 0;
     width: 220px;
     background-color: white;

@@ -6,7 +6,7 @@ import {
   FaColumns,
   FaSignOutAlt
 } from "react-icons/fa";
-import "./UserDropdown.css"; // Import file CSS riêng
+import "./UserDropdown.css"; 
 
 const UserDropdown = () => {
   const navigate = useNavigate();
@@ -14,13 +14,22 @@ const UserDropdown = () => {
   const dropdownRef = useRef(null);
 
   // Lấy thông tin user từ LocalStorage
+  // Lưu ý: Dashboard dùng 'AvatarURL', nên ta ưu tiên lấy field đó
   const user = JSON.parse(localStorage.getItem("user")) || {
     FullName: "Khách",
     Role: "Bệnh nhân",
-    Avatar: "https://i.pravatar.cc/150?img=11" // Ảnh mặc định nếu không có
+    AvatarURL: null 
   };
 
-  // Xử lý click ra ngoài để đóng menu (UX tốt hơn)
+  // --- LOGIC TẠO CHỮ CÁI ĐẦU (Giống Dashboard) ---
+  const getInitials = (name) => {
+    if (!name) return "U";
+    const words = name.trim().split(" ");
+    if (words.length === 1) return words[0][0].toUpperCase();
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+  };
+
+  // Xử lý click ra ngoài để đóng menu
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -42,18 +51,25 @@ const UserDropdown = () => {
       ref={dropdownRef} 
       onClick={() => setShowMenu(!showMenu)}
     >
-      {/* Avatar & Tên */}
-      <img 
-        src={user.Avatar || "https://i.pravatar.cc/150?img=11"} 
-        alt="avatar" 
-        className="ud-avatar" 
-      />
+      {/* --- PHẦN AVATAR ĐÃ CẬP NHẬT --- */}
+      {user.AvatarURL ? (
+        <img 
+            src={user.AvatarURL} 
+            alt="avatar" 
+            className="ud-avatar" 
+        />
+      ) : (
+        <div className="ud-avatar-placeholder">
+            {getInitials(user.FullName)}
+        </div>
+      )}
+      {/* ------------------------------- */}
+
       <div className="ud-info">
         <span className="ud-name">{user.FullName}</span>
         <span className="ud-role">{user.Role || "Bệnh nhân"}</span>
       </div>
       
-      {/* Icon mũi tên */}
       <FaChevronDown className={`ud-arrow ${showMenu ? 'rotate' : ''}`} />
 
       {/* Menu thả xuống */}

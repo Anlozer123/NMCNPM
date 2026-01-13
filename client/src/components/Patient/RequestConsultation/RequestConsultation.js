@@ -250,9 +250,6 @@ const RequestConsultation = () => {
                 <div className="history-sidebar">
                     <div className="history-header">
                         <span><FaListUl /> Lịch sử tư vấn</span>
-                        <button className="btn-icon-action" onClick={handleCreateNewRequest} title="Tạo mới" style={{color: '#28a745', background: '#e8f5e9', borderRadius: '50%', width: 30, height: 30}}>
-                            <FaPlus />
-                        </button>
                     </div>
                     <div className="history-list">
                         <div className={`history-item ${selectedRequestId === null ? 'active' : ''}`} onClick={handleCreateNewRequest} style={{borderStyle: 'dashed', textAlign:'center', color: '#0089d0', justifyContent:'center'}}>
