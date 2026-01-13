@@ -74,7 +74,7 @@ const Prescription = () => {
 
   // --- Helper: Tìm đơn thuốc đang chọn ---
   // Lưu ý: data trả về ID có thể là Int, value thẻ select là string -> dùng '=='
-  const currentPrescription = prescriptions.find(p => p.id === selectedPrescriptionId) || null;
+  const currentPrescription = prescriptions.find(p => p.id == selectedPrescriptionId) || null;
 
   // --- CÁC HÀM XỬ LÝ SỰ KIỆN ---
   useEffect(() => {
