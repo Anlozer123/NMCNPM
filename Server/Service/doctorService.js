@@ -120,6 +120,10 @@ class DoctorService {
             throw err;
         }
     }
+
+    async getWorkSchedule(doctorId) {
+        return await doctorRepo.getWorkSchedule(doctorId);
+    }
 }
 
 module.exports = new DoctorService();

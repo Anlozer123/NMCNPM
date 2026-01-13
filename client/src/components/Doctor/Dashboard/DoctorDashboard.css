@@ -294,3 +294,143 @@
 }
 
 .btn-detail:hover { color: #0ea5e9; text-decoration: underline; }
+
+.schedule-table-wrapper {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 40px;
+}
+
+.schedule-table-horizontal {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.schedule-table-horizontal th {
+    background-color: #94b2f1; /* Màu xanh giống Ảnh 1 */
+    color: #444;
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.schedule-table-horizontal th.weekend-header {
+    color: #f06292; /* Màu hồng cho Sun/Sat */
+}
+
+.schedule-table-horizontal td {
+    border: 1px solid #ddd;
+    height: 120px;
+    vertical-align: top;
+    padding: 10px;
+}
+
+.shift-text {
+    font-size: 13px;
+    margin: 0;
+}
+
+.shift-note-text {
+    font-size: 11px;
+    color: #777;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+/* Cấu trúc Header: Tiêu đề bên trái, Picker bên phải */
+.schedule-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Thanh chọn tuần (Style Ảnh 2) */
+.week-picker-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.picker-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    font-size: 15px;
+    color: #333;
+    min-width: 250px;
+    justify-content: center;
+}
+
+.picker-icon {
+    color: #666;
+}
+
+.picker-btn {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #444;
+    transition: all 0.2s;
+}
+
+.picker-btn:hover {
+    background-color: #f0f0f0;
+}
+
+/* Bảng ngang (Style Ảnh 1) */
+.schedule-table-wrapper {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.schedule-table-horizontal {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.schedule-table-horizontal th {
+    background-color: #94b2f1;
+    color: #333;
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-weight: 500;
+}
+
+.schedule-table-horizontal th.weekend-header {
+    color: #f06292; /* Màu hồng cho Sun/Sat */
+}
+
+.schedule-table-horizontal td {
+    border: 1px solid #ddd;
+    height: 130px;
+    vertical-align: top;
+    padding: 10px;
+}
+
+.shift-text {
+    font-size: 13px;
+    margin: 0;
+}
+
+.shift-note-text {
+    font-size: 11px;
+    color: #777;
+    font-style: italic;
+    margin-top: 5px;
+}

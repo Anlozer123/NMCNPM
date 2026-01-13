@@ -194,6 +194,17 @@ class DoctorRepository {
             WHERE RequestID = @RequestID
         `);
     }
+
+    async getWorkSchedule(doctorId) {
+    const result = await sql.query`
+        SELECT ScheduleID, WorkDate, ShiftType, Note
+        FROM WorkSchedule
+        WHERE StaffID = ${doctorId}
+        AND WorkDate >= CAST(GETDATE() AS DATE) -- Lấy từ ngày hôm nay trở đi
+        ORDER BY WorkDate ASC
+    `;
+    return result.recordset;
+    }
 }
 
 module.exports = new DoctorRepository();

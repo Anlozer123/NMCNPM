@@ -143,3 +143,14 @@ exports.replyConsultation = async (req, res) => {
         res.status(500).json({ message: "Lỗi Server" });
     }
 };
+
+exports.getWorkSchedule = async (req, res) => {
+    try {
+        const { doctorId } = req.params; // Lấy ID từ URL /work-schedule/:doctorId
+        const data = await doctorService.getWorkSchedule(doctorId);
+        res.json(data);
+    } catch (err) {
+        console.error("Lỗi lấy lịch làm việc:", err);
+        res.status(500).json({ message: "Lỗi Server khi tải lịch làm việc" });
+    }
+};

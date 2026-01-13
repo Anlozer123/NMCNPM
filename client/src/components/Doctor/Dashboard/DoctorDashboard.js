@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
     FaCalendarCheck, FaComments, FaUserInjured, FaFilePrescription, 
-    FaHome, FaMagic, FaSignOutAlt 
+    FaHome, FaMagic, FaSignOutAlt, FaClock, FaChevronLeft, FaChevronRight, FaRegCalendarAlt 
 } from 'react-icons/fa';
 import './DoctorDashboard.css'; 
 
@@ -15,24 +15,89 @@ import AiSummary from "../AIfunction/AiSummary";
 const DoctorDashboard = ({ user, activeView }) => {
     const navigate = useNavigate();
 
-    // Lấy ID thực tế từ user (StaffID hoặc ID tùy theo DB của bạn)
+    // Lấy ID thực tế từ user
     const currentDoctorId = user?.StaffID || user?.ID;
+
+    // State lưu trữ lịch làm việc từ database
+    const [workSchedule, setWorkSchedule] = useState([]);
+
+    // --- [SỬA] STATE QUẢN LÝ TUẦN ĐANG XEM ---
+    const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+        const now = new Date();
+        const day = now.getDay();
+        const diff = now.getDate() - day; // Lấy ngày Chủ Nhật tuần này
+        const sunday = new Date(now.setDate(diff));
+        sunday.setHours(0, 0, 0, 0);
+        return sunday;
+    });
 
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/');
     };
 
-    // Dữ liệu giả lập cho phần thống kê (Stats) - GIỮ NGUYÊN
+    // Effect gọi API lấy lịch làm việc
+    useEffect(() => {
+        if (currentDoctorId) {
+            fetch(`http://localhost:5000/api/doctor/work-schedule/${currentDoctorId}`)
+                .then(res => res.json())
+                .then(data => {
+                    setWorkSchedule(Array.isArray(data) ? data : []);
+                })
+                .catch(err => console.error("Lỗi tải lịch làm việc:", err));
+        }
+    }, [currentDoctorId]);
+
+    // Dữ liệu giả lập cho phần thống kê - GIỮ NGUYÊN
     const appointmentsData = [
         { id: 1, patientId: 1, name: 'Phạm Bệnh Nhân A', type: 'Khám định kỳ', time: '09:00', avatar: 'A' },
         { id: 2, patientId: 2, name: 'Hoàng Bệnh Nhân B', type: 'Tư vấn', time: '10:30', avatar: 'B' },
         { id: 3, patientId: 1, name: 'Phạm Bệnh Nhân A', type: 'Tái khám', time: '14:00', avatar: 'A' },
     ];
 
+    // --- [MỚI] HÀM TRÁNH LỖI NHẢY NGÀY (Sử dụng giờ địa phương thay vì UTC) ---
+    const formatLocalDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    
+    const getWeekDates = () => {
+        return Array.from({ length: 7 }, (_, i) => {
+            const d = new Date(currentWeekStart);
+            d.setDate(currentWeekStart.getDate() + i);
+            return d;
+        });
+    };
+
+    const weekDates = getWeekDates();
+
+    // Hiển thị dải ngày (VD: 12 - 18 Tháng 1, 2026)
+    const getWeekRangeLabel = () => {
+        const start = weekDates[0];
+        const end = weekDates[6];
+        return `${start.getDate()} - ${end.getDate()} Tháng ${start.getMonth() + 1}, ${start.getFullYear()}`;
+    };
+
+    const changeWeek = (direction) => {
+        const newDate = new Date(currentWeekStart);
+        newDate.setDate(currentWeekStart.getDate() + (direction * 7));
+        setCurrentWeekStart(newDate);
+    };
+
+    const getShiftForDate = (date) => {
+        const dateStr = formatLocalDate(date); // Dùng hàm format local để so sánh
+        return workSchedule.find(s => {
+            const workDateStr = formatLocalDate(new Date(s.WorkDate));
+            return workDateStr === dateStr;
+        });
+    };
+
     return (
         <div className="doctor-layout">
-            {/* --- SIDEBAR --- GIỮ NGUYÊN */}
             <aside className="doc-sidebar">
                 <div className="brand">
                     <h2 className="footer-logo">TÂM ANH</h2>
@@ -57,7 +122,6 @@ const DoctorDashboard = ({ user, activeView }) => {
                 </ul>
             </aside>
 
-            {/* --- MAIN CONTENT --- */}
             <main className="doc-main">
                 <header className="doc-header">
                     <div className="welcome-text"></div> 
@@ -70,38 +134,21 @@ const DoctorDashboard = ({ user, activeView }) => {
                 </header>
 
                 <div className="content-wrapper">
-                    {/* RENDER NỘI DUNG DỰA TRÊN ACTIVE VIEW */}
-                    
-                    {/* [SỬA] Truyền doctorId động vào DoctorAppointments */}
                     {activeView === 'appointments' ? (
                         <DoctorAppointments initialTab="appointments" doctorId={currentDoctorId} />
-                    ) : 
-                    
-                    /* [SỬA] Truyền doctorId động vào DoctorAppointments */
-                    activeView === 'patients' ? (
+                    ) : activeView === 'patients' ? (
                         <DoctorAppointments initialTab="patients" doctorId={currentDoctorId} />
-                    ) : 
-                    
-                    activeView === 'patient-detail' ? (
+                    ) : activeView === 'patient-detail' ? (
                         <PatientProfile />
-                    ) : 
-                    
-                    /* [SỬA] Bỏ "|| 2", dùng ID thực tế từ props user */
-                    activeView === 'online-consultation' ? (
+                    ) : activeView === 'online-consultation' ? (
                         <OnlineConsultation doctorId={currentDoctorId} />
-                    ) : 
-                    
-                    activeView === 'ai-summary' ? (  /* <--- CHÈN THÊM ĐOẠN NÀY */
+                    ) : activeView === 'ai-summary' ? (
                         <AiSummary user={user} />
-                    ) : 
-                    
-                    /* PHẦN MẶC ĐỊNH - GIỮ NGUYÊN HOÀN TOÀN */
-                    (
+                    ) : (
                         <>
                             <h1 className="page-title">Bảng điều khiển</h1>
                             <p className="page-subtitle">Quản lý lịch khám và bệnh nhân của bạn</p>
 
-                            {/* STATS CARDS */}
                             <div className="stats-grid">
                                 <div className="stat-card">
                                     <div className="stat-info"><p>Lịch hẹn hôm nay</p><h3>{appointmentsData.length}</h3></div>
@@ -121,7 +168,6 @@ const DoctorDashboard = ({ user, activeView }) => {
                                 </div>
                             </div>
 
-                            {/* QUICK ACTIONS */}
                             <h2 className="section-header">Chức năng nhanh</h2>
                             <div className="actions-grid">
                                 <div className="action-card" onClick={() => navigate('/doctor/appointments')}>
@@ -143,7 +189,6 @@ const DoctorDashboard = ({ user, activeView }) => {
                                 </div>
                             </div>
 
-                            {/* APPOINTMENT LIST RÚT GỌN */}
                             <div className="appointments-section">
                                 <h2 className="section-header">Lịch hẹn hôm nay</h2>
                                 <div className="appointment-list">
@@ -167,6 +212,58 @@ const DoctorDashboard = ({ user, activeView }) => {
                                             </div>
                                         </div>
                                     ))}
+                                </div>
+                            </div>
+
+                            {/* --- [SỬA HOÀN CHỈNH] LỊCH LÀM VIỆC DẠNG BẢNG NGANG CÓ CHỌN NGÀY --- */}
+                            <div className="schedule-section-horizontal" style={{ marginTop: '40px' }}>
+                                <div className="schedule-header-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                    <h2 className="section-header" style={{ margin: 0 }}>Lịch làm việc</h2>
+                                    
+                                    <div className="week-picker-container" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <button className="picker-btn" onClick={() => changeWeek(-1)} style={{ padding: '5px 10px', cursor: 'pointer' }}><FaChevronLeft /></button>
+                                        <div className="picker-display" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f8f9fa', padding: '8px 15px', borderRadius: '8px', border: '1px solid #eee' }}>
+                                            <FaRegCalendarAlt />
+                                            <span>{getWeekRangeLabel()}</span>
+                                        </div>
+                                        <button className="picker-btn" onClick={() => changeWeek(1)} style={{ padding: '5px 10px', cursor: 'pointer' }}><FaChevronRight /></button>
+                                    </div>
+                                </div>
+
+                                <div className="schedule-table-wrapper" style={{ overflowX: 'auto', background: '#fff', border: '1px solid #ddd', borderRadius: '4px' }}>
+                                    <table className="schedule-table-horizontal" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+                                        <thead>
+                                            <tr>
+                                                {dayNames.map((name, index) => (
+                                                    <th key={index} style={{ background: '#94b2f1', padding: '12px', border: '1px solid #ddd', textAlign: 'left', color: (index === 0 || index === 6) ? '#f06292' : '#333' }}>
+                                                        {name}
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                {weekDates.map((date, index) => {
+                                                    const shift = getShiftForDate(date);
+                                                    return (
+                                                        <td key={index} style={{ border: '1px solid #ddd', height: '120px', verticalAlign: 'top', padding: '10px' }}>
+                                                            {shift ? (
+                                                                <div className="shift-cell-content">
+                                                                    <p className="shift-text" style={{ fontSize: '13px', margin: 0, fontWeight: '500' }}>
+                                                                        {shift.ShiftType === 'Morning' ? 'Trực ca 08:00 - 16:00' :
+                                                                         shift.ShiftType === 'Afternoon' ? 'Trực ca 14:00 - 22:00' :
+                                                                         shift.ShiftType === 'Night' ? 'Trực ca 22:00 - 06:00 hôm sau' : 
+                                                                         `Trực ca ${shift.ShiftType}`}
+                                                                    </p>
+                                                                    {shift.Note && <p className="shift-note-text" style={{ fontSize: '11px', color: '#777', fontStyle: 'italic', marginTop: '5px' }}>{shift.Note}</p>}
+                                                                </div>
+                                                            ) : null}
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </>
