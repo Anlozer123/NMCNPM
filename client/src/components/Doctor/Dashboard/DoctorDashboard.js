@@ -10,6 +10,7 @@ import './DoctorDashboard.css';
 import DoctorAppointments from "../Appointments/DoctorAppointments";
 import PatientProfile from "../PatientCare/PatientProfile";
 import OnlineConsultation from "../Consultation/OnlineConsultation";
+import AiSummary from "../AIfunction/AiSummary";
 
 const DoctorDashboard = ({ user, activeView }) => {
     const navigate = useNavigate();
@@ -50,7 +51,9 @@ const DoctorDashboard = ({ user, activeView }) => {
                     <li className={activeView === 'patients' ? "active" : ""} onClick={() => navigate('/doctor/patients')}>
                         <FaUserInjured /> Bệnh nhân
                     </li>
-                    <li><FaMagic /> AI Tóm tắt</li>
+                    <li className={activeView === 'ai-summary' ? "active" : ""} onClick={() => navigate('/doctor/ai-summary')}>
+                        <FaMagic /> AI Tóm tắt
+                    </li>
                 </ul>
             </aside>
 
@@ -86,6 +89,10 @@ const DoctorDashboard = ({ user, activeView }) => {
                     /* [SỬA] Bỏ "|| 2", dùng ID thực tế từ props user */
                     activeView === 'online-consultation' ? (
                         <OnlineConsultation doctorId={currentDoctorId} />
+                    ) : 
+                    
+                    activeView === 'ai-summary' ? (  /* <--- CHÈN THÊM ĐOẠN NÀY */
+                        <AiSummary user={user} />
                     ) : 
                     
                     /* PHẦN MẶC ĐỊNH - GIỮ NGUYÊN HOÀN TOÀN */
@@ -130,7 +137,7 @@ const DoctorDashboard = ({ user, activeView }) => {
                                     <FaUserInjured className="action-icon green" />
                                     <h4>Quản lý bệnh nhân</h4><p>UC012</p>
                                 </div>
-                                <div className="action-card highlight">
+                                <div className="action-card highlight" onClick={() => navigate('/doctor/ai-summary')}>
                                     <FaMagic className="action-icon blue" />
                                     <h4>AI Tóm tắt</h4><p>UC018</p>
                                 </div>

@@ -20,9 +20,6 @@ import NurseDashboard from "./components/Nurse/NurseDashboard";
 /* ===== DASHBOARD (General) ===== */
 import Dashboard from "./components/Dashboard/Dashboard";
 
-/* ===== DOCTOR ===== */
-import DoctorAppointments from "./components/Doctor/Appointments/DoctorAppointments"; // Kiểm tra lại đường dẫn này nếu cần
-
 /* ===== PATIENT ===== */
 import Prescription from "./components/Patient/Prescription/Prescription";
 import PatientAppointment from "./components/Patient/Appointment/PatientAppointments"; // Kiểm tra tên file chính xác
@@ -64,6 +61,11 @@ function App() {
           element={<Dashboard activeView="patients" />}
         />
 
+        {/* --- THÊM ROUTE CHO AI SUMMARY TẠI ĐÂY --- */}
+        <Route
+          path="/doctor/ai-summary"
+          element={<Dashboard activeView="ai-summary" />}
+        />
 
         {/* ===== PATIENT ===== */}
         {/* UC001 – Online Prescription Ordering */}
