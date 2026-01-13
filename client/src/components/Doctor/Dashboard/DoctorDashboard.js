@@ -34,13 +34,12 @@ const DoctorDashboard = ({ user, activeView }) => {
             {/* --- SIDEBAR --- GIỮ NGUYÊN */}
             <aside className="doc-sidebar">
                 <div className="brand">
-                    <div className="logo-icon">⚡</div> 
-                    <span>MediCare Hospital</span>
+                    <h2 className="footer-logo">TÂM ANH</h2>
                 </div>
 
                 <ul className="doc-menu">
                     <li className={!activeView ? "active" : ""} onClick={() => navigate('/dashboard')}>
-                        <FaHome /> Trang chủ
+                        <FaHome /> Tổng quan
                     </li>
                     <li className={activeView === 'appointments' ? "active" : ""} onClick={() => navigate('/doctor/appointments')}>
                         <FaCalendarCheck /> Lịch khám

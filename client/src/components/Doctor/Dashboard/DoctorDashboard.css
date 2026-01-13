@@ -32,16 +32,20 @@
 .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #1e293b;
+    gap: 12px;           /* Khoảng cách giữa tia sét và chữ */
     margin-bottom: 40px;
-    padding-left: 10px;
+    padding-left: 20px;
 }
 
-.logo-icon {
-    color: #0ea5e9;
+/* Style cho chữ TÂM ANH - lấy cảm hứng từ Footer cao cấp */
+.footer-logo {
+    font-family: 'Times New Roman', serif; /* Font có chân tạo sự đẳng cấp */
+    font-size: 22px;
+    font-weight: 700;
+    color: #1e40af;      /* Màu xanh đen đậm */
+    margin: 0;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
 .doc-menu {
