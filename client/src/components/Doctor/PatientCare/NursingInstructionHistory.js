@@ -1,11 +1,11 @@
 import React from 'react';
 import { LuClock3 } from "react-icons/lu";
 import { FaUserNurse, FaCheckCircle, FaSpinner } from "react-icons/fa";
-import './NursingInstruction.css'; // Import file CSS
+import './NursingInstruction.css';
 
 const NursingInstructionHistory = ({ history }) => {
     
-    // Hàm helper để xác định class màu sắc cho tag ưu tiên
+    // Hàm helper (Sửa tham số thành chữ thường 'priority')
     const getPriorityClass = (priority) => {
         if (priority === 'Khẩn cấp') return 'tag-khan-cap';
         if (priority === 'Ưu tiên') return 'tag-uu-tien';
@@ -29,34 +29,39 @@ const NursingInstructionHistory = ({ history }) => {
             <div className="ni-history-list">
                 {history.map((item, index) => (
                     <div key={index} className="ni-card">
-                        {/* Header Card */}
                         <div className="ni-card-header">
+                            {/* SỬA: Dùng 'priority' (chữ thường) theo SQL Alias */}
                             <span className={`ni-tag ${getPriorityClass(item.priority)}`}>
-                                {item.priority.toUpperCase()}
+                                {(item.priority || "Thường quy").toUpperCase()}
                             </span>
-                            <span className="ni-time">{item.time}</span>
+                            
+                            {/* SỬA: Dùng 'time' (chữ thường) vì SQL đã FORMAT sẵn */}
+                            <span className="ni-time">
+                                {item.time || 'N/A'}
+                            </span>
                         </div>
                         
-                        {/* Nội dung */}
+                        {/* SỬA: Dùng 'content' (chữ thường) */}
                         <p className="ni-card-content">
-                            {item.content}
+                            {item.content || "Không có nội dung"}
                         </p>
                         
-                        {/* Footer Card */}
                         <div className="ni-card-footer">
                             <div className="ni-nurse-info">
                                 <FaUserNurse color="#0081c9" /> 
-                                <strong>ĐD:</strong> {item.nurseName || <span style={{color: '#999', fontStyle: 'italic'}}>Chưa nhận</span>}
+                                {/* SỬA: Dùng 'nurseName' theo SQL Alias */}
+                                <strong>ĐD:</strong> {item.nurseName || "Hệ thống"}
                             </div>
 
                             <div className="ni-status">
-                                {item.status === 'Đã xong' ? (
+                                {/* SỬA: Dùng 'status' (chữ thường) */}
+                                {item.status === 'Hoàn thành' ? (
                                     <span className="status-done">
                                         <FaCheckCircle /> Đã xong
                                     </span>
                                 ) : (
                                     <span className="status-pending">
-                                        <FaSpinner className="spin" /> Chờ xử lý
+                                        <FaSpinner className="spin" /> {item.status || 'Chờ xử lý'}
                                     </span>
                                 )}
                             </div>

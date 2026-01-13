@@ -1,16 +1,16 @@
 const nurseRepository = require('../Repository/nurseRepository');
 
 class NurseService {
-    async getDoctorInstructions() {
-        return await nurseRepository.getPendingInstructions();
+    async getDoctorInstructions(nurseId) { 
+        return await nurseRepository.getPendingInstructions(nurseId);
     }
 
     async completeInstruction(instructionId) {
-        return await nurseRepository.updateInstructionStatus(instructionId, 'Completed');
+        // Cập nhật trạng thái thành 'Hoàn thành' để khớp với logic tiếng Việt
+        return await nurseRepository.updateInstructionStatus(instructionId, 'Hoàn thành');
     }
 
     async requestEquipment(requestData) {
-        // Business Logic: Kiểm tra tồn kho
         const stock = await nurseRepository.getEquipmentStock(requestData.itemId);
         if (!stock) throw new Error("Thiết bị không tồn tại");
         if (parseInt(requestData.quantity) > stock.Quantity) {
@@ -27,7 +27,6 @@ class NurseService {
         }
     }
 
-    // Các hàm khác gọi trực tiếp Repo nếu không có logic phức tạp
     async getEquipments() { return await nurseRepository.getAllEquipments(); }
     async getEquipmentRequests() { return await nurseRepository.getEquipmentRequestHistory(); }
     async getMyPatients(nurseId) { return await nurseRepository.getPatientsByNurse(nurseId); }

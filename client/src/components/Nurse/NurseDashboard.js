@@ -59,7 +59,7 @@ function NurseDashboard() {
 
         // 2. Tab Chỉ thị (INSTRUCTIONS)
         if (activeTab === 'instructions') {
-            fetch('http://localhost:5000/api/nurse/doctor-instructions')
+            fetch(`http://localhost:5000/api/nurse/doctor-instructions?id=${nurseId}`)
                 .then(res => res.json())
                 .then(data => Array.isArray(data) && setInstructions(data))
                 .catch(console.log);
@@ -388,7 +388,7 @@ function NurseDashboard() {
                                             </div>
                                             <div className="patient-row">{ins.PatientName} - {ins.CurrentRoom || 'Chưa xếp phòng'}</div>
                                             <div className="doctor-source">Từ: BS. {ins.DoctorName}</div>
-                                            <div className="instruction-box">{ins.Instruction}</div>
+                                            <div className="instruction-box">{ins.Content}</div>
                                             <button className="btn-complete-outline" onClick={() => handleCompleteInstruction(ins.InstructionID)}>
                                                 Đánh dấu hoàn thành
                                             </button>

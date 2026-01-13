@@ -91,7 +91,7 @@ function App() {
         />
         <Route
           path="/online-consultation"
-element={<Dashboard activeView="online-consultation" />}
+          element={<Dashboard activeView="online-consultation" />}
         />
       </Routes>
     </Router>

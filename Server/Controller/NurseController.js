@@ -3,7 +3,10 @@ const nurseService = require('../Service/nurseService');
 // UC010
 exports.getDoctorInstructions = async (req, res) => {
     try {
-        const data = await nurseService.getDoctorInstructions();
+        const nurseId = req.query.id; // Lấy ID y tá từ tham số URL
+        if (!nurseId) return res.status(400).json({ error: "Thiếu ID y tá" });
+
+        const data = await nurseService.getDoctorInstructions(nurseId);
         res.json(data);
     } catch (err) {
         res.status(500).json({ error: err.message });

@@ -1,23 +1,24 @@
 const { sql } = require('../Config/db');
 
 class NurseRepository {
-    // UC010: Lấy danh sách y lệnh Pending
-    async getPendingInstructions() {
-        const result = await sql.query`
-            SELECT DI.*, P.FullName AS PatientName, P.Gender, P.CurrentRoom, 
-                   S.FullName AS DoctorName, S.Specialization 
-            FROM DoctorInstruction DI
-            JOIN Patient P ON DI.PatientID = P.PatientID
-            JOIN Staff S ON DI.DoctorID = S.StaffID
-            WHERE DI.Status = 'Pending' 
-            ORDER BY DI.CreatedAt ASC`;
+    // UC010: Lấy danh sách y lệnh đang chờ xử lý
+    async getPendingInstructions(nurseId) { // Thêm tham số nurseId
+    const result = await sql.query`
+        SELECT NI.*, P.FullName AS PatientName, P.Gender, P.CurrentRoom, 
+               S.FullName AS DoctorName, S.Specialization 
+        FROM NursingInstructions NI
+        JOIN Patient P ON NI.PatientID = P.PatientID
+        JOIN Staff S ON NI.DoctorID = S.StaffID
+        WHERE NI.Status = N'Chờ xử lý' 
+          AND NI.NurseID = ${nurseId} -- THÊM DÒNG NÀY ĐỂ LỌC ĐÚNG Y TÁ
+        ORDER BY NI.CreatedAt ASC`;
         return result.recordset;
     }
 
     async updateInstructionStatus(id, status) {
         return await sql.query`
-            UPDATE DoctorInstruction 
-            SET Status = ${status}, CompletedAt = GETDATE() 
+            UPDATE NursingInstructions -- Đã sửa tên bảng
+            SET Status = ${status} 
             WHERE InstructionID = ${id}`;
     }
 
@@ -81,7 +82,13 @@ class NurseRepository {
     }
 
     async countStats(nurseId) {
-        const instructions = await sql.query`SELECT COUNT(*) AS count FROM DoctorInstruction WHERE Status = 'Pending'`;
+        // Cập nhật đếm y lệnh theo trạng thái tiếng Việt
+        const instructions = await sql.query`
+        SELECT COUNT(*) AS count 
+        FROM NursingInstructions 
+        WHERE Status = N'Chờ xử lý' 
+        AND NurseID = ${nurseId}`;
+        
         const patientReqs = await sql.query`SELECT COUNT(*) AS count FROM PatientRequest WHERE Status = 'Pending'`;
         const myPatients = await sql.query`SELECT COUNT(*) AS count FROM Patient WHERE NurseID = ${nurseId}`;
         const approvedEquip = await sql.query`SELECT COUNT(*) AS count FROM EquipmentRequest WHERE StaffID = ${nurseId} AND Status IN ('Approved', 'Delivered')`;
