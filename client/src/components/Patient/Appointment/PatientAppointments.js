@@ -101,6 +101,20 @@ const PatientAppointments = () => {
       setErrorModal({ show: true, message: "Vui lòng điền đầy đủ: Ngày, Bác sĩ, Giờ khám (*)" });
       return;
     }
+
+    const selectedTime = new Date(`${formData.date}T${formData.timeSlot}:00`);
+    const currentTime = new Date();
+
+
+    if (selectedTime < currentTime) {
+        setErrorModal({ 
+            show: true, 
+            message: "Không thể đặt lịch vào thời gian trong quá khứ. Vui lòng chọn ngày/giờ khác." 
+        });
+        return;
+    }
+    // -------------------------------------
+
     const appointmentDateTime = `${formData.date} ${formData.timeSlot}:00`;
     const payload = {
         DoctorID: formData.doctorID,
