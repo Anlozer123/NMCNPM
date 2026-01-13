@@ -27,6 +27,10 @@ class NurseService {
         }
     }
 
+    async getNurseSchedule(nurseId) {
+        return await nurseRepository.getScheduleByNurseId(nurseId);
+    }
+    
     async getEquipments() { return await nurseRepository.getAllEquipments(); }
     async getEquipmentRequests() { return await nurseRepository.getEquipmentRequestHistory(); }
     async getMyPatients(nurseId) { return await nurseRepository.getPatientsByNurse(nurseId); }

@@ -80,3 +80,37 @@ exports.getDashboardStats = async (req, res) => {
         res.json({ patientCount: 0, doctorCount: 0, nurseCount: 0, appointmentCount: 0, requestCount: 0 });
     }
 };
+
+exports.addSchedule = async (req, res) => {
+    try {
+        await adminService.addSchedule(req.body);
+        res.json({ success: true, message: "Phân công ca trực thành công!" });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+exports.getEquipmentRequests = async (req, res) => {
+    try {
+        const pending = await adminService.getPendingRequests();
+        const approved = await adminService.getApprovedRequests();
+        res.json({ pending, approved });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+exports.changeRequestStatus = async (req, res) => {
+    try {
+        const { id, action } = req.body;
+        
+        if (action === 'approve') await adminService.approveRequest(id);
+        else if (action === 'reject') await adminService.rejectRequest(id);
+        else if (action === 'deliver') await adminService.deliverRequest(id);
+        else return res.status(400).json({ error: "Hành động không hợp lệ" });
+
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

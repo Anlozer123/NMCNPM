@@ -102,6 +102,28 @@ class NurseRepository {
             equipPendingCount: pendingEquip.recordset[0].count
         };
     }
+
+    async getScheduleByNurseId(nurseId) {
+        try {
+
+            const pool = await sql.connect(); 
+            
+            const result = await pool.request()
+                .input('StaffID', sql.Int, nurseId)
+                .query(`
+                    SELECT ScheduleID, WorkDate, Note, ShiftType 
+                    FROM WorkSchedule 
+                    WHERE StaffID = @StaffID
+                    AND WorkDate >= DATEADD(day, -7, GETDATE())
+                    ORDER BY WorkDate ASC
+                `);
+                
+            return result.recordset;
+        } catch (err) {
+            console.log("Lỗi truy vấn lịch làm việc:", err);
+            throw new Error("Lỗi database khi lấy lịch làm việc");
+        }
+    }
 }
 
 module.exports = new NurseRepository();

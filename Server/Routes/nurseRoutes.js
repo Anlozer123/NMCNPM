@@ -31,4 +31,6 @@ router.get('/patient-requests', nurseController.getPatientRequests);
 router.post('/handle-request', nurseController.handleRequest);
 //
 
+router.get('/schedule', nurseController.getSchedule);
+
 module.exports = router;

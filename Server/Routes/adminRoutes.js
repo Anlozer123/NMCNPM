@@ -20,4 +20,10 @@ router.put('/update-staff/:id', adminController.updateStaff);
 
 router.get('/stats', adminController.getDashboardStats);
 
+router.post('/add-schedule', adminController.addSchedule);
+
+router.get('/equipment-requests', adminController.getEquipmentRequests);
+
+router.post('/update-request-status', adminController.changeRequestStatus);
+
 module.exports = router;

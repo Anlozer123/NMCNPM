@@ -98,3 +98,19 @@ exports.getNurseStats = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+//Lấy lịch làm việc
+exports.getSchedule = async (req, res) => {
+    try {
+        const nurseId = req.query.id; // Lấy ID từ URL: /api/nurse/schedule?id=3
+        if (!nurseId) {
+            return res.status(400).json({ error: "Thiếu ID y tá" });
+        }
+
+        const data = await nurseService.getNurseSchedule(nurseId);
+        res.json(data);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+

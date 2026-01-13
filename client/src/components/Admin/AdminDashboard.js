@@ -70,6 +70,24 @@ function AdminDashboard() {
         requestCount: 0
     });
 
+    // Xem thông tin
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [viewingPatient, setViewingPatient] = useState(null);
+    const [showStaffViewModal, setShowStaffViewModal] = useState(false);
+    const [viewingStaff, setViewingStaff] = useState(null);
+
+    // STATE CHO MODAL THÊM CA LÀM VIỆC
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [scheduleForm, setScheduleForm] = useState({
+        staffId: '',
+        workDate: '',
+        shiftType: 'Morning' // Mặc định là Ca Sáng
+    });
+
+    //Kiểm duyệt yêu cầu thiết bị
+    const [pendingRequests, setPendingRequests] = useState([]);
+    const [approvedRequests, setApprovedRequests] = useState([]);
+
     // useEffect để gọi API stats khi vào tab 'home'
     useEffect(() => {
         if (activeTab === 'home') {
@@ -123,6 +141,8 @@ function AdminDashboard() {
     // --- EFFECT: Lấy dữ liệu khi chuyển tab ---
     useEffect(() => {
         if (activeTab === 'schedule') {
+            fetchSchedules();
+
             fetch('http://localhost:5000/api/admin/work-schedule')
                 .then(res => res.json())
                 .then(data => {
@@ -146,7 +166,31 @@ function AdminDashboard() {
         if (activeTab === 'staff') {
             fetchStaffList();
         }
+
+        if (activeTab === 'approval') {
+            fetchRequests();
+        }
     }, [activeTab]);
+
+    const fetchRequests = () => {
+        fetch('http://localhost:5000/api/admin/equipment-requests')
+            .then(res => res.json())
+            .then(data => {
+                setPendingRequests(data.pending);
+                setApprovedRequests(data.approved);
+            })
+            .catch(console.error);
+    };
+
+    const fetchSchedules = () => {
+        fetch('http://localhost:5000/api/admin/work-schedule')
+            .then(res => res.json())
+            .then(data => {
+                setScheduleData(data.schedule);
+                setStaffList(data.staff);
+            })
+            .catch(console.error);
+    };
 
     const fetchPatients = () => {
         fetch('http://localhost:5000/api/admin/patients')
@@ -392,6 +436,71 @@ function AdminDashboard() {
         p.Phone.includes(patientSearch)
     );
 
+    // --- HÀM MỞ MODAL XEM CHI TIẾT ---
+    const handleOpenViewModal = (patient) => {
+        setViewingPatient(patient);
+        setShowViewModal(true);
+    };
+    const handleOpenStaffViewModal = (staff) => {
+        setViewingStaff(staff);
+        setShowStaffViewModal(true);
+    };
+
+    // Hàm phụ trợ để tìm tên Y tá dựa trên ID (vì trong bảng Patient chỉ lưu ID)
+    const getNurseName = (nurseId) => {
+        if (!nurseId) return "Chưa phân công";
+        const nurse = nurseList.find(n => n.StaffID === nurseId);
+        return nurse ? nurse.FullName : "Không tìm thấy";
+    };
+
+    const handleScheduleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!scheduleForm.staffId) {
+            alert("Vui lòng chọn nhân viên!");
+            return;
+        }
+        if (!scheduleForm.workDate) {
+            alert("Vui lòng chọn ngày làm việc!");
+            return;
+        }
+
+        fetch('http://localhost:5000/api/admin/add-schedule', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(scheduleForm)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("✅ Phân công thành công!");
+                setShowScheduleModal(false);
+                fetchSchedules(); // Tải lại bảng lịch để thấy ca mới
+                // Reset form
+                setScheduleForm({ ...scheduleForm, staffId: '', workDate: '' });
+            } else {
+                alert("❌ Lỗi: " + data.error);
+            }
+        })
+        .catch(err => alert("Lỗi kết nối server!"));
+    };
+
+    const handleRequestAction = (id, action) => {
+        fetch('http://localhost:5000/api/admin/update-request-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, action })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                fetchRequests();
+            } else {
+                alert("Lỗi: " + data.error);
+            }
+        });
+    };
+
     // --- RENDER CONTENT ---
     const renderContent = () => {
         switch (activeTab) {
@@ -504,8 +613,9 @@ function AdminDashboard() {
                                     </div>
                                     <div className="p-card-actions">
                                         {renderPatientStatus(p.CurrentRoom)}
-                                        <button className="action-icon-btn"><i className="far fa-eye"></i></button>
-                                        {/* NÚT SỬA -> Gọi handleOpenEditModal */}
+                                        <button className="action-icon-btn" onClick={() => handleOpenViewModal(p)} 
+                                            title="Xem chi tiết"><i className="far fa-eye"></i>
+                                        </button>
                                         <button className="action-icon-btn" onClick={() => handleOpenEditModal(p)}>
                                             <i className="far fa-edit"></i>
                                         </button>
@@ -625,7 +735,9 @@ function AdminDashboard() {
                                             <div className="p-card-actions">
                                                 {/* Badge trạng thái (Giả định Active nếu DB chưa có cột Status) */}
                                                 <span className="status-badge status-active">Đang làm việc</span>
-                                                
+                                                <button className="action-icon-btn" onClick={() => handleOpenStaffViewModal(s)} title="Xem hồ sơ">
+                                                    <i className="far fa-eye"></i>
+                                                </button>
                                                 <button className="action-icon-btn" onClick={() => handleOpenEditStaffModal(s)} title="Sửa thông tin">
                                                     <i className="far fa-edit"></i>
                                                 </button>
@@ -649,7 +761,9 @@ function AdminDashboard() {
                                 <h2 style={{margin: 0}}>Quản lý lịch làm việc</h2>
                                 <p style={{color: '#666', marginTop: '5px'}}>Phân công ca trực (UC017)</p>
                             </div>
-                            <button className="btn-add-shift">+ Thêm ca làm việc</button>
+                            <button className="btn-add-shift" onClick={() => setShowScheduleModal(true)}>
+                                + Thêm ca làm việc
+                            </button>
                         </div>
 
                         <div className="filter-bar">
@@ -697,7 +811,79 @@ function AdminDashboard() {
                         </table>
                     </div>
                 );
+            case 'approval':
+                return (
+                    <div style={{ padding: '10px' }}>
+                        <div style={{ marginBottom: '15px' }}>
+                            <h2 style={{ margin: 0 }}>Kiểm duyệt thiết bị</h2>
+                            <p style={{ color: '#666' }}>Xử lý yêu cầu thiết bị từ y tá</p>
+                        </div>
 
+                        <div className="approval-container">
+                            <div className="approval-col">
+                                <div className="col-header header-approved">
+                                    Đã duyệt - Chờ giao ({approvedRequests.length})
+                                </div>
+                                <div className="col-scroll-body">
+                                    {approvedRequests.length === 0 ? <p style={{textAlign:'center', color:'#999'}}>Trống</p> : 
+                                    approvedRequests.map(req => (
+                                        <div key={req.RequestID} className={`req-card req-urgent-${req.Urgency}`}>
+                                            <div style={{fontWeight:'bold', color:'#374151'}}>{req.EquipmentName || `Thiết bị #${req.EquipmentID}`}</div>
+                                            <div style={{fontSize:'13px', color:'#666'}}>SL: <b>{req.Quantity}</b> | {new Date(req.RequestDate).toLocaleDateString('vi-VN')}</div>
+                                            <div style={{fontSize:'13px', margin:'5px 0'}}>
+                                                <i className="fas fa-user-nurse" style={{marginRight:'5px'}}></i> 
+                                                {req.StaffName}
+                                            </div>
+                                            {req.Reason && <div style={{fontSize:'12px', fontStyle:'italic', color:'#888'}}>"{req.Reason}"</div>}
+                                            
+                                            <div className="req-actions">
+                                                {/* Nút Đã Giao -> Biến mất */}
+                                                <button className="btn-sm btn-deliver" onClick={() => handleRequestAction(req.RequestID, 'deliver')}>
+                                                    <i className="fas fa-shipping-fast"></i> Đã giao
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* --- CỘT PHẢI: CHỜ DUYỆT --- */}
+                            <div className="approval-col">
+                                <div className="col-header header-pending">
+                                    Yêu cầu chờ duyệt ({pendingRequests.length})
+                                </div>
+                                <div className="col-scroll-body">
+                                    {pendingRequests.length === 0 ? <p style={{textAlign:'center', color:'#999'}}>Không có yêu cầu mới</p> : 
+                                    pendingRequests.map(req => (
+                                        <div key={req.RequestID} className={`req-card req-urgent-${req.Urgency}`}>
+                                            <div style={{display:'flex', justifyContent:'space-between'}}>
+                                                <span style={{fontWeight:'bold', color:'#374151'}}>{req.EquipmentName || `ID: ${req.EquipmentID}`}</span>
+                                                {req.Urgency === 'Critical' && <span style={{color:'red', fontWeight:'bold', fontSize:'12px'}}>KHẨN CẤP</span>}
+                                            </div>
+                                            <div style={{fontSize:'13px', color:'#666'}}>SL: <b>{req.Quantity}</b></div>
+                                            <div style={{fontSize:'13px', margin:'5px 0'}}>
+                                                Người gửi: <b>{req.StaffName}</b> ({req.Role})
+                                            </div>
+                                            <div style={{fontSize:'13px'}}>Lý do: {req.Reason}</div>
+
+                                            <div className="req-actions">
+                                                {/* Nút Từ chối */}
+                                                <button className="btn-sm btn-reject" onClick={() => handleRequestAction(req.RequestID, 'reject')}>
+                                                    &times; Hủy
+                                                </button>
+                                                {/* Nút Duyệt -> Chuyển sang trái */}
+                                                <button className="btn-sm btn-approve" onClick={() => handleRequestAction(req.RequestID, 'approve')}>
+                                                    <i className="fas fa-check"></i> Duyệt
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                );
             default: return <h2>Chọn chức năng từ menu bên trái</h2>;
         }
     };
@@ -706,12 +892,13 @@ function AdminDashboard() {
         <div className="admin-layout">
             {/* SIDEBAR */}
             <aside className="admin-sidebar">
-                <div className="sidebar-brand"><i className="fas fa-heartbeat logo-icon"></i> MediCare Hospital</div>
+                <div className="sidebar-brand"><span style={{ color: '#0090e7' }}>TÂMANH</span></div>
                 <nav className="sidebar-menu">
-                    <div className={`menu-link ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}><i className="fas fa-home"></i> Trang chủ</div>
+                    <div className={`menu-link ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}><i className="fas fa-home"></i> Tổng quan</div>
                     <div className={`menu-link ${activeTab === 'patients' ? 'active' : ''}`} onClick={() => setActiveTab('patients')}><i className="fas fa-user-injured"></i> Bệnh nhân</div>
                     <div className={`menu-link ${activeTab === 'staff' ? 'active' : ''}`} onClick={() => setActiveTab('staff')}><i className="fas fa-users"></i> Nhân viên</div>
                     <div className={`menu-link ${activeTab === 'schedule' ? 'active' : ''}`} onClick={() => setActiveTab('schedule')}><i className="fas fa-calendar-alt"></i> Lịch làm việc</div>
+                    <div className={`menu-link ${activeTab === 'approval' ? 'active' : ''}`} onClick={() => setActiveTab('approval')}><i className="fas fa-clipboard-check"></i> Kiểm duyệt</div>
                 </nav>
             </aside>
 
@@ -901,8 +1088,224 @@ function AdminDashboard() {
                         </div>
                     </div>
                 )}
+                {/* --- MODAL XEM CHI TIẾT BỆNH NHÂN --- */}
+                {showViewModal && viewingPatient && (
+                    <div className="modal-overlay">
+                        <div className="modal-content" style={{ width: '500px' }}>
+                            <div className="modal-header">
+                                <h3>Hồ sơ bệnh nhân</h3>
+                                <button className="close-btn" onClick={() => setShowViewModal(false)}>&times;</button>
+                            </div>
+                            
+                            <div className="view-modal-body" style={{ padding: '10px 0' }}>
+                                {/* Avatar giả lập */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+                                    <div style={{ 
+                                        width: '80px', height: '80px', 
+                                        borderRadius: '50%', backgroundColor: '#e0f2fe', color: '#0090e7',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px'
+                                    }}>
+                                        <i className="fas fa-user-injured"></i>
+                                    </div>
+                                    <div>
+                                        <h2 style={{ margin: 0, color: '#111827' }}>{viewingPatient.FullName}</h2>
+                                        <span className={`status-badge ${viewingPatient.CurrentRoom ? 'status-active' : 'status-wait'}`}>
+                                            {viewingPatient.CurrentRoom ? `Đang nằm phòng ${viewingPatient.CurrentRoom}` : 'Chờ xếp phòng'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Thông tin chi tiết - Dùng Grid 2 cột */}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                                    <div>
+                                        <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>MÃ BỆNH NHÂN</label>
+                                        <div style={{ color: '#374151', fontWeight: '500' }}>#{viewingPatient.PatientID}</div>
+                                    </div>
+                                    <div>
+                                        <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>GIỚI TÍNH</label>
+                                        <div style={{ color: '#374151', fontWeight: '500' }}>{viewingPatient.Gender === 'Male' || viewingPatient.Gender === 'Nam' ? 'Nam' : 'Nữ'}</div>
+                                    </div>
+                                    <div>
+                                        <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>NGÀY SINH (TUỔI)</label>
+                                        <div style={{ color: '#374151', fontWeight: '500' }}>
+                                            {viewingPatient.DoB ? new Date(viewingPatient.DoB).toLocaleDateString('vi-VN') : 'N/A'} 
+                                            <span style={{color:'#888', marginLeft:'5px'}}>({viewingPatient.Age} tuổi)</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>SỐ ĐIỆN THOẠI</label>
+                                        <div style={{ color: '#374151', fontWeight: '500' }}>{viewingPatient.Phone}</div>
+                                    </div>
+                                    <div style={{ gridColumn: '1 / -1' }}>
+                                        <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>EMAIL</label>
+                                        <div style={{ color: '#374151', fontWeight: '500' }}>{viewingPatient.Email || 'Chưa cập nhật'}</div>
+                                    </div>
+                                    <div style={{ gridColumn: '1 / -1' }}>
+                                        <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>ĐỊA CHỈ</label>
+                                        <div style={{ color: '#374151', fontWeight: '500' }}>{viewingPatient.Address}</div>
+                                    </div>
+                                    <div style={{ gridColumn: '1 / -1', borderTop: '1px solid #eee', paddingTop: '10px', marginTop: '5px' }}>
+                                        <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>Y TÁ PHỤ TRÁCH</label>
+                                        <div style={{ color: '#0090e7', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <i className="fas fa-user-nurse"></i>
+                                            {getNurseName(viewingPatient.NurseID)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="modal-actions" style={{ marginTop: '20px' }}>
+                                <button className="btn-cancel" onClick={() => setShowViewModal(false)}>Đóng</button>
+                                <button className="btn-submit" onClick={() => {
+                                    setShowViewModal(false);
+                                    handleOpenEditModal(viewingPatient);
+                                }}>
+                                    <i className="far fa-edit"></i> Chỉnh sửa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {/* --- MODAL XEM CHI TIẾT NHÂN VIÊN --- */}
+            {showStaffViewModal && viewingStaff && (
+                <div className="modal-overlay">
+                    <div className="modal-content" style={{ width: '500px' }}>
+                        <div className="modal-header">
+                            <h3>Hồ sơ nhân sự</h3>
+                            <button className="close-btn" onClick={() => setShowStaffViewModal(false)}>&times;</button>
+                        </div>
+                        
+                        <div className="view-modal-body" style={{ padding: '10px 0' }}>
+                            {/* Header: Avatar + Tên + Chức vụ */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+                                <div style={{ 
+                                    width: '80px', height: '80px', 
+                                    borderRadius: '50%', 
+                                    // Bác sĩ màu xanh, Y tá màu tím nhạt
+                                    backgroundColor: viewingStaff.Role === 'Doctor' ? '#e0f2fe' : '#f3e5f5', 
+                                    color: viewingStaff.Role === 'Doctor' ? '#0090e7' : '#7b1fa2',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px'
+                                }}>
+                                    <i className={viewingStaff.Role === 'Doctor' ? "fas fa-user-md" : "fas fa-user-nurse"}></i>
+                                </div>
+                                <div>
+                                    <h2 style={{ margin: 0, color: '#111827' }}>{viewingStaff.FullName}</h2>
+                                    <div style={{marginTop:'5px'}}>
+                                        <span className="staff-role-badge" style={{
+                                            backgroundColor: viewingStaff.Role === 'Doctor' ? '#0090e7' : '#9c27b0',
+                                            color: 'white'
+                                        }}>
+                                            {viewingStaff.Role === 'Doctor' ? 'Bác sĩ' : 'Điều dưỡng'}
+                                        </span>
+                                        <span style={{color: '#666', fontSize:'14px'}}>
+                                            {viewingStaff.Specialization || 'Chưa cập nhật chuyên khoa'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Thông tin chi tiết - Grid 2 cột */}
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                                <div>
+                                    <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>MÃ NHÂN VIÊN</label>
+                                    <div style={{ color: '#374151', fontWeight: '500' }}>#{viewingStaff.StaffID}</div>
+                                </div>
+                                <div>
+                                    <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>SỐ ĐIỆN THOẠI</label>
+                                    <div style={{ color: '#374151', fontWeight: '500' }}>{viewingStaff.Phone}</div>
+                                </div>
+                                <div style={{ gridColumn: '1 / -1' }}>
+                                    <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>EMAIL</label>
+                                    <div style={{ color: '#374151', fontWeight: '500' }}>{viewingStaff.Email || 'Chưa cập nhật'}</div>
+                                </div>
+                                
+                                {/* Nếu bạn có trường Address hoặc DoB cho nhân viên thì hiển thị ở đây */}
+                                {/* Ví dụ: */}
+                                {/* <div>
+                                    <label style={{ color: '#6b7280', fontSize: '13px', fontWeight: '600' }}>TRẠNG THÁI</label>
+                                    <div style={{ color: 'green', fontWeight: '500' }}>● Đang hoạt động</div>
+                                </div> 
+                                */}
+                            </div>
+                        </div>
+
+                        <div className="modal-actions" style={{ marginTop: '20px' }}>
+                            <button className="btn-cancel" onClick={() => setShowStaffViewModal(false)}>Đóng</button>
+                            <button className="btn-submit" onClick={() => {
+                                setShowStaffViewModal(false);
+                                handleOpenEditStaffModal(viewingStaff); // Chuyển sang chế độ sửa
+                            }}>
+                                <i className="far fa-edit"></i> Chỉnh sửa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* --- MODAL THÊM CA LÀM VIỆC --- */}
+            {showScheduleModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content" style={{ width: '450px' }}>
+                        <div className="modal-header">
+                            <h3>Phân công ca trực</h3>
+                            <button className="close-btn" onClick={() => setShowScheduleModal(false)}>&times;</button>
+                        </div>
+                        <form onSubmit={handleScheduleSubmit}>
+                            {/* 1. CHỌN NHÂN VIÊN */}
+                            <div className="form-group">
+                                <label>Chọn nhân viên</label>
+                                <select 
+                                    className="form-select" 
+                                    required
+                                    value={scheduleForm.staffId}
+                                    onChange={e => setScheduleForm({...scheduleForm, staffId: e.target.value})}
+                                >
+                                    <option value="">-- Chọn nhân viên --</option>
+                                    {staffList.map(s => (
+                                        <option key={s.StaffID} value={s.StaffID}>
+                                            {s.FullName} ({s.Role === 'Doctor' ? 'Bác sĩ' : 'Điều dưỡng'})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* 2. CHỌN NGÀY */}
+                            <div className="form-group">
+                                <label>Ngày làm việc</label>
+                                <input 
+                                    type="date" 
+                                    className="form-input" 
+                                    required
+                                    value={scheduleForm.workDate}
+                                    onChange={e => setScheduleForm({...scheduleForm, workDate: e.target.value})}
+                                />
+                            </div>
+
+                            {/* 3. CHỌN CA (Theo constraint Database) */}
+                            <div className="form-group">
+                                <label>Ca trực</label>
+                                <select 
+                                    className="form-select"
+                                    value={scheduleForm.shiftType}
+                                    onChange={e => setScheduleForm({...scheduleForm, shiftType: e.target.value})}
+                                >
+                                    <option value="Morning">Ca Sáng (Morning)</option>
+                                    <option value="Afternoon">Ca Chiều (Afternoon)</option>
+                                    <option value="Night">Ca Đêm (Night)</option>
+                                    <option value="Weekend">Cuối tuần (Weekend)</option>
+                                </select>
+                            </div>
+
+                            <div className="modal-actions">
+                                <button type="button" className="btn-cancel" onClick={() => setShowScheduleModal(false)}>Hủy</button>
+                                <button type="submit" className="btn-submit">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
             </main>
         </div>
+        
     );
 }
 export default AdminDashboard;

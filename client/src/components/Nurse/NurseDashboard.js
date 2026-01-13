@@ -505,14 +505,14 @@ function NurseDashboard() {
     return (
         <div className="dashboard-layout">
             <header className="top-header">
-                <div className="header-logo"><i className="fas fa-heartbeat logo-icon"></i><span>MediCare Hospital</span></div>
+                <div className="sidebar-brand"><span style={{ color: '#0090e7' }}>TÂMANH</span></div>
                 <div className="header-user"><span><strong>{user.FullName}</strong></span><button className="logout-btn" onClick={handleLogout}><i className="fas fa-sign-out-alt"></i> Đăng xuất</button></div>
             </header>
 
             <div className="body-container">
                 <aside className="sidebar">
                     <div className={`menu-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}>
-                        <span className="menu-icon"><i className="fas fa-home"></i></span> Trang chủ
+                        <span className="menu-icon"><i className="fas fa-home"></i></span> Tổng quan
                     </div>
                     <div className={`menu-item ${activeTab === 'patients' ? 'active' : ''}`} onClick={() => setActiveTab('patients')}>
                         <span className="menu-icon"><i className="fas fa-user-injured"></i></span> Bệnh nhân
