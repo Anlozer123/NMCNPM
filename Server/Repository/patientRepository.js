@@ -179,17 +179,41 @@ class PatientRepository {
 }
 
 // [THÊM MỚI] Lấy thông tin chi tiết của MỘT request cụ thể theo ID
-async getRequestById(requestId) {
-    const request = new sql.Request();
-    request.input('RequestID', sql.Int, requestId);
-    const result = await request.query(`
-        SELECT R.RequestID, R.Specialty, R.Priority, R.Status, R.CreatedDate, S.FullName AS DoctorName
-        FROM ConsultationRequests R
-        LEFT JOIN Staff S ON R.DoctorID = S.StaffID
-        WHERE R.RequestID = @RequestID
-    `);
-    return result.recordset[0];
-}
+    async getRequestById(requestId) {
+        const request = new sql.Request();
+        request.input('RequestID', sql.Int, requestId);
+        const result = await request.query(`
+            SELECT R.RequestID, R.Specialty, R.Priority, R.Status, R.CreatedDate, S.FullName AS DoctorName
+            FROM ConsultationRequests R
+            LEFT JOIN Staff S ON R.DoctorID = S.StaffID
+            WHERE R.RequestID = @RequestID
+        `);
+        return result.recordset[0];
+    }
+    async createNurseRequest({ patientId, content }) {
+        const request = new sql.Request();
+        request.input('PatientID', sql.Int, patientId);
+        request.input('Content', sql.NVarChar, content);
+        const query = `
+            INSERT INTO PatientRequest (PatientID, Content, Status, CreatedAt)
+            VALUES (@PatientID, @Content, 'Pending', GETDATE())
+        `;
+        return await request.query(query);
+    }
+    async getNurseRequests(patientId) {
+        const request = new sql.Request();
+        request.input('PatientID', sql.Int, patientId);
+        
+        const query = `
+            SELECT RequestID, Content, Status, CreatedAt, UpdatedAt
+            FROM PatientRequest
+            WHERE PatientID = @PatientID
+            ORDER BY CreatedAt DESC
+        `;
+        const result = await request.query(query);
+        return result.recordset;
+    }
+    
 }
 
 module.exports = new PatientRepository();

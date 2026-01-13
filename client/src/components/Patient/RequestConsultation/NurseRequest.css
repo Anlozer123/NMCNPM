@@ -1,0 +1,145 @@
+/* ... Giữ nguyên các code CSS cũ của layout NurseRequest ... */
+
+.nurse-request-wrapper {
+  background: #fff;
+  padding: 30px;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  height: 100%;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.nr-header-title {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 25px; color: #333;
+}
+.nr-icon { font-size: 20px; }
+.nr-header-title h3 { margin: 0; font-size: 16px; font-weight: 700; text-transform: uppercase; }
+
+.nr-label {
+  display: block; font-size: 13px; font-weight: 600; color: #666; margin-bottom: 10px; text-transform: uppercase;
+}
+
+.nr-input-box {
+  background-color: #e5e7eb;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 30px;
+}
+
+.nr-textarea {
+  width: 100%; background: transparent; border: none; resize: none;
+  font-family: inherit; font-size: 14px; color: #333; outline: none; margin-bottom: 10px;
+}
+
+.nr-options-list { display: flex; flex-direction: column; gap: 5px; }
+.nr-option-btn {
+  background: none; border: none; text-align: left; color: #555;
+  font-size: 14px; cursor: pointer; padding: 4px 0; transition: color 0.2s; width: fit-content;
+}
+.nr-option-btn:hover { color: #000; font-weight: 500; }
+
+.nr-submit-btn {
+  width: 100%; background-color: #2563eb; color: white; font-weight: 700;
+  text-transform: uppercase; padding: 12px; border: none; border-radius: 6px;
+  cursor: pointer; transition: background 0.3s;
+}
+.nr-submit-btn:hover { background-color: #1d4ed8; }
+.nr-submit-btn:disabled { background-color: #93c5fd; cursor: not-allowed; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================================
+   CHÈN CSS MODAL TỪ PatientAppointments.css
+   ============================================================ */
+
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center;
+    z-index: 9999; animation: fadeInModal 0.2s;
+}
+
+.error-modal {
+    background: white; width: 380px; padding: 40px; border-radius: 20px;
+    text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: scaleModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.error-title { 
+    font-size: 18px; font-weight: 700; margin-bottom: 15px; color: #333; 
+}
+
+.error-message { 
+    font-size: 14px; color: #666; margin-bottom: 30px; line-height: 1.5; 
+}
+
+.btn-retry {
+    background: #2d3436; /* Màu đen xám đậm chuẩn mẫu */
+    color: white; border: none; padding: 12px 0; width: 100%;
+    border-radius: 8px; font-weight: 600; cursor: pointer; text-transform: uppercase;
+}
+
+/* Animations */
+@keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleModal { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+/* Container chính của Modal Success */
+.success-modal {
+    background: white; 
+    width: 380px; 
+    padding: 40px 30px; 
+    border-radius: 20px;
+    text-align: center; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: scaleModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-top: 6px solid #00b894; /* Viền xanh lá trên cùng */
+}
+
+/* Icon check xanh lá */
+.success-icon-large { 
+    font-size: 60px; 
+    color: #00b894; 
+    margin-bottom: 20px; 
+    animation: popIn 0.5s ease; 
+}
+
+/* Tiêu đề */
+.success-title { 
+    font-size: 20px; 
+    font-weight: 700; 
+    color: #2d3436; 
+    margin-bottom: 10px; 
+    text-transform: uppercase; 
+}
+
+/* Nội dung nhắn */
+.success-message { 
+    font-size: 14px; 
+    color: #636e72; 
+    margin-bottom: 30px; 
+    line-height: 1.5; 
+}
+
+/* Nút Hoàn tất */
+.btn-success-modal {
+    background-color: #00b894; 
+    color: white; 
+    border: none; 
+    padding: 12px 0; 
+    width: 100%;
+    border-radius: 8px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    transition: background 0.2s;
+}
+
+.btn-success-modal:hover { 
+    background-color: #00a884; 
+}
+
+/* Animation nảy icon */
+@keyframes popIn { 
+    0% { transform: scale(0); opacity: 0; } 
+    80% { transform: scale(1.2); opacity: 1; } 
+    100% { transform: scale(1); opacity: 1; } 
+}

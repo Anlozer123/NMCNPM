@@ -2,21 +2,26 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   FaComments, FaExclamationCircle, FaStethoscope, FaCheckCircle,
-  FaPlus, FaUserMd, FaPaperPlane, FaPencilAlt, FaTimes, FaTrash,
+  FaUserMd, FaPaperPlane, FaPencilAlt, FaTimes, FaTrash,
   FaListUl, FaTimesCircle
 } from "react-icons/fa";
+
+// Import các component con
 import PatientSidebar from "../Sidebar/PatientSidebar"; 
 import UserDropdown from "../UserDropdown/UserDropdown"; 
+import NurseRequest from "./NurseRequest"; // Đảm bảo bạn đã tạo file này từ bước trước
+
 import "./RequestConsultation.css";
 
 const RequestConsultation = () => {
   const navigate = useNavigate();
   const chatEndRef = useRef(null);
 
-  // --- STATE ---
+  // --- STATE QUẢN LÝ TAB ---
+  const [activeTab, setActiveTab] = useState('CONSULTATION'); // 'CONSULTATION' hoặc 'NURSE_REQUEST'
+
+  // --- STATE QUẢN LÝ USER & LOGIC CHAT ---
   const [userInfo, setUserInfo] = useState(null);
-  
-  // State layout 2 cột
   const [historyList, setHistoryList] = useState([]); 
   const [selectedRequestId, setSelectedRequestId] = useState(null); // null = Mode tạo mới
   
@@ -193,9 +198,8 @@ const RequestConsultation = () => {
   const startEdit = (msg) => { setEditingMessageId(msg.MessageID); setNewMessage(msg.Content); };
   const formatDate = (date) => date ? new Date(date).toLocaleString('vi-VN') : "";
 
-  // --- RENDER ---
+  // --- RENDER CHÍNH ---
   return (
-    /* QUAN TRỌNG: Thêm class `consultation-page-container` để cô lập CSS */
     <div className="pd-layout consultation-page-container">
       
       {/* --- MODALS --- */}
@@ -229,120 +233,152 @@ const RequestConsultation = () => {
             <p className="confirm-message">Bạn có chắc chắn muốn xóa tin nhắn này không?<br/>Hành động này không thể hoàn tác.</p>
             <div className="modal-actions">
                 <button className="btn-cancel-modal" onClick={() => setDeleteModal({ show: false, messageId: null })}>HỦY BỎ</button>
-                <button className="btn-confirm-delete-modal" onClick={confirmDeleteMessage}>XÓA NGAY</button>
+                <button className="btn-confirm-delete-modal" onClick={confirmDeleteMessage}>XÓA</button>
             </div>
           </div>
         </div>
       )}
 
+      {/* --- MAIN LAYOUT --- */}
       <div className="pd-sidebar-container"><PatientSidebar /></div>
 
       <div className="pd-main-content">
         <header className="pd-header">
-          <h2 className="header-title">TƯ VẤN TRỰC TUYẾN</h2>
+          <h2 className="header-title">TƯ VẤN VÀ YÊU CẦU</h2>
           <UserDropdown />
         </header>
 
         <div className="pd-body-scroll">
-            <div className="consultation-wrapper">
+            
+            {/* *** NAVIGATION TABS (MỚI) *** */}
+            <div className="rc-tab-navigation">
+                <button 
+                    className={`rc-tab-btn ${activeTab === 'CONSULTATION' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('CONSULTATION')}
+                >
+                    TƯ VẤN
+                </button>
+                <button 
+                    className={`rc-tab-btn ${activeTab === 'NURSE_REQUEST' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('NURSE_REQUEST')}
+                >
+                    YÊU CẦU
+                </button>
+            </div>
+
+            {/* *** CONTENT AREA (Thay đổi theo Tab) *** */}
+            <div className="rc-tab-content-area">
                 
-                {/* LEFT: HISTORY */}
-                <div className="history-sidebar">
-                    <div className="history-header">
-                        <span><FaListUl /> Lịch sử tư vấn</span>
-                    </div>
-                    <div className="history-list">
-                        <div className={`history-item ${selectedRequestId === null ? 'active' : ''}`} onClick={handleCreateNewRequest} style={{borderStyle: 'dashed', textAlign:'center', color: '#0089d0', justifyContent:'center'}}>
-                            <b>+ Tạo yêu cầu mới</b>
-                        </div>
-                        {historyList.map(item => (
-                            <div key={item.RequestID} className={`history-item ${selectedRequestId === item.RequestID ? 'active' : ''}`} onClick={() => handleSelectRequest(item.RequestID)}>
-                                <h4>{item.Specialty} <span className={`status-badge status-${item.Status}`}>{item.Status}</span></h4>
-                                <p><FaUserMd /> {item.DoctorName || "Đang chờ..."}</p>
-                                <div className="history-date">{formatDate(item.CreatedDate)}</div>
+                {/* === TAB 1: TƯ VẤN BÁC SĨ (Giữ nguyên logic cũ) === */}
+                {activeTab === 'CONSULTATION' && (
+                    <div className="consultation-wrapper">
+                        {/* LEFT: HISTORY */}
+                        <div className="history-sidebar">
+                            <div className="history-header">
+                                <span><FaListUl /> Lịch sử tư vấn</span>
                             </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* RIGHT: MAIN */}
-                <div className="main-chat-area">
-                    {viewMode === "loading" && <div className="pd-loading">Đang tải...</div>}
-
-                    {viewMode === "chat" && requestInfo && (
-                        <div className="chat-container">
-                            <div className="chat-header">
-                                <div>
-                                    <h3>{requestInfo.DoctorName ? `BS. ${requestInfo.DoctorName}` : "Đang chờ bác sĩ..."} - {requestInfo.Specialty}</h3>
-                                    <div className="request-id">Mã: #{requestInfo.RequestID} | Mức độ: {requestInfo.Priority}</div>
+                            <div className="history-list">
+                                <div className={`history-item ${selectedRequestId === null ? 'active' : ''}`} onClick={handleCreateNewRequest} style={{borderStyle: 'dashed', textAlign:'center', color: '#0089d0', justifyContent:'center'}}>
+                                    <b>+ Tạo yêu cầu mới</b>
                                 </div>
+                                {historyList.map(item => (
+                                    <div key={item.RequestID} className={`history-item ${selectedRequestId === item.RequestID ? 'active' : ''}`} onClick={() => handleSelectRequest(item.RequestID)}>
+                                        <h4>{item.Specialty} <span className={`status-badge status-${item.Status}`}>{item.Status}</span></h4>
+                                        <p><FaUserMd /> {item.DoctorName || "Đang chờ..."}</p>
+                                        <div className="history-date">{formatDate(item.CreatedDate)}</div>
+                                    </div>
+                                ))}
                             </div>
+                        </div>
 
-                            <div className="chat-body">
-                                {messages.length === 0 && <div style={{textAlign: 'center', color: '#999', marginTop: 50}}><FaStethoscope size={40}/><p>Chưa có tin nhắn nào.</p></div>}
-                                {messages.map((msg, index) => {
-                                    const isPatient = msg.SenderType === 'Patient';
-                                    return (
-                                        <div key={index} className={`message-box ${!isPatient ? 'doctor-reply' : 'patient-msg'}`}>
-                                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: 5}}>
-                                                <span className="msg-role">{isPatient ? "Bạn" : "Bác sĩ"}</span>
-                                                {isPatient && (
-                                                    <div className="msg-actions">
-                                                        <FaPencilAlt onClick={() => startEdit(msg)} title="Sửa"/>
-                                                        <FaTrash onClick={() => promptDeleteMessage(msg.MessageID)} title="Xóa"/>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="msg-content">{msg.Content}</div>
-                                            <span className="msg-time">{formatDate(msg.SentAt)}</span>
+                        {/* RIGHT: MAIN */}
+                        <div className="main-chat-area">
+                            {viewMode === "loading" && <div className="pd-loading">Đang tải...</div>}
+
+                            {viewMode === "chat" && requestInfo && (
+                                <div className="chat-container">
+                                    <div className="chat-header">
+                                        <div>
+                                            <h3>{requestInfo.DoctorName ? `BS. ${requestInfo.DoctorName}` : "Đang chờ bác sĩ..."} - {requestInfo.Specialty}</h3>
+                                            <div className="request-id">Mã: #{requestInfo.RequestID} | Mức độ: {requestInfo.Priority}</div>
                                         </div>
-                                    );
-                                })}
-                                <div ref={chatEndRef} />
-                            </div>
+                                    </div>
 
-                            <div className="chat-footer">
-                                {editingMessageId && <div className="editing-indicator"><span>Đang sửa...</span><span onClick={()=>{setEditingMessageId(null); setNewMessage("")}}><FaTimes/> Hủy</span></div>}
-                                <div className="input-group">
-                                    <textarea className="chat-input" placeholder="Nhập tin nhắn..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)}/>
-                                    <button className="btn-send" onClick={handleSendMessage}>{editingMessageId ? "Cập nhật" : <><FaPaperPlane /> Gửi</>}</button>
+                                    <div className="chat-body">
+                                        {messages.length === 0 && <div style={{textAlign: 'center', color: '#999', marginTop: 50}}><FaStethoscope size={40}/><p>Chưa có tin nhắn nào.</p></div>}
+                                        {messages.map((msg, index) => {
+                                            const isPatient = msg.SenderType === 'Patient';
+                                            return (
+                                                <div key={index} className={`message-box ${!isPatient ? 'doctor-reply' : 'patient-msg'}`}>
+                                                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: 5}}>
+                                                        <span className="msg-role">{isPatient ? "Bạn" : "Bác sĩ"}</span>
+                                                        {isPatient && (
+                                                            <div className="msg-actions">
+                                                                <FaPencilAlt onClick={() => startEdit(msg)} title="Sửa"/>
+                                                                <FaTrash onClick={() => promptDeleteMessage(msg.MessageID)} title="Xóa"/>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="msg-content">{msg.Content}</div>
+                                                    <span className="msg-time">{formatDate(msg.SentAt)}</span>
+                                                </div>
+                                            );
+                                        })}
+                                        <div ref={chatEndRef} />
+                                    </div>
+
+                                    <div className="chat-footer">
+                                        {editingMessageId && <div className="editing-indicator"><span>Đang sửa...</span><span onClick={()=>{setEditingMessageId(null); setNewMessage("")}}><FaTimes/> Hủy</span></div>}
+                                        <div className="input-group">
+                                            <textarea className="chat-input" placeholder="Nhập tin nhắn..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)}/>
+                                            <button className="btn-send" onClick={handleSendMessage}>{editingMessageId ? "Cập nhật" : <><FaPaperPlane /> Gửi</>}</button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    )}
+                            )}
 
-                    {viewMode === "form" && (
-                         <div className="form-card">
-                            <div className="form-section-header">
-                                <FaComments className="section-icon" />
-                                <h3>Gửi yêu cầu tư vấn mới</h3>
-                            </div>
-                            <div className="form-group">
-                                <label>Chuyên khoa (*)</label>
-                                <select name="department" value={formData.department} onChange={handleChange} className="form-control">
-                                    <option value="">Chọn chuyên khoa</option>
-                                    <option value="Nội khoa">Nội khoa</option>
-                                    <option value="Nhi khoa">Nhi khoa</option>
-                                    <option value="Tim mạch">Tim mạch</option>
-                                    <option value="Da liễu">Da liễu</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label>Mức độ (*)</label>
-                                <select name="urgency" value={formData.urgency} onChange={handleChange} className="form-control">
-                                    <option value="Thấp">Thấp</option>
-                                    <option value="Trung bình">Trung bình</option>
-                                    <option value="Khẩn cấp">Khẩn cấp</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label>Triệu chứng (*)</label>
-                                <textarea name="symptoms" value={formData.symptoms} onChange={handleChange} className="form-control textarea-field" placeholder="Mô tả..."/>
-                            </div>
-                            <button className="btn-primary" onClick={handleSubmitNewRequest} disabled={loading}>{loading ? "Đang gửi..." : "Bắt đầu tư vấn"}</button>
-                         </div>
-                    )}
-                </div>
+                            {viewMode === "form" && (
+                                <div className="form-card">
+                                    <div className="form-section-header">
+                                        <FaComments className="section-icon" />
+                                        <h3>Gửi yêu cầu tư vấn mới</h3>
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Chuyên khoa (*)</label>
+                                        <select name="department" value={formData.department} onChange={handleChange} className="form-control">
+                                            <option value="">Chọn chuyên khoa</option>
+                                            <option value="Nội khoa">Nội khoa</option>
+                                            <option value="Nhi khoa">Nhi khoa</option>
+                                            <option value="Tim mạch">Tim mạch</option>
+                                            <option value="Da liễu">Da liễu</option>
+                                        </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Mức độ (*)</label>
+                                        <select name="urgency" value={formData.urgency} onChange={handleChange} className="form-control">
+                                            <option value="Thấp">Thấp</option>
+                                            <option value="Trung bình">Trung bình</option>
+                                            <option value="Khẩn cấp">Khẩn cấp</option>
+                                        </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Triệu chứng (*)</label>
+                                        <textarea name="symptoms" value={formData.symptoms} onChange={handleChange} className="form-control textarea-field" placeholder="Mô tả..."/>
+                                    </div>
+                                    <button className="btn-primary" onClick={handleSubmitNewRequest} disabled={loading}>{loading ? "Đang gửi..." : "Bắt đầu tư vấn"}</button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* === TAB 2: YÊU CẦU ĐIỀU DƯỠNG (MỚI) === */}
+                {activeTab === 'NURSE_REQUEST' && (
+                    <div className="nurse-request-tab-container">
+                        <NurseRequest />
+                    </div>
+                )}
+
             </div>
         </div>
       </div>

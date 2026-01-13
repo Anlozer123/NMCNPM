@@ -140,3 +140,25 @@ exports.getConsultationDetail = async (req, res) => {
         res.status(500).json({ message: "Lỗi Server" });
     }
 };
+exports.sendNurseRequest = async (req, res) => {
+    try {
+        const { note } = req.body; // Frontend gửi field tên là 'note'
+        if (!note) return res.status(400).json({ message: "Vui lòng nhập nội dung yêu cầu" });
+
+        await patientService.sendNurseRequest(req.params.patientId, note);
+        res.status(200).json({ message: "Gửi yêu cầu thành công" });
+    } catch (err) {
+        console.error("Lỗi gửi yêu cầu điều dưỡng:", err);
+        res.status(500).json({ message: "Lỗi Server" });
+    }
+};
+
+exports.getNurseRequestsHistory = async (req, res) => {
+    try {
+        const data = await patientService.getNurseRequests(req.params.patientId);
+        res.json(data);
+    } catch (err) {
+        console.error("Lỗi lấy lịch sử yêu cầu:", err);
+        res.status(500).json({ message: "Lỗi Server" });
+    }
+};

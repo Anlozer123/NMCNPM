@@ -138,6 +138,14 @@ async getConsultationDetail(requestId) {
         const rowsAffected = await patientRepo.deleteMessage({ messageId, senderId: senderID });
         return rowsAffected > 0;
     }
+    async sendNurseRequest(patientId, content) {
+        if (!content) throw new Error("Nội dung yêu cầu không được để trống");
+        return await patientRepo.createNurseRequest({ patientId, content });
+    }
+
+    async getNurseRequests(patientId) {
+        return await patientRepo.getNurseRequests(patientId);
+    }
 }
 
 module.exports = new PatientService();
