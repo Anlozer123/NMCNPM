@@ -14,4 +14,6 @@ router.get('/:patientId/latest-consultation-full', patientController.getLatestCo
 router.post('/consultation/:requestId/reply', patientController.replyToConsultation);
 router.put('/consultation/message/:messageId', patientController.editMessage);
 router.delete('/consultation/message/:messageId', patientController.deleteMessage);
+router.get('/:patientId/consultation-history', patientController.getConsultationHistory);
+router.get('/consultation/:requestId/detail', patientController.getConsultationDetail);
 module.exports = router;

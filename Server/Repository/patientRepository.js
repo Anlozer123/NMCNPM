@@ -164,6 +164,32 @@ class PatientRepository {
         `);
         return result.rowsAffected[0];
     }
+    async getAllConsultations(patientId) {
+    const request = new sql.Request();
+    request.input('PatientID', sql.Int, patientId);
+    // Lấy danh sách, sắp xếp mới nhất lên đầu
+    const result = await request.query(`
+        SELECT R.RequestID, R.Specialty, R.Priority, R.Status, R.CreatedDate, S.FullName AS DoctorName
+        FROM ConsultationRequests R
+        LEFT JOIN Staff S ON R.DoctorID = S.StaffID
+        WHERE R.PatientID = @PatientID
+        ORDER BY R.CreatedDate DESC
+    `);
+    return result.recordset;
+}
+
+// [THÊM MỚI] Lấy thông tin chi tiết của MỘT request cụ thể theo ID
+async getRequestById(requestId) {
+    const request = new sql.Request();
+    request.input('RequestID', sql.Int, requestId);
+    const result = await request.query(`
+        SELECT R.RequestID, R.Specialty, R.Priority, R.Status, R.CreatedDate, S.FullName AS DoctorName
+        FROM ConsultationRequests R
+        LEFT JOIN Staff S ON R.DoctorID = S.StaffID
+        WHERE R.RequestID = @RequestID
+    `);
+    return result.recordset[0];
+}
 }
 
 module.exports = new PatientRepository();

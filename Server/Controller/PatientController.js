@@ -119,3 +119,24 @@ exports.deleteMessage = async (req, res) => {
         res.status(500).json({ message: "Lỗi Server" });
     }
 };
+exports.getConsultationHistory = async (req, res) => {
+    try {
+        const data = await patientService.getConsultationHistory(req.params.patientId);
+        res.json(data);
+    } catch (err) {
+        console.error("Lỗi lấy lịch sử:", err);
+        res.status(500).json({ message: "Lỗi Server" });
+    }
+};
+
+// [THÊM MỚI] API Lấy chi tiết request cụ thể
+exports.getConsultationDetail = async (req, res) => {
+    try {
+        const data = await patientService.getConsultationDetail(req.params.requestId);
+        if (!data) return res.status(404).json({ message: "Không tìm thấy" });
+        res.json(data);
+    } catch (err) {
+        console.error("Lỗi lấy chi tiết:", err);
+        res.status(500).json({ message: "Lỗi Server" });
+    }
+};

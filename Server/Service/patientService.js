@@ -75,6 +75,18 @@ class PatientService {
     async getLatestConsultation(patientId) {
         return await patientRepo.getLatestConsultation(patientId);
     }
+    async getConsultationHistory(patientId) {
+    return await patientRepo.getAllConsultations(patientId);
+}
+
+// [THÊM MỚI] Lấy chi tiết một cuộc tư vấn cụ thể (Thông tin + Tin nhắn)
+async getConsultationDetail(requestId) {
+    const requestInfo = await patientRepo.getRequestById(requestId);
+    if (!requestInfo) return null;
+
+    const messages = await patientRepo.getMessagesByRequestId(requestId);
+    return { requestInfo, messages };
+}
 
     async getDoctorsList() {
         return await patientRepo.getDoctorsList();
