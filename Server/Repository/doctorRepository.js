@@ -85,7 +85,7 @@ class DoctorRepository {
 
     async getMyPatients(doctorId) {
         const result = await sql.query`
-            SELECT DISTINCT p.PatientID, p.FullName, p.Gender, p.DoB, p.Phone, p.Email, p.Address
+            SELECT DISTINCT p.PatientID, p.FullName, p.Gender, p.DoB, p.Phone, p.Email, p.Address, p.CurrentRoom AS RoomNumber
             FROM Patient p
             JOIN Appointment a ON p.PatientID = a.PatientID
             WHERE a.DoctorID = ${doctorId}

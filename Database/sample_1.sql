@@ -134,14 +134,6 @@ INSERT INTO PrescriptionItem (PrescriptionID, MedicineID, Quantity, Dosage, Freq
 (3, 5, 14, N'1 viên', N'Sáng - Tối', N'7 ngày', N'Uống trước ăn 30p');
 
 -- =============================================
--- 9. SEED TABLE: DoctorInstruction (SỬA STATUS)
--- =============================================
-INSERT INTO DoctorInstruction (DoctorID, PatientID, Instruction, NurseNote, Status) VALUES
-(2, 1, N'Theo dõi nhiệt độ 4h/lần', N'Nhiệt độ ổn định 37 độ', 'Pending'),
-(2, 1, N'Cho uống thuốc hạ sốt nếu sốt > 38.5', N'Đã thực hiện lúc 10h', 'Completed'),
-(4, 7, N'Đo huyết áp mỗi 2h', N'HA 140/90', 'Pending'); -- Đã sửa 'In Progress' -> 'Pending'
-
--- =============================================
 -- 10. SEED TABLE: PatientRequest (SỬA STATUS)
 -- =============================================
 INSERT INTO PatientRequest (PatientID, NurseID, Content, Status) VALUES

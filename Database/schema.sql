@@ -251,9 +251,6 @@ ALTER TABLE Prescription ADD FOREIGN KEY (RecordID) REFERENCES MedicalRecord(Rec
 ALTER TABLE PrescriptionItem ADD FOREIGN KEY (PrescriptionID) REFERENCES Prescription(PrescriptionID);
 ALTER TABLE PrescriptionItem ADD FOREIGN KEY (MedicineID) REFERENCES Medicine(MedicineID);
 
-ALTER TABLE DoctorInstruction ADD FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID);
-ALTER TABLE DoctorInstruction ADD FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
-
 ALTER TABLE NursingInstructions ADD FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
 ALTER TABLE NursingInstructions ADD FOREIGN KEY (DoctorID) REFERENCES Staff(StaffID);
 ALTER TABLE NursingInstructions ADD FOREIGN KEY (NurseID) REFERENCES Staff(StaffID);
