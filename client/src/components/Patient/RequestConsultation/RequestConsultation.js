@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { 
   FaComments, FaExclamationCircle, FaStethoscope, FaCheckCircle,
   FaUserMd, FaPaperPlane, FaPencilAlt, FaTimes, FaTrash,
-  FaListUl, FaTimesCircle
+  FaListUl
 } from "react-icons/fa";
 
 // Import các component con
 import PatientSidebar from "../Sidebar/PatientSidebar"; 
 import UserDropdown from "../UserDropdown/UserDropdown"; 
-import NurseRequest from "./NurseRequest"; // Đảm bảo bạn đã tạo file này từ bước trước
+import NurseRequest from "./NurseRequest"; 
 
 import "./RequestConsultation.css";
 
@@ -202,18 +202,24 @@ const RequestConsultation = () => {
   return (
     <div className="pd-layout consultation-page-container">
       
-      {/* --- MODALS --- */}
+      {/* --- MODAL LỖI (STYLE APPOINTMENT) --- */}
       {errorModal.show && (
         <div className="modal-overlay">
           <div className="error-modal">
-            <FaTimesCircle className="error-icon-large" />
-            <h3>{errorModal.title}</h3>
+            {/* Đã bỏ icon FaTimesCircle */}
+            <h3 className="error-title">{errorModal.title || "THÔNG BÁO LỖI"}</h3>
             <p className="error-message">{errorModal.message}</p>
-            <button className="btn-error-modal" onClick={() => setErrorModal({ ...errorModal, show: false })}>ĐÓNG</button>
+            <button 
+              className="btn-retry" 
+              onClick={() => setErrorModal({ ...errorModal, show: false })}
+            >
+              THỬ LẠI
+            </button>
           </div>
         </div>
       )}
       
+      {/* --- MODAL SUCCESS --- */}
       {showSuccessModal && (
         <div className="modal-overlay">
           <div className="success-modal">
@@ -225,6 +231,7 @@ const RequestConsultation = () => {
         </div>
       )}
 
+      {/* --- MODAL DELETE CONFIRM --- */}
       {deleteModal.show && (
         <div className="modal-overlay">
           <div className="confirm-modal">
@@ -250,7 +257,7 @@ const RequestConsultation = () => {
 
         <div className="pd-body-scroll">
             
-            {/* *** NAVIGATION TABS (MỚI) *** */}
+            {/* *** NAVIGATION TABS *** */}
             <div className="rc-tab-navigation">
                 <button 
                     className={`rc-tab-btn ${activeTab === 'CONSULTATION' ? 'active' : ''}`}
@@ -266,10 +273,10 @@ const RequestConsultation = () => {
                 </button>
             </div>
 
-            {/* *** CONTENT AREA (Thay đổi theo Tab) *** */}
+            {/* *** CONTENT AREA *** */}
             <div className="rc-tab-content-area">
                 
-                {/* === TAB 1: TƯ VẤN BÁC SĨ (Giữ nguyên logic cũ) === */}
+                {/* === TAB 1: TƯ VẤN BÁC SĨ === */}
                 {activeTab === 'CONSULTATION' && (
                     <div className="consultation-wrapper">
                         {/* LEFT: HISTORY */}
@@ -372,7 +379,7 @@ const RequestConsultation = () => {
                     </div>
                 )}
 
-                {/* === TAB 2: YÊU CẦU ĐIỀU DƯỠNG (MỚI) === */}
+                {/* === TAB 2: YÊU CẦU ĐIỀU DƯỠNG === */}
                 {activeTab === 'NURSE_REQUEST' && (
                     <div className="nurse-request-tab-container">
                         <NurseRequest />

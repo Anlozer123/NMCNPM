@@ -368,11 +368,7 @@
 
 @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* =========================================
-   6. NURSE REQUEST TAB CONTAINER (NEW)
-   ========================================= */
 .consultation-page-container .nurse-request-tab-container {
     height: 100%;
     width: 100%;
-    /* Component con sẽ tự fill vào đây */
 }
