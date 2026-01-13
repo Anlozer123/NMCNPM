@@ -98,7 +98,8 @@ class DoctorRepository {
         const result = await sql.query`
             SELECT p.PatientID, p.FullName, p.Gender, p.DoB, p.Phone, p.Email, p.Address,
                    p.InsuranceID, p.BloodGroup, p.Allergies, p.MedicalHistory, 
-                   p.CurrentRoom, p.AdmissionDiagnosis, p.CurrentCondition
+                   p.CurrentRoom, p.AdmissionDiagnosis, p.CurrentCondition,
+                   p.RelativeName, p.RelativePhone, p.Relationship
             FROM Patient p WHERE p.PatientID = ${patientId}
         `;
         return result.recordset[0];
@@ -204,6 +205,20 @@ class DoctorRepository {
         ORDER BY WorkDate ASC
     `;
     return result.recordset;
+    }
+
+    async checkDuplicateInfo(excludePatientId, phone, insuranceId) {
+        const result = await sql.query`
+        -- Tìm trong bảng Patient, bỏ qua chính bệnh nhân đang sửa (PatientID <> excludePatientId)
+            SELECT 'Bệnh nhân' AS Source FROM Patient 
+            WHERE (Phone = ${phone} OR InsuranceID = ${insuranceId}) AND PatientID <> ${excludePatientId}
+        
+            UNION
+        
+            -- Tìm trong bảng Staff (Nhân viên) xem có trùng số điện thoại không
+            SELECT 'Nhân viên' AS Source FROM Staff WHERE Phone = ${phone}`;
+    
+        return result.recordset[0]; // Trả về bản ghi đầu tiên tìm thấy (nếu có)
     }
 }
 

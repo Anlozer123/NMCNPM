@@ -94,18 +94,26 @@ const PatientProfile = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
+            const result = await response.json();
 
             if (response.ok) {
                 setPatient(formData);
                 setIsEditing(false);
                 alert("Cập nhật thông tin thành công!");
             } else {
-                alert("Có lỗi xảy ra khi cập nhật dữ liệu.");
+                alert(result.message || "Có lỗi xảy ra khi cập nhật dữ liệu.");
             }
         } catch (error) {
             console.error("Lỗi khi lưu:", error);
             alert("Lỗi kết nối đến server.");
         }
+    };
+
+    const handleToggleEdit = () => {
+        if (isEditing) {
+            setFormData(patient);
+        }
+        setIsEditing(!isEditing);
     };
 
     if (!patient) return <div style={{ padding: "20px", textAlign: "center" }}>Đang tải thông tin...</div>;
@@ -164,7 +172,7 @@ const PatientProfile = () => {
                                 <h3 className="header-title">Thông tin chi tiết</h3>
                             </div>
                         </div>
-                        <button className={`btn-edit-modern ${isEditing ? 'btn-cancel' : ''}`} onClick={() => setIsEditing(!isEditing)}>
+                        <button className={`btn-edit-modern ${isEditing ? 'btn-cancel' : ''}`} onClick={handleToggleEdit}>
                             {isEditing ? "✖ Hủy chỉnh sửa" : "Chỉnh sửa thông tin"}
                         </button>
                     </div>
@@ -216,14 +224,7 @@ const PatientProfile = () => {
                             </div>
                             <div className="input-group-vertical">
                                 <label>Quan hệ với bệnh nhân</label>
-                                <select name="Relationship" value={formData.Relationship || ''} onChange={(e) => setFormData({ ...formData, Relationship: e.target.value })} disabled={!isEditing} className="custom-select-box">
-                                    <option value="">-- Chọn quan hệ --</option>
-                                    <option value="Cha/Mẹ">Cha/Mẹ</option>
-                                    <option value="Vợ/Chồng">Vợ/Chồng</option>
-                                    <option value="Anh/Chị/Em">Anh/Chị/Em</option>
-                                    <option value="Con cái">Con cái</option>
-                                    <option value="Khác">Khác</option>
-                                </select>
+                                <input name="Relationship" value={formData.Relationship || ''} onChange={(e) => setFormData({ ...formData, Relationship: e.target.value })} disabled={!isEditing} placeholder="Mối quan hệ" />
                             </div>
                             <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#e7f3ff', borderRadius: '8px', color: '#0056b3', fontSize: '14px' }}>
                                 <strong>Lưu ý:</strong> Thông tin người thân được sử dụng trong các trường hợp khẩn cấp.
@@ -282,7 +283,7 @@ const PatientProfile = () => {
                 <div className="card detail-card">
                     <div className="profile-detail-header">
                         <div className="header-left-content"><h3 className="header-title">📂 Thông tin điều trị & Bệnh án</h3></div>
-                        <button className={`btn-edit-modern ${isEditing ? 'btn-cancel' : ''}`} onClick={() => setIsEditing(!isEditing)}>
+                        <button className={`btn-edit-modern ${isEditing ? 'btn-cancel' : ''}`} onClick={handleToggleEdit}>
                             {isEditing ? "✖ Hủy" : "✏️ Chỉnh sửa bệnh án"}
                         </button>
                     </div>

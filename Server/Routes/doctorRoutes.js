@@ -51,7 +51,8 @@ router.get('/consultation/:requestId/messages', doctorController.getConsultation
 // 12. Gửi phản hồi (Chat)
 // [LƯU Ý] Đổi thành POST để insert tin nhắn mới
 router.post('/consultation/reply/:requestId', doctorController.replyConsultation);
-module.exports = router;
 
 // Tìm file chứa các route của bác sĩ và thêm dòng này:
 router.get('/work-schedule/:doctorId', doctorController.getWorkSchedule);
+
+module.exports = router;

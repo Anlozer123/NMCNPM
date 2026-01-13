@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
     FaCalendarCheck, FaComments, FaUserInjured, FaFilePrescription, 
-    FaHome, FaMagic, FaSignOutAlt, FaClock, FaChevronLeft, FaChevronRight, FaRegCalendarAlt 
+    FaHome, FaMagic, FaSignOutAlt, FaChevronLeft, FaChevronRight, FaRegCalendarAlt 
 } from 'react-icons/fa';
 import './DoctorDashboard.css'; 
 

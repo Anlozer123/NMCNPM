@@ -63,10 +63,13 @@ exports.getPatientDetail = async (req, res) => {
 
 exports.updatePatientProfile = async (req, res) => {
     try {
-        await doctorService.updatePatientProfile(req.params.patientId, req.body);
-        res.json({ message: "Cập nhật hồ sơ bệnh nhân thành công!" });
+        const { patientId } = req.params;
+        const data = req.body;
+        const result = await doctorService.updatePatientProfile(patientId, data);
+        res.status(200).json({ message: "Thành công", data: result });
     } catch (err) {
-        res.status(500).json({ message: "Lỗi Server" });
+        // Trả về nội dung lỗi "Dữ liệu không hợp lệ..." từ Service
+        res.status(400).json({ message: err.message }); 
     }
 };
 

@@ -77,8 +77,18 @@ class DoctorService {
         return await doctorRepo.getPatientDetail(patientId);
     }
 
+    // Tìm hàm updatePatientProfile và sửa lại như sau:
     async updatePatientProfile(patientId, data) {
-        return await doctorRepo.updatePatientProfile(patientId, data);
+    // 1. Kiểm tra trùng lặp
+    const duplicate = await doctorRepo.checkDuplicateInfo(patientId, data.Phone, data.InsuranceID);
+    
+    if (duplicate) {
+        // Nếu thấy trùng, ném ra một lỗi kèm thông báo cụ thể
+        throw new Error(`Thông tin bị trùng: Số điện thoại hoặc BHYT đã được sử dụng bởi một bệnh nhân hoặc nhân viên khác.`);
+    }
+
+    // 2. Chỉ khi không trùng mới chạy tiếp lệnh Update
+    return await doctorRepo.updatePatientProfile(patientId, data);
     }
 
     async getInstructionHistory(patientId) {
