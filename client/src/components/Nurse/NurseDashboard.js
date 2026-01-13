@@ -407,6 +407,7 @@ function NurseDashboard() {
                         <h1 className="dashboard-title">Yêu cầu thiết bị y tế</h1>
                         <p className="sub-title">UC011: Request Medical Equipment - Tạo yêu cầu cung cấp thiết bị và vật tư</p>
                         <div className="equipment-layout">
+                            {/* CỘT TRÁI: FORM */}
                             <div className="left-col">
                                 <div className="form-card">
                                     <div className="equip-section-title"><i className="fas fa-cube icon-blue"></i> Tạo yêu cầu mới</div>
@@ -431,16 +432,20 @@ function NurseDashboard() {
                                     </form>
                                 </div>
                             </div>
-                            <div className="right-col">
+
+                            {/* CỘT PHẢI: LỊCH SỬ (ĐÃ SỬA CLASS) */}
+                            <div className="form-card"> 
                                 <div className="equip-section-title"><i className="fas fa-history icon-orange"></i> Yêu cầu gần đây</div>
                                 <p className="equip-section-desc">Lịch sử các yêu cầu thiết bị</p>
                                 <div className="history-list">
-                                    {equipRequests.length === 0 ? <p style={{color: '#999'}}>Chưa có yêu cầu nào.</p> : 
+                                    {equipRequests.length === 0 ? 
+                                        /* Sửa màu chữ thành #999 để hiện rõ trên nền trắng */
+                                        <p style={{color: '#999', textAlign: 'center'}}>Chưa có yêu cầu nào.</p> : 
                                         equipRequests.map(req => (
                                             <div key={req.RequestID} className="history-card">
                                                 <div className="history-info">
                                                     <h4>{req.EquipmentName}</h4>
-                                                    <div style={{fontSize: '13px', color: '#555'}}>Số lượng: {req.Quantity}</div>
+                                                    <div style={{fontSize: '13px', color: '#454444'}}>Số lượng: {req.Quantity}</div>
                                                     <div className="history-date">{new Date(req.RequestDate).toLocaleDateString('vi-VN')}</div>
                                                 </div>
                                                 {renderEquipStatus(req.Status)}
