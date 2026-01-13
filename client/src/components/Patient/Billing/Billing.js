@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaCheckCircle, FaQrcode, FaTimes } from "react-icons/fa"; 
+import { FaCheckCircle, FaTimes } from "react-icons/fa"; 
 import PatientSidebar from "../Sidebar/PatientSidebar"; 
 import UserDropdown from "../UserDropdown/UserDropdown"; 
 import "./Billing.css";
@@ -8,7 +8,7 @@ import "./Billing.css";
 const Billing = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem("user")) || { FullName: "Phùng Thanh Độ" };
+  const user = JSON.parse(sessionStorage.getItem("user")) || { FullName: "Phùng Thanh Độ" };
   
   // --- STATE MODALS ---
   const [showSuccess, setShowSuccess] = useState(false);

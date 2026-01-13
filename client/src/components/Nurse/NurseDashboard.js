@@ -6,7 +6,7 @@ function NurseDashboard() {
     // --- STATE QUẢN LÝ TAB & NAVIGATION ---
     const [activeTab, setActiveTab] = useState('home');
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem('user')) || { fullName: 'ĐD. Phạm Thị X', StaffID: 3 };
+    const user = JSON.parse(sessionStorage.getItem('user')) || { fullName: 'ĐD. Phạm Thị X', StaffID: 3 };
 
     // --- DATA STATES (CÁC BIẾN DỮ LIỆU TỪ SERVER) ---
     const [instructions, setInstructions] = useState([]);       // UC010: Chỉ thị
@@ -214,7 +214,7 @@ function NurseDashboard() {
 };
 
     const handleLogout = () => {
-        localStorage.clear();
+        sessionStorage.clear();
         navigate('/login');
     };
 

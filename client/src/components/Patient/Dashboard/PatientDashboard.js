@@ -23,7 +23,7 @@ const PatientDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = sessionStorage.getItem("user");
         if (!storedUser) {
           navigate("/login");
           return;

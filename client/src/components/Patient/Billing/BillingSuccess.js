@@ -6,7 +6,7 @@ import "./Billing.css";
 
 const BillingSuccess = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")) || { FullName: "Nguyễn Văn X" };
+  const user = JSON.parse(sessionStorage.getItem("user")) || { FullName: "Nguyễn Văn X" };
 
   return (
     <div className="layout-container">

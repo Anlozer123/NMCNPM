@@ -23,9 +23,9 @@ const Login = () => {
             });
 
             if (response.data.user) {
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                sessionStorage.setItem('user', JSON.stringify(response.data.user));
                 const userRole = response.data.user.Role || response.data.user.role; 
-                localStorage.setItem('role', userRole);
+                sessionStorage.setItem('role', userRole);
 
                 setTimeout(() => {
                     if (userRole === 'Nurse') navigate('/nurse-dashboard'); 

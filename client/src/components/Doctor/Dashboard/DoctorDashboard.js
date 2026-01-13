@@ -32,7 +32,7 @@ const DoctorDashboard = ({ user, activeView }) => {
     });
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('user');
         navigate('/');
     };
 

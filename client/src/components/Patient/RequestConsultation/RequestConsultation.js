@@ -48,7 +48,7 @@ const RequestConsultation = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = sessionStorage.getItem("user");
         if (!storedUser) {
           navigate("/login");
           return;
@@ -102,7 +102,7 @@ const RequestConsultation = () => {
     setMessages([]);
     setFormData({ department: "", urgency: "Thấp", symptoms: "" });
     setViewMode("form");
-    const savedDraft = localStorage.getItem("consultation_draft");
+    const savedDraft = sessionStorage.getItem("consultation_draft");
     if (savedDraft) setFormData(JSON.parse(savedDraft));
   };
 
@@ -181,7 +181,7 @@ const RequestConsultation = () => {
       const data = await response.json();
       if (!response.ok) throw new Error("Lỗi server");
       
-      localStorage.removeItem("consultation_draft");
+      sessionStorage.removeItem("consultation_draft");
       
       // Refresh list và chuyển chat
       const historyRes = await fetch(`http://localhost:5000/api/patient/${userInfo.PatientID}/consultation-history`);
@@ -190,7 +190,7 @@ const RequestConsultation = () => {
       handleSelectRequest(data.requestId);
 
     } catch (error) {
-      localStorage.setItem("consultation_draft", JSON.stringify(formData));
+      sessionStorage.setItem("consultation_draft", JSON.stringify(formData));
       setErrorModal({ show: true, title: "LỖI", message: "Gửi thất bại. Đã lưu nháp." });
     } finally { setLoading(false); }
   };

@@ -18,7 +18,7 @@ const PatientProfile = () => {
     const location = useLocation();
     
     // [FIX] 1. Lấy thông tin User đang đăng nhập để lấy đúng DoctorID
-    const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
+    const user = useMemo(() => JSON.parse(sessionStorage.getItem('user')), []);
     const currentDoctorId = user?.StaffID; 
 
     const [patient, setPatient] = useState(null);

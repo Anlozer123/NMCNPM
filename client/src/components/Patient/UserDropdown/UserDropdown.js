@@ -15,7 +15,7 @@ const UserDropdown = () => {
 
   // Lấy thông tin user từ LocalStorage
   // Lưu ý: Dashboard dùng 'AvatarURL', nên ta ưu tiên lấy field đó
-  const user = JSON.parse(localStorage.getItem("user")) || {
+  const user = JSON.parse(sessionStorage.getItem("user")) || {
     FullName: "Khách",
     Role: "Bệnh nhân",
     AvatarURL: null 
@@ -41,7 +41,7 @@ const UserDropdown = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     navigate("/login"); 
   };
 

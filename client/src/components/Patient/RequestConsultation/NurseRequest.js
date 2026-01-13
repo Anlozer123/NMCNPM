@@ -10,9 +10,9 @@ const NurseRequest = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false); 
 
 
-  const handleAddOption = (option) => {
-    setNote((prev) => (prev ? `${prev}\n${option}` : option));
-  };
+  // const handleAddOption = (option) => {
+  //   setNote((prev) => (prev ? `${prev}\n${option}` : option));
+  // };
 
   const handleSubmit = async () => {
     if (!note.trim()) {
@@ -23,7 +23,7 @@ const NurseRequest = () => {
     setIsLoading(true);
 
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(sessionStorage.getItem("user"));
       const patientId = user ? user.PatientID : null;
 
       if (!patientId) {

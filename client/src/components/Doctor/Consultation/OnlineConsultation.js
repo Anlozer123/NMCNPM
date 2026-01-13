@@ -12,7 +12,7 @@ const OnlineConsultation = ({ doctorId: propDoctorId }) => {
     const chatEndRef = useRef(null);
 
     // [SỬA QUAN TRỌNG] Lấy thông tin bác sĩ thực tế từ localStorage
-    const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
+    const user = useMemo(() => JSON.parse(sessionStorage.getItem('user')), []);
     const currentDoctorId = propDoctorId || user?.StaffID || user?.ID;
 
     // 1. Tải danh sách yêu cầu (Đã thêm tham số doctorId vào URL)

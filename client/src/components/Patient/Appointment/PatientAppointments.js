@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   FaChevronDown,
   FaMapMarkerAlt,
@@ -14,8 +13,7 @@ import CustomCalendar from "../../Common/CustomCalendar/CustomCalendar";
 import "./PatientAppointments.css";
 
 const PatientAppointments = () => {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")) || { FullName: "Guest", PatientID: 1 };
+  const user = JSON.parse(sessionStorage.getItem("user")) || { FullName: "Guest", PatientID: 1 };
 
   // --- STATE ---
   const [showCalendar, setShowCalendar] = useState(false);

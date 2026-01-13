@@ -14,7 +14,7 @@ const DoctorAppointments = ({ initialTab = 'appointments' }) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
+    const user = useMemo(() => JSON.parse(sessionStorage.getItem('user')), []);
     const staffID = user?.StaffID;
 
     // Cập nhật activeTab khi prop initialTab thay đổi (ví dụ khi đang ở trang này mà bấm Sidebar)
