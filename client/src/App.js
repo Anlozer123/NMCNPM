@@ -2,27 +2,26 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 /* ===== COMMON PAGES ===== */
-// Lưu ý: Đảm bảo file Homepage.js nằm đúng trong ./components/Pages/
 import MainLayout from './layouts/MainLayout';
 import Homepage from "./components/Pages/Homepage";
 import DoctorsPage from "./components/Pages/DoctorsPage";
 import ServicesPage from "./components/Pages/ServicesPage";
 
+/* ===== AUTH IMPORTS ===== */
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
+import PatientDetails from "./components/Auth/PatientDetails";
 
-/* ===== ADMIN & NURSE IMPORTS (MỚI) ===== */
-// Dựa trên ảnh: src/components/Admin/AdminDashboard.js
+/* ===== ADMIN & NURSE IMPORTS ===== */
 import AdminDashboard from "./components/Admin/AdminDashboard"; 
-// Dựa trên ảnh: src/components/Nurse/NurseDashboard.js
 import NurseDashboard from "./components/Nurse/NurseDashboard"; 
 
 /* ===== DASHBOARD (General) ===== */
 import Dashboard from "./components/Dashboard/Dashboard";
 
-/* ===== PATIENT ===== */
+/* ===== PATIENT IMPORTS ===== */
 import Prescription from "./components/Patient/Prescription/Prescription";
-import PatientAppointment from "./components/Patient/Appointment/PatientAppointments"; // Kiểm tra tên file chính xác
+import PatientAppointment from "./components/Patient/Appointment/PatientAppointments";
 import RequestConsultation from "./components/Patient/RequestConsultation/RequestConsultation";
 import Billing from "./components/Patient/Billing/Billing";
 import BillingSuccess from "./components/Patient/Billing/BillingSuccess";
@@ -31,53 +30,49 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* ===== PUBLIC ===== */}
+        {/* ===== PUBLIC ROUTES (Wrapped in MainLayout) ===== */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Homepage />} />
           <Route path="/doctors" element={<DoctorsPage />} />
           <Route path="/services" element={<ServicesPage />} />
+          
+          {/* Auth Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          {/* [MỚI] Route cho bước 2 đăng ký: Hoàn tất hồ sơ */}
+          <Route path="/patient-details" element={<PatientDetails />} />
         </Route>
 
-        {/* ===== ADMIN ROUTE (MỚI) ===== */}
+        {/* ===== ADMIN ROUTE ===== */}
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
-        {/* ===== NURSE ROUTE (MỚI) ===== */}
+        {/* ===== NURSE ROUTE ===== */}
         <Route path="/nurse-dashboard" element={<NurseDashboard />} />
 
-        {/* ===== GENERIC DASHBOARD ===== */}
+        {/* ===== GENERIC DASHBOARD & DOCTOR ROUTES ===== */}
         <Route path="/dashboard" element={<Dashboard />} />
-
-        {/* ===== DOCTOR ===== */}
+        
         <Route
           path="/doctor/appointments"
           element={<Dashboard activeView="appointments" />}
         />
-        
-        {/* THÊM DÒNG NÀY ĐỂ XỬ LÝ KHI NHẤN VÀO MỤC BỆNH NHÂN */}
         <Route
           path="/doctor/patients"
           element={<Dashboard activeView="patients" />}
         />
-
-        {/* --- THÊM ROUTE CHO AI SUMMARY TẠI ĐÂY --- */}
         <Route
           path="/doctor/ai-summary"
           element={<Dashboard activeView="ai-summary" />}
         />
 
-        {/* ===== PATIENT ===== */}
-        {/* UC001 – Online Prescription Ordering */}
+        {/* ===== PATIENT FUNCTIONALITIES ===== */}
         <Route path="/prescription" element={<Prescription />} />
-
-        {/* UC002 – Request Doctor Consultation */}
+        
         <Route
           path="/request-consultation"
           element={<RequestConsultation />}
         />
-
-        {/* UC003 – Register Appointment */}
+        
         <Route path="/appointment" element={<PatientAppointment />} />
 
         {/* Billing */}

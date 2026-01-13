@@ -14,14 +14,16 @@
     animation: fadeIn 0.2s ease-out;
 }
 
-/* Header: Tháng/Năm và Nút điều hướng */
+/* Header: Chứa nút điều hướng và dropdown Tháng/Năm */
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    padding: 0 5px; /* Thêm padding nhỏ để nút không sát mép */
 }
 
+/* Nút Next/Prev */
 .calendar-nav-btn {
     width: 36px;
     height: 36px;
@@ -41,13 +43,41 @@
     background-color: #e2e8f0;
 }
 
-.calendar-title {
+/* --- PHẦN MỚI: Container chứa 2 dropdown --- */
+.calendar-controls {
     display: flex;
-    gap: 10px;
-    font-size: 16px;
-    font-weight: 800; /* Chữ đậm như hình */
-    color: #111;
+    gap: 8px;
+    align-items: center;
 }
+
+/* Style chung cho thẻ Select (Tháng & Năm) */
+.calendar-select {
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 700; /* Chữ đậm giống thiết kế cũ */
+    color: #111;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    outline: none;
+    transition: background 0.2s;
+    font-family: inherit; /* Kế thừa font Inter */
+}
+
+.calendar-select:hover {
+    background-color: #f1f5f9;
+}
+
+/* Chỉnh độ rộng để tránh nhảy layout khi chọn tháng tên dài/ngắn */
+.month-select {
+    width: 120px; 
+}
+
+.year-select {
+    width: 85px;
+}
+/* ------------------------------------------- */
 
 /* Hàng thứ trong tuần (Mo Tu We...) */
 .calendar-weekdays {
@@ -96,7 +126,7 @@
 
 /* Ngày ĐANG CHỌN (Màu xanh đậm) */
 .calendar-day.selected {
-    background-color: #2563eb; /* Màu xanh giống hình */
+    background-color: #2563eb; 
     color: white;
     font-weight: 700;
     box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
@@ -112,4 +142,16 @@
 .calendar-day.selected.today {
     color: white;
     border: none;
+}
+
+/* Animation xuất hiện */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

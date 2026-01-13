@@ -208,7 +208,7 @@ const Prescription = () => {
                             <input type="text" name="address" className="form-control" placeholder="Số nhà, tên đường, phường/xã..." value={formData.address} onChange={handleInputChange} />
                         </div>
                         <div className="form-group">
-                            <label>Số điện thoại liên hệ(*)</label>
+                            <label>Số điện thoại (*)</label>
                             <input type="text" name="phone" className="form-control" placeholder="Ví dụ: 0912345678" value={formData.phone} onChange={handleInputChange} />
                         </div>
                         

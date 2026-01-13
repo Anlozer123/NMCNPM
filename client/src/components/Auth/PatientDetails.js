@@ -168,7 +168,7 @@ const PatientDetails = () => {
             <div className="register-form-section">
                 <div className="register-box">
 
-                    {error && <div className="error-message">{error}</div>}
+                    {/* [ĐÃ XÓA ERROR Ở ĐÂY] */}
 
                     <form onSubmit={handleSubmit}>
                         {/* Hàng 1: Họ tên */}
@@ -220,7 +220,7 @@ const PatientDetails = () => {
                                 <div className="input-wrapper">
                                     <FaVenusMars className="input-icon" />
                                     <select className="input-field" name="gender" onChange={handleChange} required>
-                                        <option value="">Chọn</option>
+                                        <option value=""></option>
                                         <option value="Nam">Nam</option>
                                         <option value="Nữ">Nữ</option>
                                         <option value="Khác">Khác</option>
@@ -257,7 +257,7 @@ const PatientDetails = () => {
                                 <div className="input-wrapper">
                                     <FaTint className="input-icon" />
                                     <select className="input-field" name="bloodGroup" onChange={handleChange} required>
-                                        <option value="">Chọn</option>
+                                        <option value=""></option>
                                         <option value="A+">A+</option><option value="A-">A-</option>
                                         <option value="B+">B+</option><option value="B-">B-</option>
                                         <option value="O+">O+</option><option value="O-">O-</option>
@@ -311,6 +311,9 @@ const PatientDetails = () => {
                                 <input type="text" className="input-field" name="relationship" placeholder="VD: Cha, Vợ, Chồng..." onChange={handleChange} required />
                             </div>
                         </div>
+
+                        {/* [VỊ TRÍ MỚI CỦA THÔNG BÁO LỖI] */}
+                        {error && <div className="error-message">{error}</div>}
 
                         <button type="submit" className="btn-register" disabled={isLoading}>
                             {isLoading ? 'Đang tạo tài khoản...' : 'HOÀN TẤT ĐĂNG KÝ'}
